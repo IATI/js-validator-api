@@ -1,17 +1,18 @@
 {
-    "name": "azure-function-node-microservice-template",
+    "name": "js-validator-api",
     "version": "0.0.0",
-    "description": "",
+    "description": "JavaScript IATI Validator api",
     "scripts": {
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",
-        "test": "newman run integration-tests/azure-function-node-microservice-template.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json",
+        "test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install"
     },
     "author": "IATI",
     "dependencies": {
         "applicationinsights": "^1.8.10",
-        "dotenv": "^8.2.0"
+        "dotenv": "^8.2.0",
+        "xml2js": "^0.4.23"
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^0.13.1",

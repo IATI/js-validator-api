@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "c2e4fc5b-1f70-46cd-b6fb-dec3e0379979",
+		"name": "js-validator-api-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET /pub",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Reponse body contains 'Public API.'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Public API.\");",
+							"});",
+							"pm.test(\"Reponse body contains 'Verison'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Version\");",
+							"});",
+							"pm.test(\"Reponse body contains 'John'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"IATI\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pub?name=IATI",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "IATI"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /pvt",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Reponse body contains 'Public API.'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Private API.\");",
+							"});",
+							"pm.test(\"Reponse body contains 'Verison'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Version\");",
+							"});",
+							"pm.test(\"Reponse body contains 'John'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"IATI\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt?name=IATI",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "IATI"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "iati-act-no-errors",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"pm.test(\"Body contains iati-activities attribute string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(`iati-activities`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "iati-act-no-errors.xml"
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/pub/validate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "iati-org-no-errors",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"pm.test(\"Body contains iati-organisations attribute string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(`iati-organisations`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "iati-org-no-errors.xml"
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/pub/validate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
