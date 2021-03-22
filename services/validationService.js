@@ -15,7 +15,7 @@ exports.validate = async (context, req) => {
 
     try {
         const parseStart = getStartTime();
-        const json = await xml2js.parseStringPromise(body);
+        const json = await xml2js.parseStringPromise(body, {});
 
         state.parseTime = getElapsedTime(parseStart);
         context.log({ name: 'Parse Time (s)', value: state.parseTime });
@@ -23,7 +23,7 @@ exports.validate = async (context, req) => {
         context.res = {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: json,
+            body: JSON.stringify(json),
         };
         return;
     } catch (error) {
