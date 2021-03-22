@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: 'npm'
+    # Look for `package.json` and `lock` files in the `root` directory
+    directory: '/'
+    schedule:
+      interval: 'daily'
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    # or GitHub Actions, set the directory to / to check for workflow files in .github/workflows.
+    directory: '/'
+    schedule:
+      interval: 'daily'

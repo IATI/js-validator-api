@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "4cb5c5d3-343d-47db-abbf-ae4bc6670fab",
+		"name": "azure-function-node-microservice-template",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET /pub",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Reponse body contains 'Public API.'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Public API.\");",
+							"});",
+							"pm.test(\"Reponse body contains 'Verison'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Version\");",
+							"});",
+							"pm.test(\"Reponse body contains 'John'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"IATI\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pub?name=IATI",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "IATI"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /pvt",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Reponse body contains 'Public API.'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Private API.\");",
+							"});",
+							"pm.test(\"Reponse body contains 'Verison'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Version\");",
+							"});",
+							"pm.test(\"Reponse body contains 'John'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"IATI\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt?name=IATI",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "IATI"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

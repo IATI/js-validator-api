@@ -1,0 +1,9 @@
+# Ignore artifacts:
+tmp
+test_data
+test/test_files
+node_modules
+iati-rulesets
+schemas
+var
+*.sef.json

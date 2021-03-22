@@ -1,0 +1,30 @@
+{
+    "name": "azure-function-node-microservice-template",
+    "version": "0.0.0",
+    "description": "",
+    "scripts": {
+        "start": "func start --javascript",
+        "start:verbose": "func start --javascript --verbose",
+        "test": "newman run integration-tests/azure-function-node-microservice-template.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json",
+        "prepare": "husky install"
+    },
+    "author": "IATI",
+    "dependencies": {
+        "applicationinsights": "^1.8.10",
+        "dotenv": "^8.2.0"
+    },
+    "devDependencies": {
+        "@prettier/plugin-xml": "^0.13.1",
+        "eslint": "^7.22.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-config-prettier": "^8.1.0",
+        "eslint-plugin-import": "^2.22.1",
+        "husky": "^5.2.0",
+        "lint-staged": "^10.5.3",
+        "prettier": "^2.2.1"
+    },
+    "lint-staged": {
+        "*.js": "eslint --cache --fix",
+        "*.{js,css,md}": "prettier --write"
+    }
+}
