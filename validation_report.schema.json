@@ -1,0 +1,68 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://iatistandard.org/iati-validator-report.schema.json",
+    "title": "Validation Report",
+    "description": "Validation Report for IATI XML",
+    "type": "object",
+    "properties": {
+        "valid": {
+            "description": "Is the IATI XML valid with no critical errors",
+            "type": "boolean"
+        }
+    },
+    "fileInfo": {
+        "type": "object",
+        "properties": {
+            "fileType": {
+                "description": "The type of IATI file",
+                "type": "string"
+            },
+            "version": {
+                "description": "IATI Version X.XX",
+                "type": "string"
+            }
+        }
+    },
+    "summary": {
+        "type": "object",
+        "properties": {
+            "critical": {
+                "description": "Number of critical level validation errors with the file",
+                "type": "integer"
+            },
+            "danger": {
+                "description": "Number of danger level validation errors with the file",
+                "type": "integer"
+            },
+            "warning": {
+                "description": "Number of warning level validation errors with the file",
+                "type": "integer"
+            },
+            "info": {
+                "description": "Number of info level validation errors with the file",
+                "type": "integer"
+            }
+        }
+    },
+    "errors": {
+        "type": "array",
+        "items": { "$ref": "#/$defs/error" }
+    },
+    "$defs": {
+        "error": {
+            "type": "object",
+            "required": ["id", "severity"],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "The identifier of the error"
+                },
+                "severity": {
+                    "type": "string",
+                    "description": "The severity level of the error"
+                }
+            }
+        }
+    },
+    "required": ["valid"]
+}
