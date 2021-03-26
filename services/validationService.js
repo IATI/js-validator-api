@@ -7,13 +7,23 @@ const { client, getStartTime, getElapsedTime } = require('../config/appInsights'
 let errCache = [];
 let errors = {};
 
-const cacheError = (codelistDefinition, xpath, curValue, attribute) => {
+const cacheError = (
+    codelistDefinition,
+    xpath,
+    curValue,
+    attribute,
+    linkedAttribute,
+    linkedAttributeValue
+) => {
     const { id, type, priority, valClass, message, codelist } = codelistDefinition[attribute];
     let context;
     if (attribute === 'text()') {
         context = `"${curValue}" is not a valid value for <${xpath.split('/').pop()}>`;
     } else {
         context = `"${curValue}" is not a valid value for attribute @${attribute}`;
+    }
+    if (linkedAttribute) {
+        context += ` and linked @${linkedAttribute}=${linkedAttributeValue}`;
     }
     const validationError = {
         xpath,
@@ -48,10 +58,34 @@ const validator = (xpath, something, newValue) => {
 
             // loop on matches to validate
             matches.forEach((attribute) => {
-                const { allowedCodes } = codelistDefinition[attribute];
-                const curValue = newValue.$[attribute];
-                const valid = allowedCodes.includes(curValue.toString());
-                if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
+                // linked code to vocabulary case
+                if (_.has(codelistDefinition[attribute], 'conditions')) {
+                    // do stuff
+
+                    const { linkedAttribute, defaultLink, mapping } = codelistDefinition[
+                        attribute
+                    ].conditions;
+                    const curValue = newValue.$[attribute];
+                    const linkValue = newValue.$[linkedAttribute] || defaultLink;
+                    if (mapping[linkValue]) {
+                        const { allowedCodes } = mapping[linkValue];
+                        const valid = allowedCodes.includes(curValue.toString());
+                        if (!valid)
+                            cacheError(
+                                codelistDefinition,
+                                xpath,
+                                curValue,
+                                attribute,
+                                linkedAttribute,
+                                linkValue
+                            );
+                    }
+                } else {
+                    const { allowedCodes } = codelistDefinition[attribute];
+                    const curValue = newValue.$[attribute];
+                    const valid = allowedCodes.includes(curValue.toString());
+                    if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
+                }
             });
         }
     }
