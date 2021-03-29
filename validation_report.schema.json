@@ -60,6 +60,10 @@
                 "severity": {
                     "type": "string",
                     "description": "The severity level of the error"
+                },
+                "context": {
+                    "type": "string",
+                    "description": "The context of the error"
                 }
             }
         }
