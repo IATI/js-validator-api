@@ -1,0 +1,55 @@
+{
+    "AA-AAA-123456789-ABC123": [
+        {
+            "xpath": "/iati-activities/iati-activity/description",
+            "id": "9.26.1",
+            "codelist": "DescriptionType",
+            "severity": "danger",
+            "priority": "9.26",
+            "category": "information",
+            "message": "The description type is invalid.",
+            "context": "\"369\" is not a valid value for attribute @type"
+        },
+        {
+            "xpath": "/iati-activities/iati-activity/participating-org",
+            "id": "9.41.1",
+            "codelist": "OrganisationRole",
+            "severity": "danger",
+            "priority": "9.41",
+            "category": "participating",
+            "message": "The organisation role is invalid.",
+            "context": "\"18\" is not a valid value for attribute @role"
+        },
+        {
+            "xpath": "/iati-activities/iati-activity/participating-org",
+            "id": "9.42.1",
+            "codelist": "OrganisationType",
+            "severity": "danger",
+            "priority": "9.42",
+            "category": "participating",
+            "message": "The organisation type is invalid.",
+            "context": "\"2189\" is not a valid value for attribute @type"
+        },
+        {
+            "xpath": "/iati-activities/iati-activity/activity-status",
+            "id": "9.5.1",
+            "codelist": "ActivityStatus",
+            "severity": "danger",
+            "priority": "9.5",
+            "category": "information",
+            "message": "The activity status code is invalid.",
+            "context": "\"25\" is not a valid value for attribute @code"
+        },
+        {
+            "xpath": "/iati-activities/iati-activity/activity-date",
+            "id": "9.4.1",
+            "codelist": "ActivityDateType",
+            "severity": "danger",
+            "priority": "9.4",
+            "category": "information",
+            "message": "The activity date type is invalid.",
+            "context": "\"299\" is not a valid value for attribute @type"
+        }
+    ],
+    "file": []
+}
