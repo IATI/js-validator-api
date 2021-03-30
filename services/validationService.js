@@ -60,8 +60,6 @@ const validator = (xpath, something, newValue) => {
             matches.forEach((attribute) => {
                 // linked code to vocabulary case
                 if (_.has(codelistDefinition[attribute], 'conditions')) {
-                    // do stuff
-
                     const { linkedAttribute, defaultLink, mapping } = codelistDefinition[
                         attribute
                     ].conditions;
@@ -82,9 +80,36 @@ const validator = (xpath, something, newValue) => {
                     }
                 } else {
                     const { allowedCodes } = codelistDefinition[attribute];
-                    const curValue = newValue.$[attribute];
-                    const valid = allowedCodes.includes(curValue.toString());
+                    const curValue = newValue.$[attribute].toString();
+                    const valid = allowedCodes.includes(curValue);
                     if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
+
+                    // edge case for country-budget-items/budget-item
+                    if (
+                        xpath === '/iati-activities/iati-activity/country-budget-items' &&
+                        attribute === 'vocabulary' &&
+                        curValue === '1'
+                    ) {
+                        const codelistSubDefinition =
+                            codelistRules[
+                                '/iati-activities/iati-activity/country-budget-items/budget-item'
+                            ];
+                        const allowedBudgetCodes =
+                            codelistSubDefinition.code.conditions.mapping['1'].allowedCodes;
+                        newValue['budget-item'].forEach((item) => {
+                            const value = item.$.code;
+                            const validBudget = allowedBudgetCodes.includes(value.toString());
+                            if (!validBudget)
+                                cacheError(
+                                    codelistSubDefinition,
+                                    '/iati-activities/iati-activity/country-budget-items/budget-item',
+                                    value,
+                                    'code',
+                                    'vocabulary',
+                                    '1'
+                                );
+                        });
+                    }
                 }
             });
         }
