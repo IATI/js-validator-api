@@ -15,8 +15,14 @@ const cacheError = (
     linkedAttribute,
     linkedAttributeValue
 ) => {
-    const { id, type, priority, valClass, message, codelist } = codelistDefinition[attribute];
+    let ruleInfo;
     let context;
+    if (linkedAttribute) {
+        ruleInfo = codelistDefinition[attribute].conditions.mapping[linkedAttributeValue];
+    } else {
+        ruleInfo = codelistDefinition[attribute];
+    }
+    const { id, severity, priority, category, message, codelist } = ruleInfo;
     if (attribute === 'text()') {
         context = `"${curValue}" is not a valid value for <${xpath.split('/').pop()}>`;
     } else {
@@ -29,9 +35,9 @@ const cacheError = (
         xpath,
         id,
         codelist,
-        type,
+        severity,
         priority,
-        valClass,
+        category,
         message,
         context,
     };
@@ -44,6 +50,7 @@ const validator = (xpath, something, newValue) => {
         const codelistDefinition = codelistRules[xpath];
 
         // edge case for crs-add/channel-code
+        // Remove in v3.x of standard
         if (_.has(codelistDefinition, 'text()')) {
             const { allowedCodes } = codelistDefinition['text()'];
             const valid = allowedCodes.includes(newValue.toString());
@@ -85,6 +92,7 @@ const validator = (xpath, something, newValue) => {
                     if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
 
                     // edge case for country-budget-items/budget-item
+                    // Remove in v3.x of standard
                     if (
                         xpath === '/iati-activities/iati-activity/country-budget-items' &&
                         attribute === 'vocabulary' &&
@@ -142,7 +150,7 @@ const validator = (xpath, something, newValue) => {
         errCache = [];
     }
 
-    // we're not modifying anything through the validation
+    // we're not modifying anything through the validation because we want the full json out
     return newValue;
 };
 
@@ -163,8 +171,8 @@ exports.validate = async (context, req) => {
     try {
         const parseStart = getStartTime();
         await xml2js.parseStringPromise(body, {
-            attrValueProcessors: [xml2js.processors.parseNumbers],
             validator,
+            async: true,
         });
 
         state.parseTime = getElapsedTime(parseStart);
