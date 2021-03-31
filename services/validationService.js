@@ -52,7 +52,7 @@ exports.validate = async (context, req) => {
         errCache.push(validationError);
     };
 
-    const validator = (xpath, something, newValue) => {
+    const validator = (xpath, previousValues, newValue) => {
         const codelistRules = getVersionCodelistRules(state.version);
         // if rule exists for xpath
         if (_.has(codelistRules, xpath)) {
