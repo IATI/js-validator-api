@@ -6,4 +6,5 @@ module.exports = {
     NODE_ENV: process.env.NODE_ENV,
     APPINSIGHTS_INSTRUMENTATIONKEY: process.env.APPINSIGHTS_INSTRUMENTATIONKEY,
     NS_PER_SEC: 1e9,
+    VERSIONS: process.env.VERSIONS || ['2.01', '2.02', '2.03'],
 };

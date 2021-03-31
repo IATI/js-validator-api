@@ -7,3 +7,4 @@ iati-rulesets
 schemas
 var
 *.sef.json
+*.xml
