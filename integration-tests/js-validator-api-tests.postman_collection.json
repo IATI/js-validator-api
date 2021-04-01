@@ -99,11 +99,25 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Content-Type is present\", function () {",
-							"    pm.response.to.have.header(\"Content-Type\");",
+							"pm.test(\"valid value is true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
 							"});",
-							"pm.test(\"Body contains iati-activities attribute string\", function () {",
-							"    pm.expect(pm.response.text()).to.include(`iati-activities`);",
+							"pm.test(\"fileType value is iati-activities\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.fileType).to.eql('iati-activities');",
+							"});",
+							"pm.test(\"version is 2.03\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.version).to.eql('2.03');",
+							"});",
+							"pm.test(\"file level errors are equal to []\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file).to.eql([]);",
+							"});",
+							"pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains no errors\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123']).to.eql([]);",
 							"});",
 							""
 						],
@@ -152,11 +166,25 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Content-Type is present\", function () {",
-							"    pm.response.to.have.header(\"Content-Type\");",
+							"pm.test(\"valid value is true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
 							"});",
-							"pm.test(\"Body contains iati-organisations attribute string\", function () {",
-							"    pm.expect(pm.response.text()).to.include(`iati-organisations`);",
+							"pm.test(\"fileType value is iati-organisations\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.fileType).to.eql('iati-organisations');",
+							"});",
+							"pm.test(\"version is 2.02\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.version).to.eql('2.02');",
+							"});",
+							"pm.test(\"file level errors are equal to []\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file).to.eql([]);",
+							"});",
+							"pm.test(\"Organisation identifier is equal to NP-SWC-1234 and contains no errors\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['NP-SWC-1234']).to.eql([]);",
 							"});",
 							""
 						],
@@ -182,6 +210,232 @@
 					"mode": "file",
 					"file": {
 						"src": "iati-org-no-errors.xml"
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/pub/validate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "iati-act-codelist-basic",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"valid value is true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
+							"});",
+							"pm.test(\"fileType value is iati-activities\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.fileType).to.eql('iati-activities');",
+							"});",
+							"pm.test(\"version is 2.03\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.version).to.eql('2.03');",
+							"});",
+							"pm.test(\"file level errors are equal to []\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file).to.eql([]);",
+							"});",
+							"pm.test(\"There is a codelist error for OrganisationRole Codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.codelist))).to.be.an('array').that.includes('OrganisationRole');",
+							"});",
+							"pm.test(\"There is a codelist error for BudgetType Codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.codelist))).to.be.an('array').that.includes('BudgetType');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followAuthorizationHeader": false,
+				"followOriginalHttpMethod": false,
+				"followRedirects": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "iati-act-codelist-basic.xml"
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/pub/validate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "iati-org-codelist-basic",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"valid value is true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
+							"});",
+							"pm.test(\"fileType value is iati-organisations\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.fileType).to.eql('iati-organisations');",
+							"});",
+							"pm.test(\"version is 2.02\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.version).to.eql('2.02');",
+							"});",
+							"pm.test(\"file level errors are equal to []\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file).to.eql([]);",
+							"});",
+							"pm.test(\"There is a codelist error for OrganisationType Codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['NP-SWC-1234'].map(obj => (obj.codelist))).to.be.an('array').that.includes('OrganisationType');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followAuthorizationHeader": false,
+				"followOriginalHttpMethod": false,
+				"followRedirects": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "iati-org-codelist-basic.xml"
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/pub/validate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "iati-act-codelist-conditional",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"valid value is true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
+							"});",
+							"pm.test(\"fileType value is iati-activities\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.fileType).to.eql('iati-activities');",
+							"});",
+							"pm.test(\"version is 2.03\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.fileInfo.version).to.eql('2.03');",
+							"});",
+							"pm.test(\"file level errors are equal to []\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file).to.eql([]);",
+							"});",
+							"pm.test(\"There is a codelist error for Region Codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.codelist))).to.be.an('array').that.includes('Region');",
+							"});",
+							"pm.test(\"There is a codelist error for AidType Codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.codelist))).to.be.an('array').that.includes('AidType');",
+							"});",
+							"pm.test(\"There is a codelist error for AidTypeVocabulary Codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.codelist))).to.be.an('array').that.includes('AidTypeVocabulary');",
+							"});",
+							"pm.test(\"There is a codelist error that references linked default codelist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => ({codelist: obj.codelist, errContext: obj.errContext}))).to.be.an('array').that.deep.includes({codelist: 'Region', errContext: \"\\\"ZZA123\\\" is not a valid value for attribute @code and linked @vocabulary=1\"});",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followAuthorizationHeader": false,
+				"followOriginalHttpMethod": false,
+				"followRedirects": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "iati-act-codelist-conditional.xml"
 					}
 				},
 				"url": {

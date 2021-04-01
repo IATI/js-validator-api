@@ -12,6 +12,7 @@ exports.validate = async (context, req) => {
         version: '',
         generatedDateTime: '',
     };
+    const summary = { critical: 0, danger: 0, warning: 0 };
     const errors = {};
     let errCache = [];
 
@@ -49,6 +50,8 @@ exports.validate = async (context, req) => {
             message,
             errContext,
         };
+        // increment summary object
+        summary[severity] = (summary[severity] || 0) + 1;
         errCache.push(validationError);
     };
 
@@ -171,27 +174,36 @@ exports.validate = async (context, req) => {
 
     try {
         const fileInfoStart = getStartTime();
-        let json = {};
+        // let json = {};
         try {
             ({
                 fileType: state.fileType,
                 version: state.version,
                 generatedDateTime: state.generatedDateTime,
-                json,
+                // json,
                 numberActivities: state.numberActivities,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
             } = await getFileInformation(body));
         } catch (error) {
+            summary.critical = (summary.critical || 0) + 1;
+
+            const validationReport = {
+                valid: false,
+                fileInfo: { fileType: state.fileType, version: state.version },
+                summary,
+                errors: {
+                    xml: { message: error.message },
+                },
+            };
             context.res = {
                 status: 422,
                 headers: { 'Content-Type': 'application/json' },
-                body: { error: `XML parse error: ${error}` },
+                body: JSON.stringify(validationReport),
             };
-
             return;
         }
-        context.log(state, json);
+
         state.rootParsetime = getElapsedTime(fileInfoStart);
         context.log({ name: 'Root Parse Time (s)', value: state.rootParsetime });
 
@@ -204,10 +216,17 @@ exports.validate = async (context, req) => {
         state.parseTime = getElapsedTime(parseStart);
         context.log({ name: 'Validator Parse Time (s)', value: state.parseTime });
 
+        const validationReport = {
+            valid: summary.critical === 0,
+            fileInfo: { fileType: state.fileType, version: state.version },
+            summary,
+            errors,
+        };
+
         context.res = {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(errors),
+            body: JSON.stringify(validationReport),
         };
         return;
     } catch (error) {
