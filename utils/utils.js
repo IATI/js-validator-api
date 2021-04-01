@@ -51,4 +51,9 @@ config.VERSIONS.forEach(async (version) => {
     );
 });
 
-exports.getVersionCodelistRules = (version) => codelistRules[version];
+exports.getVersionCodelistRules = (version) => {
+    if (config.VERSIONS.includes(version)) {
+        return codelistRules[version];
+    }
+    throw new Error(`Unable to retrieve codelist_rules.json for version ${version}`);
+};
