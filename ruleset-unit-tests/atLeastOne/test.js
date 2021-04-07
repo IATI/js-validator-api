@@ -8,9 +8,12 @@ const { allRulesResult } = require('../../services/rulesValidator');
 
 const testMap = [
     { rule: 'title_exists.json', file: 'empty.xml', expectedResult: true },
+    { rule: 'title_exists.json', file: 'empty_activity.xml', expectedResult: false },
     { rule: 'title_exists.json', file: 'title.xml', expectedResult: true },
     { rule: 'title_text_exists.json', file: 'title.xml', expectedResult: false },
     { rule: 'title_text_exists.json', file: 'title_text.xml', expectedResult: true },
+    { rule: 'no_paths.json', file: 'empty.xml', expectedResult: true },
+    { rule: 'no_paths.json', file: 'empty_activity.xml', expectedResult: false },
 ];
 
 describe('atLeastOne rules', () => {
