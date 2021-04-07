@@ -162,9 +162,9 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 
 ### test conditions
 
--   [ ] test condition empty_activity True
--   [ ] test condition activity_status_2 True
--   [ ] test condition activity_status_3 False
+-   [x] test condition empty_activity True
+-   [x] test condition activity_status_2 True
+-   [x] test condition activity_status_3 False
 
 -   [ ] test result_indicator_baseline_selector_with_conditions results_indicator_baseline_value_good True
 -   [ ] test result_indicator_baseline_selector_with_conditions results_indicator_baseline_value_bad False
@@ -191,10 +191,10 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [ ] test date_now date_now_good True
 -   [ ] test date_now date_now_bad False
 
--   [ ] test at_least_one at_least_one_bad False
--   [ ] test at_least_one at_least_one_ref True
--   [ ] test at_least_one at_least_one_narrative True
--   [ ] test at_least_one at_least_one_no_element_good True
+-   [x] test at_least_one at_least_one_bad False
+-   [x] test at_least_one at_least_one_ref True
+-   [x] test at_least_one at_least_one_narrative True
+-   [x] test at_least_one at_least_one_no_element_good True
 
 -   [ ] test one_or_all one_or_all_lang_bad False
 -   [ ] test one_or_all one_or_all_lang_good True

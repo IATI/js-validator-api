@@ -76,5 +76,6 @@ exports.testRuleset = (ruleset, xml) => {
 // Return true if all results are true, return false if any are false
 exports.allRulesResult = (ruleset, xml) => {
     const results = this.testRuleset(ruleset, xml);
-    return results.every((res) => res.result);
+    return results.every((res) => res.result || res.result === '');
+    // FYI: Calling this method on an empty array will return true for any condition!
 };

@@ -14,6 +14,13 @@ const testMap = [
     { rule: 'title_text_exists.json', file: 'title_text.xml', expectedResult: true },
     { rule: 'no_paths.json', file: 'empty.xml', expectedResult: true },
     { rule: 'no_paths.json', file: 'empty_activity.xml', expectedResult: false },
+    { rule: 'at_least_one.json', file: 'bad.xml', expectedResult: false },
+    { rule: 'at_least_one.json', file: 'ref.xml', expectedResult: true },
+    { rule: 'at_least_one.json', file: 'narrative.xml', expectedResult: true },
+    { rule: 'at_least_one.json', file: 'no_element_good.xml', expectedResult: true },
+    { rule: 'condition.json', file: 'empty_activity.xml', expectedResult: true },
+    { rule: 'condition.json', file: 'activity_status_2.xml', expectedResult: true },
+    { rule: 'condition.json', file: 'activity_status_3.xml', expectedResult: false },
 ];
 
 describe('atLeastOne rules', () => {
