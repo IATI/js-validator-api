@@ -18,6 +18,10 @@ class Rules {
         }
     }
 
+    noMoreThanOne() {
+        return this.pathMatches.length <= 1;
+    }
+
     atLeastOne() {
         return this.pathMatches.length >= 1;
     }
