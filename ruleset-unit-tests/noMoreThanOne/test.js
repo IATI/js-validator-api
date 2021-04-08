@@ -10,6 +10,8 @@ const testMap = [
     { rule: 'no_more_than_one_title.json', file: 'title.xml', expectedResult: true },
     { rule: 'no_more_than_one_title.json', file: 'empty_activity.xml', expectedResult: true },
     { rule: 'no_more_than_one_title.json', file: 'title_twice.xml', expectedResult: false },
+    { rule: 'results_references.json', file: 'results_refs_good.xml', expectedResult: true },
+    { rule: 'results_references.json', file: 'results_refs_bad.xml', expectedResult: false },
 ];
 
 describe('Base rules', () => {

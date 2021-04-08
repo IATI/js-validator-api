@@ -1,0 +1,7 @@
+{
+    "//result/indicator": {
+        "noMoreThanOne": {
+            "cases": [{ "paths": ["reference[1]", "../reference[1]"] }]
+        }
+    }
+}
