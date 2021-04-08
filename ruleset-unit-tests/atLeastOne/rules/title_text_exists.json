@@ -1,10 +1,11 @@
 {
     "//iati-activity": {
-        "atleast_one": {
-            "cases": [ {
-                "paths": [ "title/text()" ]
-             } ]
+        "atLeastOne": {
+            "cases": [
+                {
+                    "paths": ["title/text()"]
+                }
+            ]
         }
     }
 }
-

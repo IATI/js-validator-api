@@ -30,7 +30,7 @@ const testRule = (contextXpath, element, rule, oneCase) => {
         result = '';
     } else {
         const ruleObject = new Rules(element, oneCase);
-        result = ruleObject.atLeastOne(); // python getattr(rules_, rule)(case)
+        result = ruleObject[rule](); // python getattr(rules_, rule)(case)
     }
 
     return {

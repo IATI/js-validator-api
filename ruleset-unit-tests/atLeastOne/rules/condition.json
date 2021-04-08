@@ -1,11 +1,12 @@
 {
     "//iati-activity": {
-        "atleast_one": {
-            "cases": [ {
-                "paths": [ "activity-date[@type='end-actual']" ],
-                "condition": "activity-status/@code = 3"
-             } ]
+        "atLeastOne": {
+            "cases": [
+                {
+                    "paths": ["activity-date[@type='end-actual']"],
+                    "condition": "activity-status/@code = 3"
+                }
+            ]
         }
     }
 }
-
