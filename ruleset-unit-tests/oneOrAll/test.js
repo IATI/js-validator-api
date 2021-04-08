@@ -7,8 +7,20 @@ const { expect } = chai;
 const { allRulesResult } = require('../../services/rulesValidator');
 
 const testMap = [
-    { rule: 'one_or_all.json', file: 'one_or_all_lang_bad.xml', expectedResult: false },
-    { rule: 'one_or_all.json', file: 'one_or_all_lang_good.xml', expectedResult: true },
+    { rule: 'one_or_all.json', file: 'lang_bad.xml', expectedResult: false },
+    { rule: 'one_or_all.json', file: 'lang_good.xml', expectedResult: true },
+    { rule: 'one_or_all.json', file: 'lang_bad_all.xml', expectedResult: false },
+    { rule: 'one_or_all.json', file: 'lang_good_all.xml', expectedResult: true },
+    { rule: 'one_or_all.json', file: 'sector_bad.xml', expectedResult: false },
+    { rule: 'one_or_all.json', file: 'sector_good.xml', expectedResult: true },
+    { rule: 'one_or_all.json', file: 'sector_all_bad.xml', expectedResult: false },
+    { rule: 'one_or_all.json', file: 'sector_all_good.xml', expectedResult: true },
+    { rule: 'one_or_all.json', file: 'currency_bad.xml', expectedResult: false },
+    { rule: 'one_or_all.json', file: 'currency_good.xml', expectedResult: true },
+    { rule: 'one_or_all.json', file: 'currency_all_bad.xml', expectedResult: false },
+    { rule: 'one_or_all.json', file: 'currency_all_good.xml', expectedResult: true },
+    { rule: 'one_or_all_org.json', file: 'org_currency_bad.xml', expectedResult: false },
+    { rule: 'one_or_all_org.json', file: 'org_currency_good.xml', expectedResult: true },
 ];
 
 describe('oneOrAll rules', () => {

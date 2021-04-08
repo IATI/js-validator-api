@@ -47,12 +47,25 @@ class Rules {
         if (xpath(oneCase.one, this.element).length > 0) {
             return true;
         }
+        const currencyPaths = ['value', 'forecast', 'loan-status'];
         switch (oneCase.all) {
             case 'lang':
                 return xpath('descendant::narrative', this.element).every((narrative) => {
                     if (xpath('@xml:lang', narrative).length === 0) return false;
                     return true;
                 });
+            case 'sector':
+                return xpath('transaction', this.element).every((narrative) => {
+                    if (xpath('sector', narrative).length === 0) return false;
+                    return true;
+                });
+            case 'currency':
+                return currencyPaths.every((cpath) =>
+                    xpath(`descendant::${cpath}`, this.element).every((currency) => {
+                        if (xpath('@currency', currency).length === 0) return false;
+                        return true;
+                    })
+                );
             default:
                 return true;
         }

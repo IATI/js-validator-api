@@ -198,18 +198,18 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 
 -   [x] test one_or_all one_or_all_lang_bad False
 -   [x] test one_or_all one_or_all_lang_good True
--   [ ] test one_or_all one_or_all_lang_bad_all False
--   [ ] test one_or_all one_or_all_lang_good_all True
--   [ ] test one_or_all one_or_all_sector_bad False
--   [ ] test one_or_all one_or_all_sector_good True
--   [ ] test one_or_all one_or_all_sector_all_good True
--   [ ] test one_or_all one_or_all_sector_all_bad False
--   [ ] test one_or_all one_or_all_currency_bad False
--   [ ] test one_or_all one_or_all_currency_good True
--   [ ] test one_or_all one_or_all_currency_all_bad False
--   [ ] test one_or_all one_or_all_currency_all_good True
--   [ ] test one_or_all_org one_or_all_org_currency_good True
--   [ ] test one_or_all_org one_or_all_org_currency_bad False
+-   [x] test one_or_all one_or_all_lang_bad_all False
+-   [x] test one_or_all one_or_all_lang_good_all True
+-   [x] test one_or_all one_or_all_sector_bad False
+-   [x] test one_or_all one_or_all_sector_good True
+-   [x] test one_or_all one_or_all_sector_all_good True
+-   [x] test one_or_all one_or_all_sector_all_bad False
+-   [x] test one_or_all one_or_all_currency_bad False
+-   [x] test one_or_all one_or_all_currency_good True
+-   [x] test one_or_all one_or_all_currency_all_bad False
+-   [x] test one_or_all one_or_all_currency_all_good True
+-   [x] test one_or_all_org one_or_all_org_currency_good True
+-   [x] test one_or_all_org one_or_all_org_currency_bad False
 
 -   [ ] test between_dates between_dates_good True
 -   [ ] test between_dates between_dates_bad False

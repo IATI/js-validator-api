@@ -1,0 +1,10 @@
+{
+    "//iati-organisation": {
+        "oneOrAll": {
+            "cases": [
+                { "one": "@xml:lang", "all": "lang" },
+                { "one": "@default-currency", "all": "currency" }
+            ]
+        }
+    }
+}
