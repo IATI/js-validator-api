@@ -1,0 +1,26 @@
+[
+    {
+        "python": "no_more_than_one",
+        "js": "noMoreThanOne"
+    },
+    {
+        "python": "at_least_one",
+        "js": "atLeastOne"
+    },
+    {
+        "python": "only_one_of",
+        "js": "onlyOneOf"
+    },
+    {
+        "python": "one_or_all",
+        "js": "oneOrAll"
+    },
+    {
+        "python": "unique",
+        "js": "unique"
+    },
+    {
+        "python": "date_order",
+        "js": "dateOrder"
+    }
+]

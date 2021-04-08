@@ -2,6 +2,9 @@ const { DOMParser } = require('xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 
+const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
+// const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
+
 // Helper function: Returns the text of the given element or attribute
 const getText = (elementOrAttribute) => {
     if (elementOrAttribute.nodeType) return elementOrAttribute.textContent;
@@ -84,6 +87,26 @@ class Rules {
                 .reduce((acc, val) => Number(acc) + Number(val), 0) === Number(oneCase.sum)
         );
     }
+
+    parseDate(dateXpath) {
+        if (dateXpath === 'TODAY') {
+            return new Date().now();
+        }
+        const dateElements = xpath(dateXpath, this.element);
+        if (dateElements.length < 1) return null;
+        const dateText = dateElements[0].value;
+        if (dateText !== '') {
+            if (dateReg.test(dateText)) return new Date(dateText);
+        }
+        return null;
+    }
+
+    dateOrder(oneCase) {
+        const less = this.parseDate(oneCase.less);
+        const more = this.parseDate(oneCase.more);
+        if (less === null || more === null) return '';
+        return less.getTime() <= more.getTime();
+    }
 }
 
 // Tests a specific rule type for a specific case.
@@ -93,7 +116,7 @@ const testRule = (contextXpath, element, rule, oneCase) => {
         result = '';
     } else {
         const ruleObject = new Rules(element, oneCase);
-        result = ruleObject[rule](oneCase); // python getattr(rules_, rule)(case)
+        result = ruleObject[rule](oneCase);
     }
 
     return {
