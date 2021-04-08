@@ -25,6 +25,24 @@ class Rules {
     atLeastOne() {
         return this.pathMatches.length >= 1;
     }
+
+    onlyOneOf(oneCase) {
+        const res = oneCase.excluded.map((excluded) => {
+            // no elements from group A can be present
+            // if group B exists
+            if (xpath.select(excluded, this.element).length !== 0) {
+                return this.pathMatches.length === 0;
+            }
+            // if no element from group B exists
+            // then at least one and no more than one element
+            // from group A can exist
+            if (this.pathMatches.length === 1) {
+                return true;
+            }
+            return false;
+        });
+        return res.every((val) => val);
+    }
 }
 
 // Tests a specific rule type for a specific case.
@@ -34,7 +52,7 @@ const testRule = (contextXpath, element, rule, oneCase) => {
         result = '';
     } else {
         const ruleObject = new Rules(element, oneCase);
-        result = ruleObject[rule](); // python getattr(rules_, rule)(case)
+        result = ruleObject[rule](oneCase); // python getattr(rules_, rule)(case)
     }
 
     return {

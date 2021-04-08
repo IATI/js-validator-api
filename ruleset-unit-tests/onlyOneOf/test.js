@@ -7,14 +7,13 @@ const { expect } = chai;
 const { allRulesResult } = require('../../services/rulesValidator');
 
 const testMap = [
-    { rule: 'no_more_than_one_title.json', file: 'title.xml', expectedResult: true },
-    { rule: 'no_more_than_one_title.json', file: 'empty_activity.xml', expectedResult: true },
-    { rule: 'no_more_than_one_title.json', file: 'title_twice.xml', expectedResult: false },
-    { rule: 'results_references.json', file: 'results_refs_good.xml', expectedResult: true },
-    { rule: 'results_references.json', file: 'results_refs_bad.xml', expectedResult: false },
+    { rule: 'only_one_of.json', file: 'only_one_of_activity_bad.xml', expectedResult: false },
+    { rule: 'only_one_of.json', file: 'only_one_of_activity_good.xml', expectedResult: true },
+    { rule: 'only_one_of.json', file: 'only_one_of_transaction_bad.xml', expectedResult: false },
+    { rule: 'only_one_of.json', file: 'only_one_of_transaction_good.xml', expectedResult: true },
 ];
 
-describe('noMoreThanOne rules', () => {
+describe('onlyOneOf rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
             const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));

@@ -178,10 +178,10 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [ ] test result_indicator_period_actual_selector_with_conditions results_indicator_period_actual_value_bad False
 -   [ ] test result_indicator_period_actual_selector_with_conditions results_indicator_period_actual_value_not_relevant True
 
--   [ ] test only_one_of only_one_of_activity_bad False
--   [ ] test only_one_of only_one_of_activity_good True
--   [ ] test only_one_of only_one_of_transaction_bad False
--   [ ] test only_one_of only_one_of_transaction_good True
+-   [x] test only_one_of only_one_of_activity_bad False
+-   [x] test only_one_of only_one_of_activity_good True
+-   [x] test only_one_of only_one_of_transaction_bad False
+-   [x] test only_one_of only_one_of_transaction_good True
 
 -   [ ] test period_time period_time_good True
 -   [ ] test period_time period_time_bad False
