@@ -75,6 +75,15 @@ class Rules {
         // Set removes duplicates, so it must be equal or less than len
         return this.pathMatchesText.length <= [...new Set(this.pathMatchesText)].length;
     }
+
+    sum(oneCase) {
+        return (
+            this.pathMatches.length === 0 ||
+            this.pathMatches
+                .map((match) => getText(match))
+                .reduce((acc, val) => Number(acc) + Number(val), 0) === Number(oneCase.sum)
+        );
+    }
 }
 
 // Tests a specific rule type for a specific case.
