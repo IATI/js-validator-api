@@ -126,8 +126,8 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test no_more_than_one_title empty_activity True
 -   [x] test no_more_than_one_title title_twice False
 
--   [ ] test results_references results_refs_good True
--   [ ] test results_references results_refs_bad False
+-   [x] test results_references results_refs_good True
+-   [x] test results_references results_refs_bad False
 
 -   [ ] test dependent_title_description empty_activity True
 -   [ ] test dependent_title_description title False
