@@ -6,7 +6,7 @@ const { expect } = chai;
 
 const { allRulesResult } = require('../../services/rulesValidator');
 
-const testMap = [{ rule: 'empty.json', file: 'empty.xml', expectedResult: true }];
+const testMap = [{ rule: 'empty.json', file: 'empty.xml', expectedResult: 'No Rule Match' }];
 
 describe('Base rules', () => {
     testMap.forEach((test) => {
