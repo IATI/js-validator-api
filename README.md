@@ -129,10 +129,10 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test results_references results_refs_good True
 -   [x] test results_references results_refs_bad False
 
--   [ ] test dependent_title_description empty_activity True
--   [ ] test dependent_title_description title False
--   [ ] test dependent_title_description description False
--   [ ] test dependent_title_description title_description True
+-   [N/A] test dependent_title_description empty_activity True
+-   [N/A] test dependent_title_description title False
+-   [N/A] test dependent_title_description description False
+-   [N/A] test dependent_title_description title_description True
 
 -   [ ] test sum sum_good True
 -   [ ] test sum sum_bad False
@@ -152,10 +152,10 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [ ] test starts_with identifiers True
 -   [ ] test starts_with identifiers_bad False
 
--   [ ] test unique unique_good True
--   [ ] test unique unique_bad False
--   [ ] test unique_title_description title_description False # FIXME
--   [ ] test unique_title_description title_description_content True
+-   [x] test unique unique_good True
+-   [x] test unique unique_bad False
+-   [x] test unique_title_description title_description False # FIXME
+-   [x] test unique_title_description title_description_content True
 
 -   [ ] test if_then if_then_good True
 -   [ ] test if_then if_then_bad False

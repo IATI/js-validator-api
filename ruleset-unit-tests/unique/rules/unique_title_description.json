@@ -1,0 +1,11 @@
+{
+    "//iati-activity": {
+        "unique": {
+            "cases": [
+                {
+                    "paths": ["title", "description"]
+                }
+            ]
+        }
+    }
+}

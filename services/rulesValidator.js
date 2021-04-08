@@ -70,6 +70,11 @@ class Rules {
                 return true;
         }
     }
+
+    unique() {
+        // Set removes duplicates, so it must be equal or less than len
+        return this.pathMatchesText.length <= [...new Set(this.pathMatchesText)].length;
+    }
 }
 
 // Tests a specific rule type for a specific case.
