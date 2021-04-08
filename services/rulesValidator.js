@@ -27,7 +27,7 @@ class Rules {
     }
 
     onlyOneOf(oneCase) {
-        const res = oneCase.excluded.map((excluded) => {
+        return oneCase.excluded.every((excluded) => {
             // no elements from group A can be present
             // if group B exists
             if (xpath(excluded, this.element).length !== 0) {
@@ -41,7 +41,6 @@ class Rules {
             }
             return false;
         });
-        return res.every((val) => val);
     }
 
     oneOrAll(oneCase) {
