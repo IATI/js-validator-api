@@ -1,5 +1,5 @@
 const { DOMParser } = require('xmldom');
-const xpath = require('xpath');
+const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 
 // Helper function: Returns the text of the given element or attribute
@@ -12,7 +12,7 @@ class Rules {
     constructor(element, cases) {
         this.element = element;
         if ('paths' in cases) {
-            this.nestedMatches = cases.paths.map((path) => xpath.select(path, element));
+            this.nestedMatches = cases.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
             this.pathMatchesText = this.pathMatches.map((match) => getText(match));
         }
@@ -30,7 +30,7 @@ class Rules {
         const res = oneCase.excluded.map((excluded) => {
             // no elements from group A can be present
             // if group B exists
-            if (xpath.select(excluded, this.element).length !== 0) {
+            if (xpath(excluded, this.element).length !== 0) {
                 return this.pathMatches.length === 0;
             }
             // if no element from group B exists
@@ -43,12 +43,27 @@ class Rules {
         });
         return res.every((val) => val);
     }
+
+    oneOrAll(oneCase) {
+        if (xpath(oneCase.one, this.element).length > 0) {
+            return true;
+        }
+        switch (oneCase.all) {
+            case 'lang':
+                return xpath('descendant::narrative', this.element).every((narrative) => {
+                    if (xpath('@xml:lang', narrative).length === 0) return false;
+                    return true;
+                });
+            default:
+                return true;
+        }
+    }
 }
 
 // Tests a specific rule type for a specific case.
 const testRule = (contextXpath, element, rule, oneCase) => {
     let result;
-    if ('condition' in oneCase && !xpath.select(oneCase.condition, element)) {
+    if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = '';
     } else {
         const ruleObject = new Rules(element, oneCase);
@@ -83,7 +98,7 @@ exports.testRuleset = (ruleset, xml) => {
     const document = new DOMParser().parseFromString(xml);
     const result = [];
     Object.keys(ruleset).forEach((contextXpath) => {
-        xpath.select(contextXpath, document).forEach((element) => {
+        xpath(contextXpath, document).forEach((element) => {
             Object.keys(ruleset[contextXpath]).forEach((rule) => {
                 const theCases = ruleset[contextXpath][rule].cases;
                 theCases.forEach((oneCase) => {

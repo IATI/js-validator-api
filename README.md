@@ -196,8 +196,8 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test at_least_one at_least_one_narrative True
 -   [x] test at_least_one at_least_one_no_element_good True
 
--   [ ] test one_or_all one_or_all_lang_bad False
--   [ ] test one_or_all one_or_all_lang_good True
+-   [x] test one_or_all one_or_all_lang_bad False
+-   [x] test one_or_all one_or_all_lang_good True
 -   [ ] test one_or_all one_or_all_lang_bad_all False
 -   [ ] test one_or_all one_or_all_lang_good_all True
 -   [ ] test one_or_all one_or_all_sector_bad False

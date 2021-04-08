@@ -1,0 +1,11 @@
+{
+    "//iati-activity": {
+        "oneOrAll": {
+            "cases": [
+                { "one": "@xml:lang", "all": "lang" },
+                { "one": "sector", "all": "sector" },
+                { "one": "@default-currency", "all": "currency" }
+            ]
+        }
+    }
+}
