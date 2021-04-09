@@ -107,7 +107,7 @@ class Rules {
         const less = this.parseDate(oneCase.less);
         const more = this.parseDate(oneCase.more);
         if (less === null || more === null) return '';
-        return compareAsc(less, more) === -1;
+        return compareAsc(less, more) <= 0;
     }
 
     timeLimit(oneCase) {
