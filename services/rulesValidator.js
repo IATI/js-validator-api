@@ -1,6 +1,8 @@
 const { DOMParser } = require('xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
+const compareAsc = require('date-fns/compareAsc');
+const differenceInDays = require('date-fns/differenceInDays');
 
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
 // const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
@@ -105,7 +107,14 @@ class Rules {
         const less = this.parseDate(oneCase.less);
         const more = this.parseDate(oneCase.more);
         if (less === null || more === null) return '';
-        return less.getTime() <= more.getTime();
+        return compareAsc(less, more) === -1;
+    }
+
+    timeLimit(oneCase) {
+        const start = this.parseDate(oneCase.start);
+        const end = this.parseDate(oneCase.end);
+        if (start === null || end === null) return '';
+        return differenceInDays(end, start) <= 365;
     }
 }
 

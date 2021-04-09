@@ -22,5 +22,9 @@
     {
         "python": "date_order",
         "js": "dateOrder"
+    },
+    {
+        "python": "time_limit",
+        "js": "timeLimit"
     }
 ]

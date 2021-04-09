@@ -185,8 +185,8 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 
 -   [ ] test period_time period_time_good True
 -   [ ] test period_time period_time_bad False
--   [ ] test time_limit time_limit_good True
--   [ ] test time_limit time_limit_bad False
+-   [x] test time_limit time_limit_good True
+-   [x] test time_limit time_limit_bad False
 
 -   [ ] test date_now date_now_good True
 -   [ ] test date_now date_now_bad False
