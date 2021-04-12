@@ -209,8 +209,8 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test one_or_all_org one_or_all_org_currency_good True
 -   [x] test one_or_all_org one_or_all_org_currency_bad False
 
--   [ ] test between_dates between_dates_good True
--   [ ] test between_dates between_dates_bad False
+-   [x] test between_dates between_dates_good True
+-   [x] test between_dates between_dates_bad False
 
 -   [ ] test recipient_region_budget recipient_region_budget_good True
 -   [ ] test recipient_region_budget recipient_region_budget_bad False

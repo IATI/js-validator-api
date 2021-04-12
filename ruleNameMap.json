@@ -50,5 +50,9 @@
     {
         "python": "date_now",
         "js": "dateNow"
+    },
+    {
+        "python": "between_dates",
+        "js": "betweenDates"
     }
 ]
