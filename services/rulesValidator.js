@@ -134,6 +134,11 @@ class Rules {
     regexNoMatches(oneCase) {
         return this.regex(oneCase, false);
     }
+
+    startsWith(oneCase) {
+        const start = getText(xpath(oneCase.start, this.element)[0]);
+        return this.pathMatchesText.every((pathMatchText) => pathMatchText.startsWith(start));
+    }
 }
 
 // Tests a specific rule type for a specific case.

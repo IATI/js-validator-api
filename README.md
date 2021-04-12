@@ -149,8 +149,8 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test regex_no_matches regex_bad True
 -   [x] test regex_no_matches regex_good False
 
--   [ ] test starts_with identifiers True
--   [ ] test starts_with identifiers_bad False
+-   [x] test starts_with identifiers True
+-   [x] test starts_with identifiers_bad False
 
 -   [x] test unique unique_good True
 -   [x] test unique unique_bad False

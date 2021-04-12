@@ -38,5 +38,9 @@
     {
         "python": "regex_no_matches",
         "js": "regexNoMatches"
+    },
+    {
+        "python": "startswith",
+        "js": "startsWith"
     }
 ]
