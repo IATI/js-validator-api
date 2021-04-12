@@ -51,6 +51,21 @@ const testMap = [
         file: 'results_indicator_period_target_value_not_relevant.xml',
         expectedResult: 'No Rule Match',
     },
+    {
+        rule: 'result_indicator_period_actual_selector_with_conditions.json',
+        file: 'results_indicator_period_actual_value_good.xml',
+        expectedResult: true,
+    },
+    {
+        rule: 'result_indicator_period_actual_selector_with_conditions.json',
+        file: 'results_indicator_period_actual_value_bad.xml',
+        expectedResult: false,
+    },
+    {
+        rule: 'result_indicator_period_actual_selector_with_conditions.json',
+        file: 'results_indicator_period_actual_value_not_relevant.xml',
+        expectedResult: 'No Rule Match',
+    },
 ];
 
 describe('atLeastOne rules', () => {
