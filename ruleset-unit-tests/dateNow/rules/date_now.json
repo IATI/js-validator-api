@@ -1,0 +1,7 @@
+{
+    "//iati-activity": {
+        "dateNow": {
+            "cases": [{ "date": "@last-updated-datetime" }]
+        }
+    }
+}

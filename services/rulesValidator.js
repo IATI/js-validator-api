@@ -5,7 +5,7 @@ const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
 
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
-// const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
+const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
 
 // Helper function: Returns the text of the given element or attribute
 const getText = (elementOrAttribute) => {
@@ -95,7 +95,7 @@ class Rules {
 
     parseDate(dateXpath) {
         if (dateXpath === 'TODAY') {
-            return new Date().now();
+            return Date().now();
         }
         const dateElements = xpath(dateXpath, this.element);
         if (dateElements.length < 1) return null;
@@ -111,6 +111,16 @@ class Rules {
         const more = this.parseDate(oneCase.more);
         if (less === null || more === null) return '';
         return compareAsc(less, more) <= 0;
+    }
+
+    dateNow(oneCase) {
+        const datetimeElement = xpath(oneCase.date, this.element);
+        if (datetimeElement.length > 0 && dateTimeReg.test(datetimeElement[0].nodeValue)) {
+            const selectedDatetime = new Date(datetimeElement[0].nodeValue);
+            const now = new Date();
+            return compareAsc(selectedDatetime, now) <= 0;
+        }
+        return '';
     }
 
     timeLimit(oneCase) {
