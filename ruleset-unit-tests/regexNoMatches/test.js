@@ -11,7 +11,7 @@ const testMap = [
     { rule: 'regex_no_matches.json', file: 'good.xml', expectedResult: false },
 ];
 
-describe('regexMatches rules', () => {
+describe('regexNoMatches rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
             const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));
