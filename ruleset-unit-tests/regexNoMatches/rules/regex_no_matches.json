@@ -1,0 +1,12 @@
+{
+    "//iati-activity": {
+        "regexNoMatches": {
+            "cases": [
+                {
+                    "paths": ["title"],
+                    "regex": "^[^\\/\\&\\|\\?]+$"
+                }
+            ]
+        }
+    }
+}

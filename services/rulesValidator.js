@@ -119,6 +119,21 @@ class Rules {
         if (start === null || end === null) return '';
         return differenceInDays(end, start) <= 365;
     }
+
+    regex(oneCase, allMatches) {
+        const regEx = new RegExp(oneCase.regex);
+        return this.pathMatchesText.every(
+            (pathMatchText) => regEx.test(pathMatchText) === allMatches
+        );
+    }
+
+    regexMatches(oneCase) {
+        return this.regex(oneCase, true);
+    }
+
+    regexNoMatches(oneCase) {
+        return this.regex(oneCase, false);
+    }
 }
 
 // Tests a specific rule type for a specific case.

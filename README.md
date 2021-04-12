@@ -144,10 +144,10 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test date_order date_good True
 -   [x] test date_order date_bad False
 
--   [ ] test regex_matches regex_good True
--   [ ] test regex_matches regex_bad False
--   [ ] test regex_no_matches regex_bad True
--   [ ] test regex_no_matches regex_good False
+-   [x] test regex_matches regex_good True
+-   [x] test regex_matches regex_bad False
+-   [x] test regex_no_matches regex_bad True
+-   [x] test regex_no_matches regex_good False
 
 -   [ ] test starts_with identifiers True
 -   [ ] test starts_with identifiers_bad False

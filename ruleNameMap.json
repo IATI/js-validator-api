@@ -26,5 +26,17 @@
     {
         "python": "time_limit",
         "js": "timeLimit"
+    },
+    {
+        "python": "strict_sum",
+        "js": "strictSum"
+    },
+    {
+        "python": "regex_matches",
+        "js": "regexMatches"
+    },
+    {
+        "python": "regex_no_matches",
+        "js": "regexNoMatches"
     }
 ]
