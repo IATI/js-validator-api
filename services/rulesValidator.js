@@ -82,8 +82,11 @@ class Rules {
     }
 
     sum(oneCase) {
+        return this.pathMatches.length === 0 || this.strictSum(oneCase);
+    }
+
+    strictSum(oneCase) {
         return (
-            this.pathMatches.length === 0 ||
             this.pathMatches
                 .map((match) => getText(match))
                 .reduce((acc, val) => Number(acc) + Number(val), 0) === Number(oneCase.sum)
