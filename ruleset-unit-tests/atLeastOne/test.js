@@ -21,6 +21,21 @@ const testMap = [
     { rule: 'condition.json', file: 'empty_activity.xml', expectedResult: 'No Condition Match' },
     { rule: 'condition.json', file: 'activity_status_2.xml', expectedResult: 'No Condition Match' },
     { rule: 'condition.json', file: 'activity_status_3.xml', expectedResult: false },
+    {
+        rule: 'result_indicator_baseline_selector_with_conditions.json',
+        file: 'results_indicator_baseline_value_bad.xml',
+        expectedResult: false,
+    },
+    {
+        rule: 'result_indicator_baseline_selector_with_conditions.json',
+        file: 'results_indicator_baseline_value_good.xml',
+        expectedResult: true,
+    },
+    {
+        rule: 'result_indicator_baseline_selector_with_conditions.json',
+        file: 'results_indicator_baseline_value_not_relevant.xml',
+        expectedResult: 'No Rule Match',
+    },
 ];
 
 describe('atLeastOne rules', () => {
