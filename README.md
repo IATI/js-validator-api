@@ -212,11 +212,5 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test between_dates between_dates_good True
 -   [x] test between_dates between_dates_bad False
 
--   [ ] test recipient_region_budget recipient_region_budget_good True
--   [ ] test recipient_region_budget recipient_region_budget_bad False
-
--   [ ] test total_expenditure total_expenditure_good True
--   [ ] test total_expenditure total_expenditure_bad False
-
--   [ ] test range range_good True
--   [ ] test range range_bad False
+-   [x] test range range_good True
+-   [x] test range range_bad False

@@ -13,6 +13,11 @@ const getText = (elementOrAttribute) => {
     return elementOrAttribute;
 };
 
+const getObjVal = (obj, key, def) => {
+    if (_.has(obj, key)) return obj[key];
+    return def;
+};
+
 class Rules {
     constructor(element, cases) {
         this.element = element;
@@ -165,6 +170,16 @@ class Rules {
             return xpath(oneCase.then, this.element);
         }
         return true;
+    }
+
+    range(oneCase) {
+        // if min/max are missing, we use val as the sentinel
+        // so we can check also that val is at_least_value or no_more_than_value
+        return this.pathMatchesText.every((value) => {
+            const min = Number(getObjVal(oneCase, 'min', value));
+            const max = Number(getObjVal(oneCase, 'max', value));
+            return min <= Number(value) && Number(value) <= max;
+        });
     }
 }
 
