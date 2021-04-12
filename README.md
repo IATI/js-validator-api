@@ -170,9 +170,9 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test result_indicator_baseline_selector_with_conditions results_indicator_baseline_value_bad False
 -   [x] test result_indicator_baseline_selector_with_conditions results_indicator_baseline_value_not_relevant True
 
--   [ ] test result_indicator_period_target_selector_with_conditions results_indicator_period_target_value_good True
--   [ ] test result_indicator_period_target_selector_with_conditions results_indicator_period_target_value_bad False
--   [ ] test result_indicator_period_target_selector_with_conditions results_indicator_period_target_value_not_relevant True
+-   [x] test result_indicator_period_target_selector_with_conditions results_indicator_period_target_value_good True
+-   [x] test result_indicator_period_target_selector_with_conditions results_indicator_period_target_value_bad False
+-   [x] test result_indicator_period_target_selector_with_conditions results_indicator_period_target_value_not_relevant True
 
 -   [ ] test result_indicator_period_actual_selector_with_conditions results_indicator_period_actual_value_good True
 -   [ ] test result_indicator_period_actual_selector_with_conditions results_indicator_period_actual_value_bad False
