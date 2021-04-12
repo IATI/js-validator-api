@@ -157,8 +157,8 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 -   [x] test unique_title_description title_description False # FIXME
 -   [x] test unique_title_description title_description_content True
 
--   [ ] test if_then if_then_good True
--   [ ] test if_then if_then_bad False
+-   [x] test if_then if_then_good True
+-   [x] test if_then if_then_bad False
 
 ### test conditions
 

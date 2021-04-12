@@ -139,6 +139,13 @@ class Rules {
         const start = getText(xpath(oneCase.start, this.element)[0]);
         return this.pathMatchesText.every((pathMatchText) => pathMatchText.startsWith(start));
     }
+
+    ifThen(oneCase) {
+        if (xpath(oneCase.if, this.element)) {
+            return xpath(oneCase.then, this.element);
+        }
+        return true;
+    }
 }
 
 // Tests a specific rule type for a specific case.

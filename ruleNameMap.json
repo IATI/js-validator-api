@@ -42,5 +42,9 @@
     {
         "python": "startswith",
         "js": "startsWith"
+    },
+    {
+        "python": "if_then",
+        "js": "ifThen"
     }
 ]
