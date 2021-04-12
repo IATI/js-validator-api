@@ -123,6 +123,16 @@ class Rules {
         return '';
     }
 
+    betweenDates(oneCase) {
+        if (xpath(oneCase.date, this.element).length > 0) {
+            const start = this.parseDate(oneCase.start);
+            const date = this.parseDate(oneCase.date);
+            const end = this.parseDate(oneCase.end);
+            return compareAsc(start, date) <= 0 && compareAsc(date, end) <= 0;
+        }
+        return '';
+    }
+
     timeLimit(oneCase) {
         const start = this.parseDate(oneCase.start);
         const end = this.parseDate(oneCase.end);
