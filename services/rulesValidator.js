@@ -3,6 +3,7 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
+const ruleNameMap = require('../ruleNameMap.json');
 
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
 const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
@@ -16,6 +17,19 @@ const getText = (elementOrAttribute) => {
 const getObjVal = (obj, key, def) => {
     if (_.has(obj, key)) return obj[key];
     return def;
+};
+
+const getRuleMethodName = (ruleName) => {
+    let name = '';
+    name = ruleNameMap
+        .map((rule) => {
+            if (rule.python === ruleName) return rule.js;
+            if (rule.js === ruleName) return ruleName;
+            return '';
+        })
+        .join('');
+    if (name === '') throw new Error(`No rule name map between python and js for ${ruleName}`);
+    return name;
 };
 
 class Rules {
@@ -186,18 +200,20 @@ class Rules {
 // Tests a specific rule type for a specific case.
 const testRule = (contextXpath, element, rule, oneCase) => {
     let result;
+    let ruleName;
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = '';
     } else {
         const ruleObject = new Rules(element, oneCase);
-        result = ruleObject[rule](oneCase);
+        ruleName = getRuleMethodName(rule);
+        result = ruleObject[ruleName](oneCase);
     }
 
     return {
         result,
         element,
         context: contextXpath,
-        rule,
+        rule: ruleName,
         oneCase,
     };
 };
