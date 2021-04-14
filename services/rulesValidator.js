@@ -195,6 +195,33 @@ class Rules {
             return min <= Number(value) && Number(value) <= max;
         });
     }
+
+    loop(oneCase) {
+        const results = [];
+        _.forEach(oneCase.do, (subCases, rule) => {
+            _.forEach(subCases.cases, (subCase) => {
+                const subs = {};
+                _.forEach(oneCase.subs, (sub) => {
+                    subs[sub] = subCase[sub];
+                });
+                _.forEach([...new Set(xpath(oneCase.foreach, this.element))], (val) => {
+                    const subCaseTest = { ...subCase };
+                    _.forEach(subs, (v, k) => {
+                        if (typeof v === 'string') {
+                            subCaseTest[k] = v.replace('$1', val.nodeValue);
+                        } else {
+                            subCaseTest[k] = v.map((vi) => vi.replace('$1', val.nodeValue));
+                        }
+                    });
+                    const subRule = new Rules(this.element, subCaseTest);
+                    const ruleName = getRuleMethodName(rule);
+                    const loopResult = subRule[ruleName](subCaseTest);
+                    results.push(loopResult);
+                });
+            });
+        });
+        return results.every((val) => val);
+    }
 }
 
 // Tests a specific rule type for a specific case.

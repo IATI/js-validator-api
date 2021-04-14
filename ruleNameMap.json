@@ -4,7 +4,7 @@
         "js": "noMoreThanOne"
     },
     {
-        "python": "at_least_one",
+        "python": "atleast_one",
         "js": "atLeastOne"
     },
     {
@@ -54,5 +54,17 @@
     {
         "python": "between_dates",
         "js": "betweenDates"
+    },
+    {
+        "python": "sum",
+        "js": "sum"
+    },
+    {
+        "python": "range",
+        "js": "range"
+    },
+    {
+        "python": "loop",
+        "js": "loop"
     }
 ]
