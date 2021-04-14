@@ -1,0 +1,7 @@
+{
+    "//iati-activity": {
+        "dateOrder": {
+            "cases": [{ "less": "activity-date[@type='2']/@iso-date", "more": "NOW" }]
+        }
+    }
+}

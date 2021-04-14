@@ -113,8 +113,8 @@ class Rules {
     }
 
     parseDate(dateXpath) {
-        if (dateXpath === 'TODAY') {
-            return Date().now();
+        if (dateXpath === 'NOW') {
+            return new Date();
         }
         const dateElements = xpath(dateXpath, this.element);
         if (dateElements.length < 1) return null;

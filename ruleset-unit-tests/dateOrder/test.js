@@ -11,6 +11,8 @@ const testMap = [
     { rule: 'date_order.json', file: 'good.xml', expectedResult: true },
     { rule: 'date_order.json', file: 'bad.xml', expectedResult: false },
     { rule: 'date_order.json', file: 'same_as.xml', expectedResult: true },
+    { rule: 'date_order_now.json', file: 'now_bad.xml', expectedResult: false },
+    { rule: 'date_order_now.json', file: 'now_good.xml', expectedResult: true },
 ];
 
 describe('dateOrder rules', () => {
