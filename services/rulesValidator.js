@@ -220,6 +220,7 @@ class Rules {
                 });
             });
         });
+        if (results.length === 0) return [];
         return results.every((val) => val);
     }
 }
@@ -227,12 +228,12 @@ class Rules {
 // Tests a specific rule type for a specific case.
 const testRule = (contextXpath, element, rule, oneCase) => {
     let result;
-    let ruleName;
+    const ruleName = getRuleMethodName(rule);
+    // if there is a condition, but not match, don't evalute the rule
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
-        result = '';
+        result = 'No Condition Match';
     } else {
         const ruleObject = new Rules(element, oneCase);
-        ruleName = getRuleMethodName(rule);
         result = ruleObject[ruleName](oneCase);
     }
 
@@ -282,7 +283,7 @@ exports.allRulesResult = (ruleset, xml) => {
     if (results.length === 0) {
         return 'No Rule Match';
     }
-    if (results.every((res) => res.result === '')) {
+    if (results.every((res) => res.result === '' || res.result === 'No Condition Match')) {
         return 'No Condition Match';
     }
     // All true = true, any false = false

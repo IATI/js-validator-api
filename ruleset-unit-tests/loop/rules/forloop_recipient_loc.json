@@ -1,0 +1,25 @@
+{
+    "//iati-activity": {
+        "loop": {
+            "cases": [
+                {
+                    "foreach": "recipient-region/@vocabulary",
+                    "do": {
+                        "strict_sum": {
+                            "cases": [
+                                {
+                                    "paths": [
+                                        "recipient-region[@vocabulary = '$1']/@percentage",
+                                        "recipient-country/@percentage"
+                                    ],
+                                    "sum": 100
+                                }
+                            ]
+                        }
+                    },
+                    "subs": ["paths"]
+                }
+            ]
+        }
+    }
+}

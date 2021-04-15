@@ -1,0 +1,8 @@
+<iati-activities><iati-activity>
+    <!--recipient-country starts-->
+    <recipient-country code="AF" percentage="25" />
+    <recipient-country code="AG" percentage="25" />
+    <recipient-country code="GB" percentage="30" />
+    <recipient-country code="NZ" percentage="25" />
+    <!--recipient-country ends-->
+</iati-activity></iati-activities>
