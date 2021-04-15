@@ -32,6 +32,19 @@ const getRuleMethodName = (ruleName) => {
     return name;
 };
 
+const getIATIIdentifier = (element) => {
+    const idName =
+        xpath('//iati-activities', element).length > 0
+            ? 'iati-identifier'
+            : 'organisation-identifier';
+    return (
+        xpath(`string(preceding-sibling/${idName})`, element) ||
+        xpath(`string(${idName})`, element) ||
+        xpath(`string(../${idName})`, element) ||
+        xpath(`string(../../${idName})`, element)
+    );
+};
+
 class Rules {
     constructor(element, cases) {
         this.element = element;
@@ -236,13 +249,16 @@ const testRule = (contextXpath, element, rule, oneCase) => {
         const ruleObject = new Rules(element, oneCase);
         result = ruleObject[ruleName](oneCase);
     }
+    const identifier = getIATIIdentifier(element);
 
     return {
         result,
-        element,
+        identifier,
         context: contextXpath,
+        lineNumber: element.lineNumber,
         rule: ruleName,
         oneCase,
+        element,
     };
 };
 

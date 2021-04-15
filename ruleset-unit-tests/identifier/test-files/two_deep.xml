@@ -1,0 +1,23 @@
+<iati-activities>
+<iati-activity>
+    <iati-identifier>ACT-1</iati-identifier>    
+    <other-identifier>
+    	<owner-org>
+    	</owner-org>
+    </other-identifier>
+</iati-activity>
+<iati-activity>
+    <other-identifier>
+    	<owner-org>
+    	</owner-org>
+    </other-identifier>
+    <iati-identifier>ACT-2</iati-identifier> 
+</iati-activity>
+<iati-activity>
+    <iati-identifier>ACT-3</iati-identifier> 
+    <other-identifier>
+    	<owner-org>
+    	</owner-org>
+    </other-identifier>
+</iati-activity>
+</iati-activities>
