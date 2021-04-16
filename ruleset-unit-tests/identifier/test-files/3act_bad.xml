@@ -1,12 +1,14 @@
 <iati-activities>
 <iati-activity>
     <iati-identifier>ACT-1</iati-identifier>    
+    <activity-date type="6"/>
     <other-identifier>
-    	<owner-org>
+        <owner-org>
     	</owner-org>
     </other-identifier>
 </iati-activity>
 <iati-activity>
+    <activity-date type="4"/>
     <other-identifier>
     	<owner-org>
     	</owner-org>

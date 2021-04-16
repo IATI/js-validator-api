@@ -1,0 +1,29 @@
+<iati-activities>
+<iati-activity>
+    <iati-identifier>ACT-1</iati-identifier>    
+    <activity-date type="1"/>
+    <other-identifier>
+    	<owner-org ref="hello">
+            <narrative></narrative>
+    	</owner-org>
+    </other-identifier>
+</iati-activity>
+<iati-activity>
+    <activity-date type="2"/>
+    <other-identifier>
+    	<owner-org ref="hello">
+            <narrative></narrative>
+    	</owner-org>
+    </other-identifier>
+    <iati-identifier>ACT-2</iati-identifier> 
+</iati-activity>
+<iati-activity>
+    <activity-date type="2"/>
+    <iati-identifier>ACT-3</iati-identifier> 
+    <other-identifier>
+    	<owner-org ref="hello">
+            <narrative></narrative>
+    	</owner-org>
+    </other-identifier>
+</iati-activity>
+</iati-activities>

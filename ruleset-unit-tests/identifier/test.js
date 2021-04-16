@@ -7,7 +7,33 @@ const { expect } = chai;
 const { testRuleset } = require('../../services/rulesValidator');
 
 const testMap = [
-    { rule: 'two_deep.json', file: 'two_deep.xml', expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'] },
+    { rule: 'two_deep.json', file: '3act_good.xml', expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'] },
+    {
+        rule: 'activity_level.json',
+        file: '3act_good.xml',
+        expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'],
+    },
+    { rule: 'two_deep.json', file: '3act_bad.xml', expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'] },
+    {
+        rule: 'activity_level.json',
+        file: '3act_bad.xml',
+        expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'],
+    },
+    {
+        rule: 'org_level.json',
+        file: 'org_good.xml',
+        expectedResult: ['NP-SWC-1234', 'NP-SWC-1234', 'NP-SWC-1234'],
+    },
+    {
+        rule: 'org_level.json',
+        file: 'org_bad.xml',
+        expectedResult: ['NP-SWC-1234', 'NP-SWC-1234', 'NP-SWC-1234'],
+    },
+    {
+        rule: 'activity_level.json',
+        file: 'act_no_id.xml',
+        expectedResult: ['ACT-1', '', 'ACT-3'],
+    },
 ];
 
 describe('Base rules', () => {

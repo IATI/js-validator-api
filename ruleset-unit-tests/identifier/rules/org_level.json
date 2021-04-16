@@ -1,0 +1,13 @@
+{
+    "//iati-organisation": {
+        "date_now": {
+            "cases": [{ "date": "@last-updated-datetime" }]
+        },
+        "one_or_all": {
+            "cases": [
+                { "one": "@xml:lang", "all": "lang" },
+                { "one": "@default-currency", "all": "currency" }
+            ]
+        }
+    }
+}
