@@ -1,8 +1,10 @@
 const xml2js = require('xml2js');
 const _ = require('underscore');
-
+const fs = require('fs/promises');
+const path = require('path');
 const { getFileInformation, getVersionCodelistRules } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
+const { validateIATI } = require('./rulesValidator');
 
 exports.validate = async (context, req) => {
     const { body } = req;
@@ -204,23 +206,34 @@ exports.validate = async (context, req) => {
             return;
         }
 
-        state.rootParsetime = getElapsedTime(fileInfoStart);
-        context.log({ name: 'Root Parse Time (s)', value: state.rootParsetime });
+        state.fileInfoTime = getElapsedTime(fileInfoStart);
+        context.log({ name: 'FileInfo Parse Time (s)', value: state.fileInfoTime });
 
-        const parseStart = getStartTime();
+        const codelistStart = getStartTime();
         await xml2js.parseStringPromise(body, {
             validator,
             async: true,
         });
 
-        state.parseTime = getElapsedTime(parseStart);
-        context.log({ name: 'Validator Parse Time (s)', value: state.parseTime });
+        state.codelistTime = getElapsedTime(codelistStart);
+        context.log({ name: 'Codelist Validate Time (s)', value: state.codelistTime });
+
+        const ruleStart = getStartTime();
+        const ruleset = JSON.parse(
+            await fs.readFile(path.join(__dirname, '../rulesets/2.03/standard.json'))
+        );
+
+        const rulesResult = validateIATI(ruleset, body);
+
+        state.ruleTime = getElapsedTime(ruleStart);
+        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });
 
         const validationReport = {
             valid: summary.critical === 0,
             fileInfo: { fileType: state.fileType, version: state.version },
             summary,
             errors,
+            rulesResult,
         };
 
         context.res = {
