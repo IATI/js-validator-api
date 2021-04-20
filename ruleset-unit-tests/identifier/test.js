@@ -4,7 +4,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 
-const { testRuleset } = require('../../services/rulesValidator');
+const { validateIATI } = require('../../services/rulesValidator');
 
 const testMap = [
     { rule: 'two_deep.json', file: '3act_good.xml', expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'] },
@@ -22,17 +22,17 @@ const testMap = [
     {
         rule: 'org_level.json',
         file: 'org_good.xml',
-        expectedResult: ['NP-SWC-1234', 'NP-SWC-1234', 'NP-SWC-1234'],
+        expectedResult: ['NP-SWC-1234'],
     },
     {
         rule: 'org_level.json',
         file: 'org_bad.xml',
-        expectedResult: ['NP-SWC-1234', 'NP-SWC-1234', 'NP-SWC-1234'],
+        expectedResult: ['NP-SWC-1234'],
     },
     {
         rule: 'activity_level.json',
         file: 'act_no_id.xml',
-        expectedResult: ['ACT-1', '', 'ACT-3'],
+        expectedResult: ['ACT-1', 'noIdentifier', 'ACT-3'],
     },
 ];
 
@@ -42,7 +42,7 @@ describe('Base rules', () => {
             const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));
             const xml = (await fs.readFile(`${__dirname}/test-files/${test.file}`)).toString();
 
-            expect(testRuleset(rule, xml).map((res) => res.identifier)).to.eql(test.expectedResult);
+            expect(Object.keys(validateIATI(rule, xml))).to.eql(test.expectedResult);
         });
     });
 });

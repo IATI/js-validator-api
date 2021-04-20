@@ -32,19 +32,6 @@ const getRuleMethodName = (ruleName) => {
     return name;
 };
 
-const getIATIIdentifier = (element) => {
-    const idName =
-        xpath('//iati-activities', element).length > 0
-            ? 'iati-identifier'
-            : 'organisation-identifier';
-    return (
-        xpath(`string(preceding-sibling/${idName})`, element) ||
-        xpath(`string(${idName})`, element) ||
-        xpath(`string(../${idName})`, element) ||
-        xpath(`string(../../${idName})`, element)
-    );
-};
-
 class Rules {
     constructor(element, cases) {
         this.element = element;
@@ -249,16 +236,14 @@ const testRule = (contextXpath, element, rule, oneCase) => {
         const ruleObject = new Rules(element, oneCase);
         result = ruleObject[ruleName](oneCase);
     }
-    const identifier = getIATIIdentifier(element);
 
     return {
         result,
-        identifier,
         context: contextXpath,
         lineNumber: element.lineNumber,
         rule: ruleName,
         oneCase,
-        element,
+        // element,
     };
 };
 
@@ -278,7 +263,12 @@ const testRule = (contextXpath, element, rule, oneCase) => {
     }
 */
 exports.testRuleset = (ruleset, xml) => {
-    const document = new DOMParser().parseFromString(xml);
+    let document;
+    if (typeof xml === 'string') {
+        document = new DOMParser().parseFromString(xml);
+    } else {
+        document = xml;
+    }
     const result = [];
     Object.keys(ruleset).forEach((contextXpath) => {
         xpath(contextXpath, document).forEach((element) => {
@@ -304,4 +294,25 @@ exports.allRulesResult = (ruleset, xml) => {
     }
     // All true = true, any false = false
     return results.every((res) => res.result);
+};
+
+exports.validateIATI = (ruleset, xml) => {
+    const document = new DOMParser().parseFromString(xml);
+    const isActivity = xpath('//iati-activities', document).length > 0;
+    const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
+    const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
+    const elements = xpath(`//${fileType}`, document);
+    const results = {};
+    elements.forEach((element) => {
+        const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
+        singleElementDoc.firstChild.appendChild(element);
+        const identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
+        results[identifier] = [];
+        this.testRuleset(ruleset, singleElementDoc).forEach((result) => {
+            if (result.result === false) {
+                results[identifier].push(result);
+            }
+        });
+    });
+    return results;
 };
