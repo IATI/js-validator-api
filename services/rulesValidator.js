@@ -106,9 +106,8 @@ class Rules {
 
     strictSum(oneCase) {
         return (
-            this.pathMatches
-                .map((match) => getText(match))
-                .reduce((acc, val) => Number(acc) + Number(val), 0) === Number(oneCase.sum)
+            this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0) ===
+            Number(oneCase.sum)
         );
     }
 
