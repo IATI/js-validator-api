@@ -5,6 +5,7 @@ const path = require('path');
 const { getFileInformation, getVersionCodelistRules } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateIATI } = require('./rulesValidator');
+const config = require('../config/config');
 
 exports.validate = async (context, req) => {
     const { body } = req;
@@ -14,7 +15,7 @@ exports.validate = async (context, req) => {
         version: '',
         generatedDateTime: '',
     };
-    const summary = { critical: 0, danger: 0, warning: 0 };
+    const summary = { critical: 0, error: 0, warning: 0 };
     const errors = {};
     let errCache = [];
 
@@ -205,9 +206,32 @@ exports.validate = async (context, req) => {
             };
             return;
         }
-
         state.fileInfoTime = getElapsedTime(fileInfoStart);
         context.log({ name: 'FileInfo Parse Time (s)', value: state.fileInfoTime });
+
+        // Version Check
+        if (!state.supportedVersion) {
+            const validationReport = {
+                valid: true,
+                fileInfo: { fileType: state.fileType, version: state.version },
+                errors: {
+                    file: {
+                        id: '0.6.1',
+                        severity: 'error',
+                        category: 'documents',
+                        message: `${
+                            state.version
+                        } is not a supported version. Supported versions: ${config.VERSIONS.join()}`,
+                    },
+                },
+            };
+
+            context.res = {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(validationReport),
+            };
+        }
 
         const codelistStart = getStartTime();
         await xml2js.parseStringPromise(body, {
