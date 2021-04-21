@@ -7,8 +7,10 @@ const { expect } = chai;
 const { allRulesResult } = require('../../services/rulesValidator');
 
 const testMap = [
-    { rule: 'regex_matches.json', file: 'bad.xml', expectedResult: false },
-    { rule: 'regex_matches.json', file: 'good.xml', expectedResult: true },
+    { rule: 'regex_matches_element.json', file: 'bad.xml', expectedResult: false },
+    { rule: 'regex_matches_element.json', file: 'good.xml', expectedResult: true },
+    { rule: 'regex_matches_attribute.json', file: 'bad.xml', expectedResult: false },
+    { rule: 'regex_matches_attribute.json', file: 'good.xml', expectedResult: true },
 ];
 
 describe('regexMatches rules', () => {

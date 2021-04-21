@@ -1,3 +1,4 @@
 <iati-activities><iati-activity>
     <title>ADBD</title>
+    <reporting-org ref='ADBD'></reporting-org>
 </iati-activity></iati-activities>

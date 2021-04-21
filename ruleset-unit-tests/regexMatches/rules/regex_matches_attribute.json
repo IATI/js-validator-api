@@ -1,0 +1,12 @@
+{
+    "//iati-activity": {
+        "regexMatches": {
+            "cases": [
+                {
+                    "paths": ["reporting-org/@ref"],
+                    "regex": "^[^\\/\\&\\|\\?]+$"
+                }
+            ]
+        }
+    }
+}

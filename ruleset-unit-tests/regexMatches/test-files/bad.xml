@@ -1,3 +1,4 @@
 <iati-activities><iati-activity>
     <title>ABC&amp;D</title>
+    <reporting-org ref='ABC&amp;D'></reporting-org>
 </iati-activity></iati-activities>
