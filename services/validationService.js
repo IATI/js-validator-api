@@ -215,14 +215,18 @@ exports.validate = async (context, req) => {
                 valid: true,
                 fileInfo: { fileType: state.fileType, version: state.version },
                 errors: {
-                    file: {
-                        id: '0.6.1',
-                        severity: 'error',
-                        category: 'documents',
-                        message: `${
-                            state.version
-                        } is not a supported version. Supported versions: ${config.VERSIONS.join()}`,
-                    },
+                    file: [
+                        {
+                            id: '0.6.1',
+                            severity: 'error',
+                            category: 'documents',
+                            message: `${
+                                state.version
+                            } is not a supported version. Supported versions: ${config.VERSIONS.join(
+                                ', '
+                            )}`,
+                        },
+                    ],
                 },
             };
 
@@ -231,6 +235,7 @@ exports.validate = async (context, req) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
+            return;
         }
 
         const codelistStart = getStartTime();
