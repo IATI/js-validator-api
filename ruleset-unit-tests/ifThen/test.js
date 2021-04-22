@@ -9,14 +9,14 @@ const { allRulesResult } = require('../../services/rulesValidator');
 const testMap = [
     { rule: 'if_then.json', file: 'good.xml', expectedResult: true },
     { rule: 'if_then.json', file: 'bad.xml', expectedResult: false },
-    { rule: 'dac_rec.json', file: 'good.xml', expectedResult: true },
-    { rule: 'dac_rec.json', file: 'bad.xml', expectedResult: false },
-    { rule: 'dac_rec.json', file: 'only_dac_good.xml', expectedResult: true },
-    { rule: 'dac_rec.json', file: 'only_dac_null_good.xml', expectedResult: true },
-    { rule: 'dac_rec.json', file: 'only_dac_blank_good.xml', expectedResult: true },
-    { rule: 'dac_rec.json', file: 'blank_vocab_good.xml', expectedResult: true },
-    { rule: 'dac_rec.json', file: 'default_vocab_good.xml', expectedResult: true },
-    { rule: 'dac_rec.json', file: 'real_good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'bad.xml', expectedResult: false },
+    { rule: '102.1.1_dac_rec.json', file: 'only_dac_good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'only_dac_null_good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'only_dac_blank_good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'blank_vocab_good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'default_vocab_good.xml', expectedResult: true },
+    { rule: '102.1.1_dac_rec.json', file: 'real_good.xml', expectedResult: true },
 ];
 
 describe('ifThen rules', () => {
