@@ -1,0 +1,12 @@
+{
+    "//iati-activity": {
+        "regex_matches": {
+            "cases": [
+                {
+                    "regex": "[^\\/\\&\\|\\?]+",
+                    "paths": ["iati-identifier"]
+                }
+            ]
+        }
+    }
+}

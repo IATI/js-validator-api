@@ -313,7 +313,19 @@ exports.validateIATI = (ruleset, xml) => {
         const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
         singleElementDoc.firstChild.appendChild(element);
         const identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
-        results[identifier] = [];
+        if (isActivity && _.has(results, identifier)) {
+            // duplicate identifier, drop a file level error
+            results.file = [
+                {
+                    id: '1.1.2',
+                    severity: 'error',
+                    category: 'identifiers',
+                    message: `The activity identifier must be unique for each activity. Duplicate found for ${identifier}`,
+                },
+            ];
+        } else {
+            results[identifier] = [];
+        }
         this.testRuleset(ruleset, singleElementDoc).forEach((result) => {
             if (result.result === false) {
                 results[identifier].push(result);
