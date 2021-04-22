@@ -1,0 +1,7 @@
+<iati-activities><iati-activity>
+    <sector vocabulary="1" code="11110" percentage="50" />
+    <sector vocabulary="1" code="11230" percentage="50" />
+    <sector vocabulary="98" vocabulary-uri="http://example.com/vocab.html" code="A1" percentage="100">
+     <narrative>Code A1</narrative>
+    </sector>
+</iati-activity></iati-activities>

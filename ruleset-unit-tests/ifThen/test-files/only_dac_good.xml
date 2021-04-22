@@ -2,7 +2,4 @@
     <test example="1"></test>
     <other />
     <sector vocabulary="1" code="11110"/>
-    <sector vocabulary="98">
-        <narrative>narrative</narrative>
-    </sector>
 </iati-activity></iati-activities>
