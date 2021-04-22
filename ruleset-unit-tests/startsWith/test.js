@@ -15,6 +15,12 @@ const testMap = [
     { rule: '1.1.1_identifiers.json', file: 'mult_other_id_good.xml', expectedResult: true },
     { rule: '1.1.1_identifiers.json', file: 'mult_other_id_bad.xml', expectedResult: false },
     { rule: '1.1.1_identifiers.json', file: 'other_id_bad.xml', expectedResult: false },
+    { rule: '1.1.21_identifiers_separator.json', file: 'good.xml', expectedResult: true },
+    {
+        rule: '1.1.21_identifiers_separator.json',
+        file: 'missing_separator_bad.xml',
+        expectedResult: false,
+    },
 ];
 
 describe('startsWith rules', () => {

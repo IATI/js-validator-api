@@ -181,7 +181,11 @@ class Rules {
 
         // every path match (e.g. iati-identifier), must start with at least one (some) start match (e.g. reporting-org/@ref)
         return this.pathMatchesText.every((pathMatchText) =>
-            startMatchesText.some((startText) => pathMatchText.startsWith(startText))
+            startMatchesText.some((startText) => {
+                const separator = _.has(oneCase, 'separator') ? oneCase.separator : '';
+                const textWithSep = startText + separator;
+                return pathMatchText.startsWith(textWithSep);
+            })
         );
     }
 
