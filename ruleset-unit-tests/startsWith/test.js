@@ -9,6 +9,12 @@ const { allRulesResult } = require('../../services/rulesValidator');
 const testMap = [
     { rule: 'starts_with.json', file: 'bad.xml', expectedResult: false },
     { rule: 'starts_with.json', file: 'good.xml', expectedResult: true },
+    { rule: '1.1.1_identifiers.json', file: 'bad.xml', expectedResult: false },
+    { rule: '1.1.1_identifiers.json', file: 'good.xml', expectedResult: true },
+    { rule: '1.1.1_identifiers.json', file: 'other_id_good.xml', expectedResult: true },
+    { rule: '1.1.1_identifiers.json', file: 'mult_other_id_good.xml', expectedResult: true },
+    { rule: '1.1.1_identifiers.json', file: 'mult_other_id_bad.xml', expectedResult: false },
+    { rule: '1.1.1_identifiers.json', file: 'other_id_bad.xml', expectedResult: false },
 ];
 
 describe('startsWith rules', () => {

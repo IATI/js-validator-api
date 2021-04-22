@@ -1,7 +1,7 @@
 {
     "//iati-activity": {
         "startsWith": {
-            "cases": [{ "start": "reporting-org/@ref", "paths": ["iati-identifier"] }]
+            "cases": [{ "prefix": ["reporting-org/@ref"], "paths": ["iati-identifier"] }]
         }
     }
 }

@@ -174,8 +174,15 @@ class Rules {
     }
 
     startsWith(oneCase) {
-        const start = getText(xpath(oneCase.start, this.element)[0]);
-        return this.pathMatchesText.every((pathMatchText) => pathMatchText.startsWith(start));
+        // get text matches for start into Array
+        const startMatchesText = _.flatten(
+            oneCase.prefix.map((path) => xpath(path, this.element))
+        ).map((match) => getText(match));
+
+        // every path match (e.g. iati-identifier), must start with at least one (some) start match (e.g. reporting-org/@ref)
+        return this.pathMatchesText.every((pathMatchText) =>
+            startMatchesText.some((startText) => pathMatchText.startsWith(startText))
+        );
     }
 
     ifThen(oneCase) {
