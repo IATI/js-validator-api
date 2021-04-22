@@ -15,6 +15,16 @@ const testMap = [
         file: 'title_description_content.xml',
         expectedResult: true,
     },
+    {
+        rule: '1.1.3_unique_identifier.json',
+        file: 'identifier_good.xml',
+        expectedResult: true,
+    },
+    {
+        rule: '1.1.3_unique_identifier.json',
+        file: 'identifier_bad.xml',
+        expectedResult: false,
+    },
 ];
 
 describe('unique rules', () => {
