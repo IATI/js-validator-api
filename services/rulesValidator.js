@@ -79,8 +79,8 @@ class Rules {
                     return true;
                 });
             case 'sector':
-                return xpath('transaction', this.element).every((narrative) => {
-                    if (xpath('sector', narrative).length === 0) return false;
+                return xpath('transaction', this.element).every((transaction) => {
+                    if (xpath('sector', transaction).length === 0) return false;
                     return true;
                 });
             case 'currency':
