@@ -1,7 +1,6 @@
 const xml2js = require('xml2js');
 const _ = require('underscore');
 const fs = require('fs/promises');
-const path = require('path');
 const { getFileInformation, getVersionCodelistRules } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateIATI } = require('./rulesValidator');
@@ -249,7 +248,7 @@ exports.validate = async (context, req) => {
 
         const ruleStart = getStartTime();
         const ruleset = JSON.parse(
-            await fs.readFile(path.join(__dirname, '../rulesets/2.03/standard.json'))
+            await fs.readFile('/Users/nosvalds/Projects/IATI-Rulesets/rulesets/standard.json')
         );
 
         const rulesResult = validateIATI(ruleset, body);
