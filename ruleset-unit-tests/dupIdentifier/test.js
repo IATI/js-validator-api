@@ -20,14 +20,14 @@ const testMap = [
     },
 ];
 
-describe('Duplicate Identifier rules', () => {
+describe('dupIdentifier rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
             const ruleSet = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));
             const xml = (await fs.readFile(`${__dirname}/test-files/${test.file}`)).toString();
 
             // file level errors
-            expect(validateIATI(ruleSet, xml).file).to.deep.include(test.expectedResult);
+            expect((await validateIATI(ruleSet, xml)).file).to.deep.include(test.expectedResult);
         });
     });
 });

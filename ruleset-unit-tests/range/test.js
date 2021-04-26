@@ -11,7 +11,7 @@ const testMap = [
     { rule: 'range.json', file: 'bad.xml', expectedResult: false },
 ];
 
-describe('Base rules', () => {
+describe('range rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
             const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));

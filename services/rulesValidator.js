@@ -3,6 +3,8 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
+const { getOrgIds } = require('../identifiers/fetchIdenitifiers');
+
 const ruleNameMap = require('../ruleNameMap.json');
 
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
@@ -33,8 +35,9 @@ const getRuleMethodName = (ruleName) => {
 };
 
 class Rules {
-    constructor(element, cases) {
+    constructor(element, cases, idSets) {
         this.element = element;
+        this.idSets = idSets;
         if ('paths' in cases) {
             this.nestedMatches = cases.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
@@ -174,6 +177,15 @@ class Rules {
     }
 
     startsWith(oneCase) {
+        // ORG ID Prefix case
+        if (oneCase.prefix === 'ORG-ID') {
+            return this.pathMatchesText.every((pathMatchText) => {
+                // Get prefix as everything left of the 2nd "-"
+                const split = pathMatchText.split('-');
+                const prefix = `${split[0]}-${split[1]}`;
+                return this.idSets['ORG-ID'].has(prefix);
+            });
+        }
         // get text matches for start into Array
         const startMatchesText = _.flatten(
             oneCase.prefix.map((path) => xpath(path, this.element))
@@ -236,14 +248,14 @@ class Rules {
 }
 
 // Tests a specific rule type for a specific case.
-const testRule = (contextXpath, element, rule, oneCase) => {
+const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     let result;
     const ruleName = getRuleMethodName(rule);
     // if there is a condition, but not match, don't evalute the rule
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = 'No Condition Match';
     } else {
-        const ruleObject = new Rules(element, oneCase);
+        const ruleObject = new Rules(element, oneCase, idSets);
         result = ruleObject[ruleName](oneCase);
     }
 
@@ -272,7 +284,7 @@ const testRule = (contextXpath, element, rule, oneCase) => {
         oneCase,
     }
 */
-exports.testRuleset = (ruleset, xml) => {
+exports.testRuleset = (ruleset, xml, idSets) => {
     let document;
     if (typeof xml === 'string') {
         document = new DOMParser().parseFromString(xml);
@@ -285,7 +297,7 @@ exports.testRuleset = (ruleset, xml) => {
             Object.keys(ruleset[contextXpath]).forEach((rule) => {
                 const theCases = ruleset[contextXpath][rule].cases;
                 theCases.forEach((oneCase) => {
-                    result.push(testRule(contextXpath, element, rule, oneCase));
+                    result.push(testRule(contextXpath, element, rule, oneCase, idSets));
                 });
             });
         });
@@ -306,13 +318,15 @@ exports.allRulesResult = (ruleset, xml) => {
     return results.every((res) => res.result);
 };
 
-exports.validateIATI = (ruleset, xml) => {
+exports.validateIATI = async (ruleset, xml) => {
     const document = new DOMParser().parseFromString(xml);
     const isActivity = xpath('//iati-activities', document).length > 0;
     const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
     const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
     const elements = xpath(`//${fileType}`, document);
     const results = {};
+    const orgIds = await getOrgIds();
+    const idSets = { 'ORG-ID': orgIds };
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
         singleElementDoc.firstChild.appendChild(element);
@@ -330,7 +344,7 @@ exports.validateIATI = (ruleset, xml) => {
         } else {
             results[identifier] = [];
         }
-        this.testRuleset(ruleset, singleElementDoc).forEach((result) => {
+        this.testRuleset(ruleset, singleElementDoc, idSets).forEach((result) => {
             if (result.result === false) {
                 results[identifier].push(result);
             }

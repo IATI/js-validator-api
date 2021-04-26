@@ -251,7 +251,7 @@ exports.validate = async (context, req) => {
             await fs.readFile('/Users/nosvalds/Projects/IATI-Rulesets/rulesets/standard.json')
         );
 
-        const rulesResult = validateIATI(ruleset, body);
+        const rulesResult = await validateIATI(ruleset, body);
 
         state.ruleTime = getElapsedTime(ruleStart);
         context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });

@@ -36,13 +36,13 @@ const testMap = [
     },
 ];
 
-describe('Base rules', () => {
+describe('identifier rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
             const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));
             const xml = (await fs.readFile(`${__dirname}/test-files/${test.file}`)).toString();
 
-            expect(Object.keys(validateIATI(rule, xml))).to.eql(test.expectedResult);
+            expect(Object.keys(await validateIATI(rule, xml))).to.eql(test.expectedResult);
         });
     });
 });
