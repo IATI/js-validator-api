@@ -256,12 +256,63 @@ exports.validate = async (context, req) => {
         state.ruleTime = getElapsedTime(ruleStart);
         context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });
 
+        const combinedErrors = {};
+        const combinedKeys = _.union(Object.keys(errors), Object.keys(rulesResult));
+        combinedKeys.forEach((key) => {
+            combinedErrors[key] = [];
+            if (_.has(errors, key)) {
+                combinedErrors[key] = combinedErrors[key].concat(errors[key]);
+            }
+            if (_.has(rulesResult, key)) {
+                combinedErrors[key] = combinedErrors[key].concat(rulesResult[key]);
+                rulesResult[key].forEach((ruleError) => {
+                    if (_.has(ruleError.oneCase, 'ruleInfo')) {
+                        const { severity } = ruleError.oneCase.ruleInfo;
+                        summary[severity] = (summary[severity] || 0) + 1;
+                    }
+                    if (ruleError.rule === 'loop') {
+                        /* have to loop much deeper
+                            {
+                                "result": false,
+                                "context": "//iati-activity",
+                                "lineNumber": 3,
+                                "rule": "loop",
+                                "oneCase": {
+                                    "foreach": "sector[@vocabulary != '1']/@vocabulary",
+                                    "do": {
+                                        "strict_sum": {
+                                            "cases": [
+                                                {
+                                                    "paths": [
+                                                        "sector[@vocabulary = '$1']/@percentage"
+                                                    ],
+                                                    "sum": 100,
+                                                    "ruleInfo": {
+                                                        "id": "2.1.2",
+                                                        "severity": "error",
+                                                        "category": "classifications",
+                                                        "message": "Percentage values for sectors, within a vocabulary (e.g. 1 - OECD DAC), must add up to 100%."
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "subs": [
+                                        "paths"
+                                    ]
+                                }
+                            }
+                        */
+                    }
+                });
+            }
+        });
+
         const validationReport = {
             valid: summary.critical === 0,
             fileInfo: { fileType: state.fileType, version: state.version },
             summary,
-            errors,
-            rulesResult,
+            errors: combinedErrors,
         };
 
         context.res = {

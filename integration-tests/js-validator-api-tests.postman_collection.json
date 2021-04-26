@@ -117,7 +117,7 @@
 							"});",
 							"pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains no errors\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123']).to.eql([]);",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.oneCase.ruleInfo.id))).to.eql(['1.3.8']);",
 							"});",
 							""
 						],
