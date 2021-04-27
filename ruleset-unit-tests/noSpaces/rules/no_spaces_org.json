@@ -1,0 +1,17 @@
+{
+    "//iati-organisation": {
+        "no_spaces": {
+            "cases": [
+                {
+                    "paths": ["organisation-identifier"],
+                    "ruleInfo": {
+                        "id": "1.12.1",
+                        "severity": "warning",
+                        "category": "identifiers",
+                        "message": "The organisation identifier should not start or end with spaces or newlines."
+                    }
+                }
+            ]
+        }
+    }
+}

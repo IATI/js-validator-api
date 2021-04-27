@@ -66,5 +66,9 @@
     {
         "python": "loop",
         "js": "loop"
+    },
+    {
+        "python": "no_spaces",
+        "js": "noSpaces"
     }
 ]

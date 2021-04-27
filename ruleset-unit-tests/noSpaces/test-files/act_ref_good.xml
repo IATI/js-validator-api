@@ -1,0 +1,9 @@
+<iati-activities>
+    <iati-activity>
+        <other-identifier ref=" ABC123-XYZ" type="A1">
+            <owner-org ref="AA-AAA-123456789">
+             <narrative>Organisation name</narrative>
+            </owner-org>
+        </other-identifier>
+    </iati-activity>
+</iati-activities>

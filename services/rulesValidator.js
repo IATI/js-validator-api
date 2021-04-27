@@ -245,6 +245,12 @@ class Rules {
         if (results.length === 0) return [];
         return results.every((val) => val);
     }
+
+    noSpaces() {
+        return this.pathMatchesText.every(
+            (pathMatchText) => pathMatchText === pathMatchText.trim()
+        );
+    }
 }
 
 // Tests a specific rule type for a specific case.

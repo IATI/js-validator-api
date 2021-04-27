@@ -1,0 +1,17 @@
+{
+    "//iati-activity": {
+        "no_spaces": {
+            "cases": [
+                {
+                    "paths": ["iati-identifier"],
+                    "ruleInfo": {
+                        "id": "1.3.1",
+                        "severity": "warning",
+                        "category": "identifiers",
+                        "message": "The iati-identifier should not start or end with spaces or newlines."
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "//iati-activity": {
+        "no_spaces": {
+            "cases": [
+                {
+                    "paths": ["other-identifier/owner-org/@ref"],
+                    "ruleInfo": {
+                        "id": "1.11.1",
+                        "severity": "warning",
+                        "category": "identifiers",
+                        "message": "The owner organisation should not start or end with spaces or newlines."
+                    }
+                }
+            ]
+        }
+    }
+}
