@@ -1,0 +1,23 @@
+{
+    "//iati-activity": {
+        "loop": {
+            "cases": [
+                {
+                    "foreach": "sector[@vocabulary != '1']/@vocabulary",
+                    "do": {
+                        "strict_sum": {
+                            "cases": [
+                                {
+                                    "condition": "count(sector[@vocabulary = '$1']/@percentage) > 1",
+                                    "paths": ["sector[@vocabulary = '$1']/@percentage"],
+                                    "sum": 100
+                                }
+                            ]
+                        }
+                    },
+                    "subs": ["paths", "condition"]
+                }
+            ]
+        }
+    }
+}

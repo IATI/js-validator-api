@@ -235,10 +235,14 @@ class Rules {
                             subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val.nodeValue));
                         }
                     });
-                    const subRule = new Rules(this.element, subCaseTest);
-                    const ruleName = getRuleMethodName(rule);
-                    const loopResult = subRule[ruleName](subCaseTest);
-                    results.push(loopResult);
+                    if ('condition' in subCaseTest && !xpath(subCaseTest.condition, this.element)) {
+                        results.push('No Condition Match');
+                    } else {
+                        const subRule = new Rules(this.element, subCaseTest);
+                        const ruleName = getRuleMethodName(rule);
+                        const loopResult = subRule[ruleName](subCaseTest);
+                        results.push(loopResult);
+                    }
                 });
             });
         });
