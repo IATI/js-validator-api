@@ -1,0 +1,8 @@
+<iati-activities>
+    <iati-activity>
+        <country-budget-items vocabulary="4">
+            <budget-item code="1844" percentage="100">
+            </budget-item>
+        </country-budget-items>
+    </iati-activity>
+</iati-activities>

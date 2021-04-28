@@ -11,6 +11,8 @@ const testMap = [
     { rule: 'forloop.json', file: 'good.xml', expectedResult: true },
     { rule: 'forloop_recipient_loc.json', file: 'recipient_loc_good.xml', expectedResult: true },
     { rule: 'forloop_recipient_loc.json', file: 'recipient_loc_bad.xml', expectedResult: false },
+    { rule: 'forloop_if_then.json', file: 'if_then_bad.xml', expectedResult: false },
+    { rule: 'forloop_if_then.json', file: 'if_then_good.xml', expectedResult: true },
 ];
 
 describe('loop rules', () => {

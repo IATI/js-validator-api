@@ -1,0 +1,28 @@
+{
+    "//iati-activity": {
+        "loop": {
+            "cases": [
+                {
+                    "foreach": "country-budget-items/@vocabulary",
+                    "do": {
+                        "if_then": {
+                            "cases": [
+                                {
+                                    "if": "count(country-budget-items[@vocabulary = '$1']/budget-item) = 1",
+                                    "then": "country-budget-items[@vocabulary = '$1']/budget-item/@percentage = 100 or not(country-budget-items[@vocabulary = '$1']/budget-item/@percentage)",
+                                    "ruleInfo": {
+                                        "id": "7.9.4",
+                                        "severity": "warning",
+                                        "category": "financial",
+                                        "message": "When a single budget item is declared, the percentage must either be omitted, or set to 100."
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "subs": ["if", "then"]
+                }
+            ]
+        }
+    }
+}

@@ -230,9 +230,9 @@ class Rules {
                     const subCaseTest = { ...subCase };
                     _.forEach(subs, (v, k) => {
                         if (typeof v === 'string') {
-                            subCaseTest[k] = v.replace('$1', val.nodeValue);
+                            subCaseTest[k] = v.replace(/\$1/g, val.nodeValue);
                         } else {
-                            subCaseTest[k] = v.map((vi) => vi.replace('$1', val.nodeValue));
+                            subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val.nodeValue));
                         }
                     });
                     const subRule = new Rules(this.element, subCaseTest);
