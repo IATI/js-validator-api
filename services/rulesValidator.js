@@ -3,7 +3,7 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
-const { getOrgIdPrefixes } = require('../identifiers/fetchIdenitifiers');
+const { getOrgIdPrefixes, getOrgIds } = require('../identifiers/fetchIdenitifiers');
 
 const ruleNameMap = require('../ruleNameMap.json');
 
@@ -342,7 +342,8 @@ exports.validateIATI = async (ruleset, xml) => {
     const elements = xpath(`//${fileType}`, document);
     const results = {};
     const orgIdPrefixes = await getOrgIdPrefixes();
-    const idSets = { 'ORG-ID-PREFIX': orgIdPrefixes };
+    const orgIds = await getOrgIds();
+    const idSets = { 'ORG-ID-PREFIX': orgIdPrefixes, 'ORG-ID': orgIds };
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
         singleElementDoc.firstChild.appendChild(element);
