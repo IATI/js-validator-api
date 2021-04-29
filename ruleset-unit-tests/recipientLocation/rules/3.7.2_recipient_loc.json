@@ -1,0 +1,18 @@
+{
+    "//iati-activity": {
+        "if_then": {
+            "cases": [
+                {
+                    "if": "not(recipient-country or recipient-region)",
+                    "then": "not(transaction[not(recipient-country or recipient-region)])",
+                    "ruleInfo": {
+                        "id": "3.7.2",
+                        "severity": "error",
+                        "category": "financial",
+                        "message": "Recipient country or recipient region should be declared for either the activity or for all transactions."
+                    }
+                }
+            ]
+        }
+    }
+}
