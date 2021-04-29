@@ -86,6 +86,12 @@ class Rules {
                     if (xpath('sector', transaction).length === 0) return false;
                     return true;
                 });
+            case 'recipient-country|recipient-region':
+                return xpath('transaction', this.element).every((transaction) => {
+                    if (xpath('recipient-country|recipient-region', transaction).length === 0)
+                        return false;
+                    return true;
+                });
             case 'currency':
                 return currencyPaths.every((cpath) =>
                     xpath(`descendant::${cpath}`, this.element).every((currency) => {

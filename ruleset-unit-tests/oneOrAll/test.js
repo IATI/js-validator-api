@@ -21,6 +21,8 @@ const testMap = [
     { rule: 'one_or_all.json', file: 'currency_all_good.xml', expectedResult: true },
     { rule: 'one_or_all_org.json', file: 'org_currency_bad.xml', expectedResult: false },
     { rule: 'one_or_all_org.json', file: 'org_currency_good.xml', expectedResult: true },
+    { rule: 'one_or_all_recipient_loc.json', file: 'recip_loc_good.xml', expectedResult: true },
+    { rule: 'one_or_all_recipient_loc.json', file: 'recip_loc_bad.xml', expectedResult: false },
 ];
 
 describe('oneOrAll rules', () => {
