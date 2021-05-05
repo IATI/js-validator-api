@@ -35,13 +35,28 @@ const getRuleMethodName = (ruleName) => {
 };
 
 class Rules {
-    constructor(element, cases, idSets) {
+    constructor(element, oneCase, idSets) {
         this.element = element;
         this.idSets = idSets;
-        if ('paths' in cases) {
-            this.nestedMatches = cases.paths.map((path) => xpath(path, element));
+        if ('paths' in oneCase) {
+            this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
             this.pathMatchesText = this.pathMatches.map((match) => getText(match));
+        }
+        if ('idCondition' in oneCase) {
+            if (oneCase.idCondition === 'NOT_EXISTING_ORG_ID') {
+                this.idCondition = this.pathMatchesText.every(
+                    (pathText) => !idSets['ORG-ID'].has(pathText)
+                );
+            }
+            if (oneCase.idCondition === 'NOT_EXISTING_ORG_ID_PREFIX') {
+                this.idCondition = this.pathMatchesText.every(
+                    (pathText) =>
+                        !Array.from(idSets['ORG-ID']).some((orgId) =>
+                            pathText.startsWith(`${orgId}-`)
+                        )
+                );
+            }
         }
     }
 
@@ -272,7 +287,11 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
         result = 'No Condition Match';
     } else {
         const ruleObject = new Rules(element, oneCase, idSets);
-        result = ruleObject[ruleName](oneCase);
+        if (ruleObject.idCondition === false) {
+            result = 'No ID Condition Match';
+        } else {
+            result = ruleObject[ruleName](oneCase);
+        }
     }
 
     return {

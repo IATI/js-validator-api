@@ -1,0 +1,19 @@
+{
+    "//iati-activity": {
+        "regex_matches": {
+            "cases": [
+                {
+                    "idCondition": "NOT_EXISTING_ORG_ID_PREFIX",
+                    "regex": "^[^\\/\\&\\|\\?]+$",
+                    "paths": ["iati-identifier"],
+                    "ruleInfo": {
+                        "id": "1.3.13",
+                        "severity": "warning",
+                        "category": "identifiers",
+                        "message": "The iati-identifier must not contain any of the symbols /, &, | or ?."
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,3 +1,3 @@
 <iati-activities><iati-activity>
-    <iati-identifier>GBX-CXOH-ABCD-1234</iati-identifier>
+    <reporting-org ref="GB-GOV-ABCD-1234"/>
 </iati-activity></iati-activities>

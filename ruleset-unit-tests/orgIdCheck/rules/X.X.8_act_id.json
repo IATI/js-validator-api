@@ -3,14 +3,14 @@
         "startsWith": {
             "cases": [
                 {
-                    "idCondition": "NOT_EXISTING_ORG_ID",
+                    "idCondition": "NOT_EXISTING_ORG_ID_PREFIX",
                     "prefix": "ORG-ID-PREFIX",
-                    "paths": ["reporting-org/@ref"],
+                    "paths": ["iati-identifier"],
                     "ruleInfo": {
-                        "id": "1.14.8",
+                        "id": "1.3.8",
                         "severity": "warning",
                         "category": "identifiers",
-                        "message": "The reporting organisation id must start with an approved agency code."
+                        "message": "The iati-identifier must start with an approved agency code."
                     }
                 }
             ]

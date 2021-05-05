@@ -1,16 +1,16 @@
 {
     "//iati-activity": {
-        "startsWith": {
+        "regex_matches": {
             "cases": [
                 {
                     "idCondition": "NOT_EXISTING_ORG_ID",
-                    "prefix": "ORG-ID-PREFIX",
+                    "regex": "^[^\\/\\&\\|\\?]+$",
                     "paths": ["reporting-org/@ref"],
                     "ruleInfo": {
-                        "id": "1.14.8",
+                        "id": "1.14.13",
                         "severity": "warning",
                         "category": "identifiers",
-                        "message": "The reporting organisation id must start with an approved agency code."
+                        "message": "The reporting-org idenitifier must not contain any of the symbols /, &, | or ?."
                     }
                 }
             ]
