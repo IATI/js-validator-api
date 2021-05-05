@@ -38,6 +38,7 @@ class Rules {
     constructor(element, oneCase, idSets) {
         this.element = element;
         this.idSets = idSets;
+        this.failContext = [];
         if ('paths' in oneCase) {
             this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
@@ -58,6 +59,28 @@ class Rules {
                 );
             }
         }
+    }
+
+    addFailureContext(node) {
+        let text;
+        const parentNodeName = node.parentNode.nodeName;
+        if (['budget', 'planned-disbursement'].includes(parentNodeName)) {
+            const startDate = xpath('string(period-start/@iso-date)', node.parentNode);
+            const endDate = xpath('string(period-end/@iso-date)', node.parentNode);
+            text = `In the ${parentNodeName} of ${startDate} to ${endDate}`;
+        }
+        if (['transaction'].includes(parentNodeName)) {
+            const transDate = xpath('string(transaction-date/@iso-date)', node.parentNode);
+            text = `In the transaction of ${transDate}`;
+        }
+        this.failContext.push({
+            text,
+            parent: parentNodeName,
+            element: node.nodeName,
+            value: getText(node),
+            lineNumber: node.lineNumber,
+            columnNumber: node.columnNumber,
+        });
     }
 
     noMoreThanOne() {
@@ -110,7 +133,10 @@ class Rules {
             case 'currency':
                 return currencyPaths.every((cpath) =>
                     xpath(`descendant::${cpath}`, this.element).every((currency) => {
-                        if (xpath('@currency', currency).length === 0) return false;
+                        if (xpath('@currency', currency).length === 0) {
+                            this.addFailureContext(currency);
+                            return false;
+                        }
                         return true;
                     })
                 );
@@ -282,6 +308,7 @@ class Rules {
 const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     let result;
     let pathsContext;
+    let failContext;
     const ruleName = getRuleMethodName(rule);
     // if there is a condition, but not match, don't evalute the rule
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
@@ -300,6 +327,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
                     columnNumber: path.columnNumber,
                 }));
             }
+            ({ failContext } = ruleObject);
         }
     }
 
@@ -310,7 +338,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             lineNumber: element.lineNumber,
             columnNumber: element.columnNumber,
         },
-        rule: { name: ruleName, case: oneCase, pathsContext },
+        rule: { name: ruleName, case: oneCase, pathsContext, failContext },
     };
 };
 
