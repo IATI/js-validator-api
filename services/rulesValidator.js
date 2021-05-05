@@ -39,11 +39,24 @@ class Rules {
         this.element = element;
         this.idSets = idSets;
         this.failContext = [];
+        this.caseContext = {};
         if ('paths' in oneCase) {
             this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
             this.pathMatchesText = this.pathMatches.map((match) => getText(match));
+            this.caseContext.paths = this.pathMatches.map((path, i) => ({
+                xpath: oneCase.paths[i],
+                value: this.pathMatchesText[i],
+                lineNumber: path.lineNumber,
+                columnNumber: path.columnNumber,
+            }));
         }
+        ['less', 'more', 'start', 'date', 'end'].forEach((timeCase) => {
+            if (timeCase in oneCase) {
+                this[timeCase] = this.parseDate(oneCase[timeCase]);
+                this.caseContext[timeCase] = this[timeCase];
+            }
+        });
         if ('idCondition' in oneCase) {
             if (oneCase.idCondition === 'NOT_EXISTING_ORG_ID') {
                 this.idCondition = this.pathMatchesText.every(
@@ -163,22 +176,25 @@ class Rules {
 
     parseDate(dateXpath) {
         if (dateXpath === 'NOW') {
-            return new Date();
+            return { parsedDate: new Date() };
         }
         const dateElements = xpath(dateXpath, this.element);
         if (dateElements.length < 1) return null;
         const dateText = dateElements[0].value;
         if (dateText !== '') {
-            if (dateReg.test(dateText)) return new Date(dateText);
+            if (dateReg.test(dateText))
+                return {
+                    parsedDate: new Date(dateText),
+                    lineNumber: dateElements[0].lineNumber,
+                    columnNumber: dateElements[0].columnNumber,
+                };
         }
         return null;
     }
 
-    dateOrder(oneCase) {
-        const less = this.parseDate(oneCase.less);
-        const more = this.parseDate(oneCase.more);
-        if (less === null || more === null) return '';
-        return compareAsc(less, more) <= 0;
+    dateOrder() {
+        if (this.less === null || this.more === null) return '';
+        return compareAsc(this.less.parsedDate, this.more.parsedDate) <= 0;
     }
 
     dateNow(oneCase) {
@@ -191,21 +207,19 @@ class Rules {
         return '';
     }
 
-    betweenDates(oneCase) {
-        if (xpath(oneCase.date, this.element).length > 0) {
-            const start = this.parseDate(oneCase.start);
-            const date = this.parseDate(oneCase.date);
-            const end = this.parseDate(oneCase.end);
-            return compareAsc(start, date) <= 0 && compareAsc(date, end) <= 0;
+    betweenDates() {
+        if (this.date !== null) {
+            return (
+                compareAsc(this.start.parsedDate, this.date.parsedDate) <= 0 &&
+                compareAsc(this.date.parsedDate, this.end.parsedDate) <= 0
+            );
         }
         return '';
     }
 
-    timeLimit(oneCase) {
-        const start = this.parseDate(oneCase.start);
-        const end = this.parseDate(oneCase.end);
-        if (start === null || end === null) return '';
-        return differenceInDays(end, start) <= 365;
+    timeLimit() {
+        if (this.start === null || this.end === null) return '';
+        return differenceInDays(this.end.parsedDate, this.start.parsedDate) <= 365;
     }
 
     regex(oneCase, allMatches) {
@@ -307,7 +321,7 @@ class Rules {
 // Tests a specific rule type for a specific case.
 const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     let result;
-    let pathsContext;
+    let caseContext;
     let failContext;
     const ruleName = getRuleMethodName(rule);
     // if there is a condition, but not match, don't evalute the rule
@@ -319,15 +333,8 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             result = 'No ID Condition Match';
         } else {
             result = ruleObject[ruleName](oneCase);
-            if (_.has(ruleObject, 'pathMatches')) {
-                pathsContext = ruleObject.pathMatches.map((path, i) => ({
-                    xpath: `${contextXpath}/${oneCase.paths[i]}`,
-                    value: ruleObject.pathMatchesText[i],
-                    lineNumber: path.lineNumber,
-                    columnNumber: path.columnNumber,
-                }));
-            }
-            ({ failContext } = ruleObject);
+
+            ({ caseContext, failContext } = ruleObject);
         }
     }
 
@@ -338,7 +345,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             lineNumber: element.lineNumber,
             columnNumber: element.columnNumber,
         },
-        rule: { name: ruleName, case: oneCase, pathsContext, failContext },
+        rule: { name: ruleName, case: oneCase, caseContext, failContext },
     };
 };
 
