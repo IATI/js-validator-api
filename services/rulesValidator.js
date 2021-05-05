@@ -281,6 +281,7 @@ class Rules {
 // Tests a specific rule type for a specific case.
 const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     let result;
+    let pathsContext;
     const ruleName = getRuleMethodName(rule);
     // if there is a condition, but not match, don't evalute the rule
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
@@ -291,16 +292,25 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             result = 'No ID Condition Match';
         } else {
             result = ruleObject[ruleName](oneCase);
+            if (_.has(ruleObject, 'pathMatches')) {
+                pathsContext = ruleObject.pathMatches.map((path, i) => ({
+                    xpath: `${contextXpath}/${oneCase.paths[i]}`,
+                    value: ruleObject.pathMatchesText[i],
+                    lineNumber: path.lineNumber,
+                    columnNumber: path.columnNumber,
+                }));
+            }
         }
     }
 
     return {
         result,
-        context: contextXpath,
-        lineNumber: element.lineNumber,
-        rule: ruleName,
-        oneCase,
-        // element,
+        xpathContext: {
+            xpath: contextXpath,
+            lineNumber: element.lineNumber,
+            columnNumber: element.columnNumber,
+        },
+        rule: { name: ruleName, case: oneCase, pathsContext },
     };
 };
 
