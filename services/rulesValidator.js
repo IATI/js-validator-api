@@ -83,8 +83,9 @@ class Rules {
                     )}`;
                 }
                 return {
-                    xpath: oneCase.paths[i],
+                    xpath: oneCase.paths[i] || oneCase.paths[0],
                     attributes,
+                    name: path.nodeName,
                     value: this.pathMatchesText[i],
                     lineNumber: path.lineNumber,
                     columnNumber: path.columnNumber,
@@ -209,10 +210,23 @@ class Rules {
     }
 
     strictSum(oneCase) {
-        return (
-            this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0) ===
-            Number(oneCase.sum)
-        );
+        const computedSum = this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0);
+        const limitSum = Number(oneCase.sum);
+        if (computedSum !== limitSum) {
+            const elements = Array.from(
+                new Set(this.pathMatches.map((path) => path.ownerElement.nodeName))
+            ).join(', ');
+            const vocabularies = Array.from(
+                new Set(
+                    this.pathMatches.map((path) => xpath('string(@vocabulary)', path.ownerElement))
+                )
+            ).join(', ');
+            const text = `The sum is ${computedSum} for ${elements} in vocabulary ${vocabularies}`;
+            this.failContext.push({
+                text,
+            });
+        }
+        return computedSum === limitSum;
     }
 
     parseDate(dateXpath) {
