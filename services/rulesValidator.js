@@ -52,46 +52,50 @@ class Rules {
             this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
             this.pathMatchesText = this.pathMatches.map((match) => getText(match));
-            this.caseContext.paths = this.pathMatches.map((path, i) => {
-                let attributes = [];
-                let text;
-                let parentNodeName;
-                if (_.has(path.parentNode, 'nodeName')) {
-                    parentNodeName = path.parentNode.nodeName;
-                }
-                if (_.has(path, 'attributes') && path.attributes.length > 0) {
-                    attributes = Array.from(path.attributes).map((attr) => ({
-                        name: attr.name,
-                        value: attr.value,
-                    }));
-                }
-                if (path.nodeName === 'reference') {
-                    text = `For the ${parentNodeName} "${xpath(
-                        'string(../title/narrative)',
-                        path
-                    )}"`;
-                } else if (parentNodeName === 'transaction') {
-                    const transactionType =
-                        transactionTypes[xpath('string(../transaction-type/@code)', path)];
+            this.caseContext.paths = _.flatten(
+                this.nestedMatches.map((pathMatch, i) =>
+                    pathMatch.map((path) => {
+                        let attributes = [];
+                        let text;
+                        let parentNodeName;
+                        if (_.has(path.parentNode, 'nodeName')) {
+                            parentNodeName = path.parentNode.nodeName;
+                        }
+                        if (_.has(path, 'attributes') && path.attributes.length > 0) {
+                            attributes = Array.from(path.attributes).map((attr) => ({
+                                name: attr.name,
+                                value: attr.value,
+                            }));
+                        }
+                        if (path.nodeName === 'reference') {
+                            text = `For the ${parentNodeName} "${xpath(
+                                'string(../title/narrative)',
+                                path
+                            )}"`;
+                        } else if (parentNodeName === 'transaction') {
+                            const transactionType =
+                                transactionTypes[xpath('string(../transaction-type/@code)', path)];
 
-                    text = `For the ${transactionType || parentNodeName} of ${xpath(
-                        'string(../transaction-date/@iso-date)',
-                        path
-                    )} with value ${xpath('string(../value/@currency)', path)}${xpath(
-                        'string(../value)',
-                        path
-                    )}`;
-                }
-                return {
-                    xpath: oneCase.paths[i] || oneCase.paths[0],
-                    attributes,
-                    name: path.nodeName,
-                    value: this.pathMatchesText[i],
-                    lineNumber: path.lineNumber,
-                    columnNumber: path.columnNumber,
-                    text,
-                };
-            });
+                            text = `For the ${transactionType || parentNodeName} of ${xpath(
+                                'string(../transaction-date/@iso-date)',
+                                path
+                            )} with value ${xpath('string(../value/@currency)', path)}${xpath(
+                                'string(../value)',
+                                path
+                            )}`;
+                        }
+                        return {
+                            xpath: oneCase.paths[i],
+                            attributes,
+                            name: path.nodeName,
+                            value: getText(path),
+                            lineNumber: path.lineNumber,
+                            columnNumber: path.columnNumber,
+                            text,
+                        };
+                    })
+                )
+            );
         }
         ['less', 'more', 'start', 'date', 'end'].forEach((timeCase) => {
             if (timeCase in oneCase) {
