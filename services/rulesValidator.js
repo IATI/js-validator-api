@@ -10,6 +10,14 @@ const ruleNameMap = require('../ruleNameMap.json');
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
 const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
 
+const transactionTypes = {
+    1: 'incoming funds',
+    2: '(outgoing) commitment',
+    3: 'disbursement',
+    4: 'expenditure',
+    11: 'incoming commitment',
+};
+
 // Helper function: Returns the text of the given element or attribute
 const getText = (elementOrAttribute) => {
     if (elementOrAttribute.nodeType) return elementOrAttribute.textContent;
@@ -44,12 +52,45 @@ class Rules {
             this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
             this.pathMatchesText = this.pathMatches.map((match) => getText(match));
-            this.caseContext.paths = this.pathMatches.map((path, i) => ({
-                xpath: oneCase.paths[i],
-                value: this.pathMatchesText[i],
-                lineNumber: path.lineNumber,
-                columnNumber: path.columnNumber,
-            }));
+            this.caseContext.paths = this.pathMatches.map((path, i) => {
+                let attributes = [];
+                let text;
+                let parentNodeName;
+                if (_.has(path.parentNode, 'nodeName')) {
+                    parentNodeName = path.parentNode.nodeName;
+                }
+                if (_.has(path, 'attributes') && path.attributes.length > 0) {
+                    attributes = Array.from(path.attributes).map((attr) => ({
+                        name: attr.name,
+                        value: attr.value,
+                    }));
+                }
+                if (path.nodeName === 'reference') {
+                    text = `For the ${parentNodeName} "${xpath(
+                        'string(../title/narrative)',
+                        path
+                    )}"`;
+                } else if (parentNodeName === 'transaction') {
+                    const transactionType =
+                        transactionTypes[xpath('string(../transaction-type/@code)', path)];
+
+                    text = `For the ${transactionType || parentNodeName} of ${xpath(
+                        'string(../transaction-date/@iso-date)',
+                        path
+                    )} with value ${xpath('string(../value/@currency)', path)}${xpath(
+                        'string(../value)',
+                        path
+                    )}`;
+                }
+                return {
+                    xpath: oneCase.paths[i],
+                    attributes,
+                    value: this.pathMatchesText[i],
+                    lineNumber: path.lineNumber,
+                    columnNumber: path.columnNumber,
+                    text,
+                };
+            });
         }
         ['less', 'more', 'start', 'date', 'end'].forEach((timeCase) => {
             if (timeCase in oneCase) {
