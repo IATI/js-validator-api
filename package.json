@@ -13,7 +13,7 @@
     "dependencies": {
         "applicationinsights": "^1.8.10",
         "date-fns": "^2.21.2",
-        "dotenv": "^9.0.0",
+        "dotenv": "^9.0.1",
         "node-fetch": "^2.6.1",
         "underscore": "^1.13.1",
         "xml2js": "^0.4.23",
