@@ -18,7 +18,7 @@ const testMap = [
     {
         rule: 'forloop_condition.json',
         file: 'condition_no_match.xml',
-        expectedResult: true,
+        expectedResult: 'No Condition Match',
     },
 ];
 

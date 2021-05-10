@@ -338,38 +338,6 @@ class Rules {
         });
     }
 
-    loop(oneCase) {
-        const results = [];
-        _.forEach(oneCase.do, (subCases, rule) => {
-            _.forEach(subCases.cases, (subCase) => {
-                const subs = {};
-                _.forEach(oneCase.subs, (sub) => {
-                    subs[sub] = subCase[sub];
-                });
-                _.forEach([...new Set(xpath(oneCase.foreach, this.element))], (val) => {
-                    const subCaseTest = { ...subCase };
-                    _.forEach(subs, (v, k) => {
-                        if (typeof v === 'string') {
-                            subCaseTest[k] = v.replace(/\$1/g, val.nodeValue);
-                        } else {
-                            subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val.nodeValue));
-                        }
-                    });
-                    if ('condition' in subCaseTest && !xpath(subCaseTest.condition, this.element)) {
-                        results.push('No Condition Match');
-                    } else {
-                        const subRule = new Rules(this.element, subCaseTest);
-                        const ruleName = getRuleMethodName(rule);
-                        const loopResult = subRule[ruleName](subCaseTest);
-                        results.push(loopResult);
-                    }
-                });
-            });
-        });
-        if (results.length === 0) return [];
-        return results.every((val) => val);
-    }
-
     noSpaces() {
         return this.pathMatchesText.every(
             (pathMatchText) => pathMatchText === pathMatchText.trim()
@@ -392,7 +360,6 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             result = 'No ID Condition Match';
         } else {
             result = ruleObject[ruleName](oneCase);
-
             ({ caseContext, failContext } = ruleObject);
         }
     }
@@ -406,6 +373,30 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
         },
         rule: { name: ruleName, case: oneCase, caseContext, failContext },
     };
+};
+
+const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
+    const results = [];
+    _.forEach(oneCase.do, (subCases, subRule) => {
+        _.forEach(subCases.cases, (subCase) => {
+            const subs = {};
+            _.forEach(oneCase.subs, (sub) => {
+                subs[sub] = subCase[sub];
+            });
+            _.forEach([...new Set(xpath(oneCase.foreach, element))], (val) => {
+                const subCaseTest = { ...subCase };
+                _.forEach(subs, (v, k) => {
+                    if (typeof v === 'string') {
+                        subCaseTest[k] = v.replace(/\$1/g, val.nodeValue);
+                    } else {
+                        subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val.nodeValue));
+                    }
+                });
+                results.push(testRule(contextXpath, element, subRule, subCaseTest, idSets));
+            });
+        });
+    });
+    return results;
 };
 
 /*
@@ -430,13 +421,18 @@ exports.testRuleset = (ruleset, xml, idSets) => {
     } else {
         document = xml;
     }
-    const result = [];
+    let result = [];
     Object.keys(ruleset).forEach((contextXpath) => {
         xpath(contextXpath, document).forEach((element) => {
             Object.keys(ruleset[contextXpath]).forEach((rule) => {
                 const theCases = ruleset[contextXpath][rule].cases;
                 theCases.forEach((oneCase) => {
-                    result.push(testRule(contextXpath, element, rule, oneCase, idSets));
+                    if (rule === 'loop') {
+                        const loopRes = testRuleLoop(contextXpath, element, oneCase, idSets);
+                        result = result.concat(loopRes);
+                    } else {
+                        result.push(testRule(contextXpath, element, rule, oneCase, idSets));
+                    }
                 });
             });
         });
