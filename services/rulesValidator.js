@@ -222,7 +222,9 @@ class Rules {
             ).join(', ');
             const vocabularies = Array.from(
                 new Set(
-                    this.pathMatches.map((path) => xpath('string(@vocabulary)', path.ownerElement))
+                    this.pathMatches.map((path) =>
+                        xpath('string(@vocabulary | ../@vocabulary)', path.ownerElement)
+                    )
                 )
             ).join(', ');
             const text = `The sum is ${computedSum} for ${elements} in vocabulary ${vocabularies}`;
