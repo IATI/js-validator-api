@@ -67,7 +67,7 @@ exports.validate = async (context, req) => {
             // Remove in v3.x of standard
             if (_.has(codelistDefinition, 'text()')) {
                 const { allowedCodes } = codelistDefinition['text()'];
-                const valid = allowedCodes.includes(newValue.toString());
+                const valid = allowedCodes.has(newValue.toString());
                 if (!valid) cacheError(codelistDefinition, xpath, newValue, 'text()');
 
                 // if current element has attributes to check, do the validation
@@ -88,7 +88,7 @@ exports.validate = async (context, req) => {
                         const linkValue = newValue.$[linkedAttribute] || defaultLink;
                         if (mapping[linkValue]) {
                             const { allowedCodes } = mapping[linkValue];
-                            const valid = allowedCodes.includes(curValue.toString());
+                            const valid = allowedCodes.has(curValue.toString());
                             if (!valid)
                                 cacheError(
                                     codelistDefinition,
@@ -102,7 +102,7 @@ exports.validate = async (context, req) => {
                     } else {
                         const { allowedCodes } = codelistDefinition[attribute];
                         const curValue = newValue.$[attribute].toString();
-                        const valid = allowedCodes.includes(curValue);
+                        const valid = allowedCodes.has(curValue);
                         if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
 
                         // edge case for country-budget-items/budget-item
@@ -120,7 +120,7 @@ exports.validate = async (context, req) => {
                                 codelistSubDefinition.code.conditions.mapping['1'].allowedCodes;
                             newValue['budget-item'].forEach((item) => {
                                 const value = item.$.code;
-                                const validBudget = allowedBudgetCodes.includes(value.toString());
+                                const validBudget = allowedBudgetCodes.has(value.toString());
                                 if (!validBudget)
                                     cacheError(
                                         codelistSubDefinition,
