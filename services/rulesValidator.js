@@ -383,13 +383,16 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
             _.forEach(oneCase.subs, (sub) => {
                 subs[sub] = subCase[sub];
             });
-            _.forEach([...new Set(xpath(oneCase.foreach, element))], (val) => {
+            const groups = [
+                ...new Set(xpath(oneCase.foreach, element).map((res) => res.nodeValue)),
+            ];
+            _.forEach(groups, (val) => {
                 const subCaseTest = { ...subCase };
                 _.forEach(subs, (v, k) => {
                     if (typeof v === 'string') {
-                        subCaseTest[k] = v.replace(/\$1/g, val.nodeValue);
+                        subCaseTest[k] = v.replace(/\$1/g, val);
                     } else {
-                        subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val.nodeValue));
+                        subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val));
                     }
                 });
                 results.push(testRule(contextXpath, element, subRule, subCaseTest, idSets));
@@ -428,8 +431,9 @@ exports.testRuleset = (ruleset, xml, idSets) => {
                 const theCases = ruleset[contextXpath][rule].cases;
                 theCases.forEach((oneCase) => {
                     if (rule === 'loop') {
-                        const loopRes = testRuleLoop(contextXpath, element, oneCase, idSets);
-                        result = result.concat(loopRes);
+                        result = result.concat(
+                            testRuleLoop(contextXpath, element, oneCase, idSets)
+                        );
                     } else {
                         result.push(testRule(contextXpath, element, rule, oneCase, idSets));
                     }
