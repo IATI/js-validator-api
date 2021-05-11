@@ -373,7 +373,10 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             lineNumber: element.lineNumber,
             columnNumber: element.columnNumber,
         },
-        rule: { name: ruleName, case: oneCase, caseContext, failContext },
+        ruleName,
+        ruleCase: oneCase,
+        caseContext,
+        failContext,
     };
 };
 
