@@ -8,6 +8,29 @@ const config = require('../config/config');
 
 exports.validate = async (context, req) => {
     const { body } = req;
+
+    // No body
+    if (!body || JSON.stringify(body) === '{}') {
+        context.res = {
+            status: 422,
+            headers: { 'Content-Type': 'application/json' },
+            body: { error: 'No body' },
+        };
+
+        return;
+    }
+
+    // Body should be a string
+    if (typeof body !== 'string') {
+        context.res = {
+            status: 422,
+            headers: { 'Content-Type': 'application/json' },
+            body: { error: 'Body must be an application/xml string' },
+        };
+
+        return;
+    }
+
     const state = {
         fileSize: '',
         fileType: '',
@@ -170,19 +193,16 @@ exports.validate = async (context, req) => {
 
     // Metric: File Size (Mb)
     state.fileSize = Number(Buffer.byteLength(body) / 1000000).toFixed(4);
-
     client.trackMetric({ name: 'File Size (Mb)', value: state.fileSize });
     context.log({ name: 'File Size (Mb)', value: state.fileSize });
 
     try {
         const fileInfoStart = getStartTime();
-        // let json = {};
         try {
             ({
                 fileType: state.fileType,
                 version: state.version,
                 generatedDateTime: state.generatedDateTime,
-                // json,
                 numberActivities: state.numberActivities,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,

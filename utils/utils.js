@@ -37,7 +37,6 @@ exports.getFileInformation = async (body) => {
         fileType,
         version,
         generatedDateTime,
-        json,
         numberActivities,
         supportedVersion,
         isIati,
