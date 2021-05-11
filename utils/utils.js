@@ -1,4 +1,5 @@
 const xml2js = require('xml2js');
+const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 
 const config = require('../config/config');
@@ -45,14 +46,25 @@ exports.getFileInformation = async (body) => {
 
 const codelistRules = {};
 const ruleset = {};
+const schemas = {};
+
 config.VERSIONS.forEach(async (version) => {
-    // load 'allowedCodes' Arrays in as Set's for faster .has lookup
+    // load 'allowedCodes' Arrays in as Set's for faster .has() lookup
     codelistRules[version] = JSON.parse(
         await fs.readFile(`codelists/${version}/codelist_rules.json`),
         (key, value) => (key === 'allowedCodes' ? new Set(value) : value)
     );
 
+    // load rulesets
     ruleset[version] = JSON.parse(await fs.readFile(`rulesets/${version}/standard.json`));
+
+    // load schemas
+    ['iati-activities', 'iati-organisations'].forEach(async (fileType) => {
+        schemas[`${fileType}-${version}`] = libxml.parseXml(
+            (await fs.readFile(`schemas/${version}/${fileType}-schema.xsd`)).toString(),
+            { baseUrl: `./schemas/${version}/` }
+        );
+    });
 });
 
 exports.getVersionCodelistRules = (version) => {
@@ -65,6 +77,16 @@ exports.getVersionCodelistRules = (version) => {
 exports.getRuleset = (version) => {
     if (config.VERSIONS.includes(version)) {
         return ruleset[version];
+    }
+    throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
+};
+
+exports.getSchema = (fileType, version) => {
+    if (
+        config.VERSIONS.includes(version) &&
+        (fileType === 'iati-activities' || fileType === 'iati-organisations')
+    ) {
+        return schemas[`${fileType}-${version}`];
     }
     throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
 };

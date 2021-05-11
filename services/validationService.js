@@ -1,6 +1,12 @@
 const xml2js = require('xml2js');
+const libxml = require('libxmljs2');
 const _ = require('underscore');
-const { getFileInformation, getVersionCodelistRules, getRuleset } = require('../utils/utils');
+const {
+    getFileInformation,
+    getVersionCodelistRules,
+    getRuleset,
+    getSchema,
+} = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateIATI } = require('./rulesValidator');
 const config = require('../config/config');
@@ -265,6 +271,40 @@ exports.validate = async (context, req) => {
             return;
         }
 
+        // Schema Validation
+        const schemaStart = getStartTime();
+
+        const xsd = getSchema(state.fileType, state.version);
+        const parsedXML = libxml.parseXml(body);
+        if (!parsedXML.validate(xsd)) {
+            const schemaErrors = parsedXML.validationErrors.map((error) => ({
+                id: '0.3.1',
+                message: error.message,
+            }));
+            const validationReport = {
+                valid: false,
+                fileType: state.fileType,
+                iatiVersion: state.version,
+                errors: {
+                    file: schemaErrors,
+                },
+            };
+
+            state.schemaTime = getElapsedTime(schemaStart);
+            context.log({ name: 'Schema Validate Time (s)', value: state.schemaTime });
+
+            context.res = {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(validationReport),
+            };
+            return;
+        }
+
+        state.schemaTime = getElapsedTime(schemaStart);
+        context.log({ name: 'Schema Validation Time (s)', value: state.schemaTime });
+
+        // Codelist Validation
         const codelistStart = getStartTime();
         await xml2js.parseStringPromise(body, {
             validator,
@@ -274,6 +314,7 @@ exports.validate = async (context, req) => {
         state.codelistTime = getElapsedTime(codelistStart);
         context.log({ name: 'Codelist Validate Time (s)', value: state.codelistTime });
 
+        // Ruleset Validation
         const ruleStart = getStartTime();
 
         const ruleset = getRuleset(state.version);
