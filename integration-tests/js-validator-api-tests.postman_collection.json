@@ -336,7 +336,7 @@
 			"response": []
 		},
 		{
-			"name": "not-xml - 0.1.1 Copy",
+			"name": "not-xml - 0.1.1",
 			"event": [
 				{
 					"listen": "test",
@@ -381,6 +381,67 @@
 					"mode": "file",
 					"file": {
 						"src": "not-xml.xml"
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/pub/validate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "xlsx-spreadsheet-with-extension - 0.1.1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+							"pm.test(\"The file in not valid\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(false);",
+							"});",
+							"pm.test(\"Feedback message id is equal to 0.1.1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.1.1');",
+							"});",
+							"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include('Non-whitespace before first tag.\\nLine: 0\\nColumn: 1\\nChar: P');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followRedirects": false,
+				"followOriginalHttpMethod": false,
+				"followAuthorizationHeader": false
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "xlsx-spreadsheet-with-extension.xml"
 					}
 				},
 				"url": {
