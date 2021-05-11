@@ -216,7 +216,14 @@ exports.validate = async (context, req) => {
                 iatiVersion: state.version,
                 summary,
                 errors: {
-                    xml: { message: error.message },
+                    file: [
+                        {
+                            id: '0.1.1',
+                            severity: 'critical',
+                            category: 'iati',
+                            message: error.message,
+                        },
+                    ],
                 },
             };
             context.res = {
