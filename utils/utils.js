@@ -44,12 +44,15 @@ exports.getFileInformation = async (body) => {
 };
 
 const codelistRules = {};
+const ruleset = {};
 config.VERSIONS.forEach(async (version) => {
     // load 'allowedCodes' Arrays in as Set's for faster .has lookup
     codelistRules[version] = JSON.parse(
         await fs.readFile(`codelists/${version}/codelist_rules.json`),
         (key, value) => (key === 'allowedCodes' ? new Set(value) : value)
     );
+
+    ruleset[version] = JSON.parse(await fs.readFile(`rulesets/${version}/standard.json`));
 });
 
 exports.getVersionCodelistRules = (version) => {
@@ -57,4 +60,11 @@ exports.getVersionCodelistRules = (version) => {
         return codelistRules[version];
     }
     throw new Error(`Unable to retrieve codelist_rules.json for version ${version}`);
+};
+
+exports.getRuleset = (version) => {
+    if (config.VERSIONS.includes(version)) {
+        return ruleset[version];
+    }
+    throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
 };
