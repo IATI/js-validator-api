@@ -64,7 +64,9 @@ jobs:
     needs: build-test-deploy
     runs-on: ubuntu-latest
     steps:
-      ## FIXME
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v2
+
       - name: 'Install newman'
         run: |
           npm i newman
