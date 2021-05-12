@@ -10,6 +10,17 @@ const { client, getStartTime, getElapsedTime } = require('../config/appInsights'
 const { validateIATI } = require('./rulesValidator');
 const config = require('../config/config');
 
+const logValidationSummary = (context, state) => {
+    const validationSummary = {
+        name: 'Validation Summary',
+        properties: {
+            ...state,
+        },
+    };
+    client.trackEvent(validationSummary);
+    context.log(validationSummary);
+};
+
 exports.validate = async (context, req) => {
     const { body } = req;
 
@@ -38,8 +49,16 @@ exports.validate = async (context, req) => {
     const state = {
         fileSize: '',
         fileType: '',
-        version: '',
+        iatiVersion: '',
         generatedDateTime: '',
+        supportedVersion: '',
+        isIati: '',
+        fileInfoTime: '',
+        schemaTime: '',
+        codelistTime: '',
+        ruleTime: '',
+        numberActivities: '',
+        exitCategory: '',
     };
     const summary = { critical: 0, error: 0, warning: 0 };
     const errors = {};
@@ -85,7 +104,7 @@ exports.validate = async (context, req) => {
     };
 
     const validator = (xpath, previousValues, newValue) => {
-        const codelistRules = getVersionCodelistRules(state.version);
+        const codelistRules = getVersionCodelistRules(state.iatiVersion);
         // if rule exists for xpath
         if (_.has(codelistRules, xpath)) {
             const codelistDefinition = codelistRules[xpath];
@@ -205,7 +224,7 @@ exports.validate = async (context, req) => {
         try {
             ({
                 fileType: state.fileType,
-                version: state.version,
+                version: state.iatiVersion,
                 generatedDateTime: state.generatedDateTime,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
@@ -217,7 +236,7 @@ exports.validate = async (context, req) => {
             const validationReport = {
                 valid: false,
                 fileType: state.fileType,
-                iatiVersion: state.version,
+                iatiVersion: state.iatiVersion,
                 summary,
                 errors: {
                     file: [
@@ -230,6 +249,10 @@ exports.validate = async (context, req) => {
                     ],
                 },
             };
+            state.exitCategory = 'xmlError';
+
+            logValidationSummary(context, state);
+
             context.res = {
                 status: 422,
                 headers: { 'Content-Type': 'application/json' },
@@ -247,7 +270,7 @@ exports.validate = async (context, req) => {
             const validationReport = {
                 valid: false,
                 fileType: state.fileType,
-                iatiVersion: state.version,
+                iatiVersion: state.iatiVersion,
                 errors: {
                     file: [
                         {
@@ -259,6 +282,10 @@ exports.validate = async (context, req) => {
                     ],
                 },
             };
+
+            state.exitCategory = 'notIati';
+
+            logValidationSummary(context, state);
 
             context.res = {
                 status: 200,
@@ -275,7 +302,7 @@ exports.validate = async (context, req) => {
             const validationReport = {
                 valid: true,
                 fileType: state.fileType,
-                iatiVersion: state.version,
+                iatiVersion: state.iatiVersion,
                 errors: {
                     file: [
                         {
@@ -283,7 +310,7 @@ exports.validate = async (context, req) => {
                             severity: 'error',
                             category: 'documents',
                             message: `Version ${
-                                state.version
+                                state.iatiVersion
                             } of the IATI Standard is no longer supported. Supported versions: ${config.VERSIONS.join(
                                 ', '
                             )}`,
@@ -291,6 +318,10 @@ exports.validate = async (context, req) => {
                     ],
                 },
             };
+
+            state.exitCategory = 'notSupportedVersion';
+
+            logValidationSummary(context, state);
 
             context.res = {
                 status: 200,
@@ -303,7 +334,7 @@ exports.validate = async (context, req) => {
         // Schema Validation
         const schemaStart = getStartTime();
 
-        const xsd = getSchema(state.fileType, state.version);
+        const xsd = getSchema(state.fileType, state.iatiVersion);
         if (!xmlDoc.validate(xsd)) {
             const schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
@@ -314,7 +345,7 @@ exports.validate = async (context, req) => {
             const validationReport = {
                 valid: false,
                 fileType: state.fileType,
-                iatiVersion: state.version,
+                iatiVersion: state.iatiVersion,
                 errors: {
                     file: schemaErrors,
                 },
@@ -322,6 +353,10 @@ exports.validate = async (context, req) => {
 
             state.schemaTime = getElapsedTime(schemaStart);
             context.log({ name: 'Schema Validate Time (s)', value: state.schemaTime });
+
+            state.exitCategory = 'schemaErrors';
+
+            logValidationSummary(context, state);
 
             context.res = {
                 status: 200,
@@ -347,7 +382,7 @@ exports.validate = async (context, req) => {
         // Ruleset Validation
         const ruleStart = getStartTime();
 
-        const ruleset = getRuleset(state.version);
+        const ruleset = getRuleset(state.iatiVersion);
         const rulesResult = await validateIATI(ruleset, body);
 
         state.ruleTime = getElapsedTime(ruleStart);
@@ -370,11 +405,16 @@ exports.validate = async (context, req) => {
                 });
             }
         });
+        state.numberActivities = Object.keys(errors).length - 1;
+
+        state.exitCategory = 'fullValidation';
+
+        logValidationSummary(context, state);
 
         const validationReport = {
             valid: summary.critical === 0,
             fileType: state.fileType,
-            iatiVersion: state.version,
+            iatiVersion: state.iatiVersion,
             summary,
             errors: combinedErrors,
         };
