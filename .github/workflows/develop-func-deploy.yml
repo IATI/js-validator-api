@@ -27,7 +27,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: 'Login via Azure CLI'
-        uses: azure/login@v1
+        uses: azure/login@v1.3.0
         with:
           creds: ${{ secrets.DEV_AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
