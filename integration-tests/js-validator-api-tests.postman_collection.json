@@ -353,7 +353,7 @@
 							"});",
 							"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include('Non-whitespace before first tag.\\nLine: 0\\nColumn: 1\\nChar: T');",
+							"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include(\"Start tag expected, '<' not found\\n\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -414,7 +414,7 @@
 							"});",
 							"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include('Non-whitespace before first tag.\\nLine: 0\\nColumn: 1\\nChar: P');",
+							"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include(\"Start tag expected, '<' not found\\n\");",
 							"});"
 						],
 						"type": "text/javascript"

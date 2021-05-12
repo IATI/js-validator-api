@@ -1,5 +1,4 @@
 const xml2js = require('xml2js');
-const libxml = require('libxmljs2');
 const _ = require('underscore');
 const {
     getFileInformation,
@@ -203,15 +202,16 @@ exports.validate = async (context, req) => {
 
     try {
         const fileInfoStart = getStartTime();
+        let xmlDoc;
         try {
             ({
                 fileType: state.fileType,
                 version: state.version,
                 generatedDateTime: state.generatedDateTime,
-                numberActivities: state.numberActivities,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
-            } = await getFileInformation(body));
+                xmlDoc,
+            } = getFileInformation(body));
         } catch (error) {
             summary.critical = (summary.critical || 0) + 1;
 
@@ -275,9 +275,9 @@ exports.validate = async (context, req) => {
         const schemaStart = getStartTime();
 
         const xsd = getSchema(state.fileType, state.version);
-        const parsedXML = libxml.parseXml(body);
-        if (!parsedXML.validate(xsd)) {
-            const schemaErrors = parsedXML.validationErrors.map((error) => ({
+        // const parsedXML = libxml.parseXml(body);
+        if (!xmlDoc.validate(xsd)) {
+            const schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
                 message: error.message,
             }));

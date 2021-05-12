@@ -1,46 +1,38 @@
-const xml2js = require('xml2js');
 const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 
 const config = require('../config/config');
 
 // parse xml body to JSON to check the root element, don't attempt to parse if output from xmllint --recover was just blank XML doc
-exports.getFileInformation = async (body) => {
+exports.getFileInformation = (body) => {
     let fileType = '';
     let version = '';
     let generatedDateTime = '';
-    let numberActivities;
     let supportedVersion;
     let isIati;
-    let json;
+    let xmlDoc;
     if (body.toString() !== `<?xml version="1.0"?>\n`) {
-        json = await xml2js.parseStringPromise(body);
-        if (json) {
-            fileType = Object.keys(json).join('');
-            if (fileType === 'iati-activities') {
-                ({ version, 'generated-datetime': generatedDateTime } = json[fileType].$);
-                supportedVersion = version && config.VERSIONS.includes(version);
-                if (Array.isArray(json[fileType]['iati-activity'])) {
-                    numberActivities = json[fileType]['iati-activity'].length;
-                }
-                isIati = true;
-            } else if (fileType === 'iati-organisations') {
-                ({ version, 'generated-datetime': generatedDateTime } = json[fileType].$);
-                supportedVersion = version && config.VERSIONS.includes(version);
-                numberActivities = '';
-                isIati = true;
-            } else {
-                isIati = false;
+        xmlDoc = libxml.parseXml(body);
+        if (xmlDoc) {
+            fileType = xmlDoc.root().name();
+            isIati = fileType === 'iati-activities' || fileType === 'iati-organisations';
+
+            if (xmlDoc.get(`/${fileType}/@version`) !== undefined) {
+                version = xmlDoc.get(`/${fileType}/@version`).value();
             }
+            if (xmlDoc.get(`/${fileType}/@generated-datetime`) !== undefined) {
+                generatedDateTime = xmlDoc.get(`/${fileType}/@generated-datetime`).value();
+            }
+            supportedVersion = version && config.VERSIONS.includes(version);
         }
     }
     return {
         fileType,
         version,
         generatedDateTime,
-        numberActivities,
         supportedVersion,
         isIati,
+        xmlDoc,
     };
 };
 
