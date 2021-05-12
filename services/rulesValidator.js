@@ -3,7 +3,7 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
-const { getOrgIdPrefixes, getOrgIds } = require('../identifiers/fetchIdenitifiers');
+const { getOrgIdPrefixes, getOrgIds } = require('../utils/utils');
 
 const ruleNameMap = require('../ruleNameMap.json');
 
