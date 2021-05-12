@@ -6,16 +6,16 @@ on:
       - '**/README.md' # don't run on README.md file updates anywhere in repo
       - '**/dependabot.yml'
     branches:
-      - notabranch # update with develop
+      - develop # update with develop
 
 env:
   STAGE: dev # prefix to indicate environment stage
-  NAME: func-iati-servicename
+  NAME: func-validator
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
-  build-and-deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
@@ -26,11 +26,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1.3.0
-        with:
-          creds: ${{ secrets.DEV_AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
-
       - name: 'Resolve Project Dependencies Using Npm'
         shell: bash
         run: |
@@ -38,16 +33,28 @@ jobs:
           npm install
           popd
 
+      - name: 'Run unit tests'
+        run: npm run rules:test
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1.3.0
+        with:
+          creds: ${{ secrets.DEV_AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
+
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1.3.2
         with:
           app-name: ${{ env.STAGE }}-${{ env.NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
 
+  integration-test:
+    needs: build-test-deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: 'Install newman'
         run: |
           npm i -g newman
 
-      - name: 'Run integration tests' # Update -e environment file with an environment that points to your deployed instance
+      - name: 'Run integration tests'
         run: |
-          newman run integration_tests/azure-function-node-microservice-template.postman_collection.json -e integration_tests/envs/UPDATE_ME.postman_environment.json
+          newman run integration_tests/azure-function-node-microservice-template.postman_collection.json -e integration_tests/envs/dev-func-validator.postman_environment.json
