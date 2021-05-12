@@ -108,9 +108,8 @@ exports.validate = async (context, req) => {
                 matches.forEach((attribute) => {
                     // linked code to vocabulary case
                     if (_.has(codelistDefinition[attribute], 'conditions')) {
-                        const { linkedAttribute, defaultLink, mapping } = codelistDefinition[
-                            attribute
-                        ].conditions;
+                        const { linkedAttribute, defaultLink, mapping } =
+                            codelistDefinition[attribute].conditions;
                         const curValue = newValue.$[attribute];
                         const linkValue = newValue.$[linkedAttribute] || defaultLink;
                         if (mapping[linkValue]) {
@@ -279,7 +278,9 @@ exports.validate = async (context, req) => {
         if (!xmlDoc.validate(xsd)) {
             const schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
+                category: 'schema',
                 message: error.message,
+                ...error,
             }));
             const validationReport = {
                 valid: false,
