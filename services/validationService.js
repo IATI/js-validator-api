@@ -240,8 +240,38 @@ exports.validate = async (context, req) => {
         state.fileInfoTime = getElapsedTime(fileInfoStart);
         context.log({ name: 'FileInfo Parse Time (s)', value: state.fileInfoTime });
 
+        // IATI Check
+        if (!state.isIati) {
+            summary.critical = (summary.critical || 0) + 1;
+
+            const validationReport = {
+                valid: false,
+                fileType: state.fileType,
+                iatiVersion: state.version,
+                errors: {
+                    file: [
+                        {
+                            id: '0.2.1',
+                            severity: 'critical',
+                            category: 'iati',
+                            message: 'The file is not an IATI file.',
+                        },
+                    ],
+                },
+            };
+
+            context.res = {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(validationReport),
+            };
+            return;
+        }
+
         // Version Check
         if (!state.supportedVersion) {
+            summary.error = (summary.error || 0) + 1;
+
             const validationReport = {
                 valid: true,
                 fileType: state.fileType,
@@ -252,9 +282,9 @@ exports.validate = async (context, req) => {
                             id: '0.6.1',
                             severity: 'error',
                             category: 'documents',
-                            message: `${
+                            message: `Version ${
                                 state.version
-                            } is not a supported version. Supported versions: ${config.VERSIONS.join(
+                            } of the IATI Standard is no longer supported. Supported versions: ${config.VERSIONS.join(
                                 ', '
                             )}`,
                         },
@@ -274,7 +304,6 @@ exports.validate = async (context, req) => {
         const schemaStart = getStartTime();
 
         const xsd = getSchema(state.fileType, state.version);
-        // const parsedXML = libxml.parseXml(body);
         if (!xmlDoc.validate(xsd)) {
             const schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
