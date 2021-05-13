@@ -87,7 +87,7 @@ let orgIdPrefixes = '';
 
 exports.getOrgIdPrefixes = async () => {
     if (orgIdPrefixes === '') {
-        console.log('Fetching OrgIdPrefixes from http://org-id.guide/download.json');
+        console.log({ name: 'Loading OrgId Prefixes', value: true });
         // const res = await fetch('http://org-id.guide/download.json');
         // const fullOrgIdInfo = await res.json();
         const fullOrgIdInfo = await JSON.parse(
@@ -107,7 +107,7 @@ let orgIds = '';
 
 exports.getOrgIds = async () => {
     if (orgIds === '') {
-        console.log('Fetching OrgIds');
+        console.log({ name: 'Loading OrgIds', value: true });
         const fullOrgIdInfo = await JSON.parse(
             await fs.readFile('identifiers/iati_publishers_list.json')
         );

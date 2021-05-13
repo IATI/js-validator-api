@@ -5,7 +5,7 @@
     "scripts": {
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",
-        "rules:test": "mocha './ruleset-unit-tests/**/test.js'",
+        "rules:test": "mocha './ruleset-unit-tests/**/test.js' --v8-prof",
         "int:test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install"
     },
@@ -16,6 +16,7 @@
         "dotenv": "^9.0.2",
         "libxmljs2": "^0.27.0",
         "node-fetch": "^2.6.1",
+        "numeral": "^2.0.6",
         "underscore": "^1.13.1",
         "xml2js": "^0.4.23",
         "xmldom": "^0.6.0",

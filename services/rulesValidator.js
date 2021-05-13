@@ -357,13 +357,14 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = 'No Condition Match';
     } else {
-        const ruleObject = new Rules(element, oneCase, idSets);
+        let ruleObject = new Rules(element, oneCase, idSets);
         if (ruleObject.idCondition === false) {
             result = 'No ID Condition Match';
         } else {
             result = ruleObject[ruleName](oneCase);
             ({ caseContext, failContext } = ruleObject);
         }
+        ruleObject = null;
     }
 
     return {

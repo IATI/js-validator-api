@@ -1,5 +1,6 @@
 const xml2js = require('xml2js');
 const _ = require('underscore');
+const numeral = require('numeral');
 const {
     getFileInformation,
     getVersionCodelistRules,
@@ -21,8 +22,20 @@ const logValidationSummary = (context, state) => {
     context.log(validationSummary);
 };
 
+const logMemoryUseage = (context, tag) => {
+    const { rss, heapTotal } = process.memoryUsage();
+
+    context.log({
+        name: tag,
+        value: {
+            rss: numeral(rss).format('0.0 ib'),
+            heapTotal: numeral(heapTotal).format('0.0 ib'),
+        },
+    });
+};
+
 exports.validate = async (context, req) => {
-    const { body } = req;
+    let { body } = req;
 
     // No body
     if (!body || JSON.stringify(body) === '{}') {
@@ -61,7 +74,7 @@ exports.validate = async (context, req) => {
         exitCategory: '',
     };
     const summary = { critical: 0, error: 0, warning: 0 };
-    const errors = {};
+    let errors = {};
     let errCache = [];
 
     const cacheError = (
@@ -103,116 +116,6 @@ exports.validate = async (context, req) => {
         errCache.push(validationError);
     };
 
-    const validator = (xpath, previousValues, newValue) => {
-        const codelistRules = getVersionCodelistRules(state.iatiVersion);
-        // if rule exists for xpath
-        if (_.has(codelistRules, xpath)) {
-            const codelistDefinition = codelistRules[xpath];
-
-            // edge case for crs-add/channel-code
-            // Remove in v3.x of standard
-            if (_.has(codelistDefinition, 'text()')) {
-                const { allowedCodes } = codelistDefinition['text()'];
-                const valid = allowedCodes.has(newValue.toString());
-                if (!valid) cacheError(codelistDefinition, xpath, newValue, 'text()');
-
-                // if current element has attributes to check, do the validation
-            } else if (_.has(newValue, '$')) {
-                // see if the attributes match any rules
-                const attrs = Object.keys(newValue.$);
-                const ruleAttrs = Object.keys(codelistDefinition);
-                const matches = _.intersection(attrs, ruleAttrs);
-
-                // loop on matches to validate
-                matches.forEach((attribute) => {
-                    // linked code to vocabulary case
-                    if (_.has(codelistDefinition[attribute], 'conditions')) {
-                        const { linkedAttribute, defaultLink, mapping } =
-                            codelistDefinition[attribute].conditions;
-                        const curValue = newValue.$[attribute];
-                        const linkValue = newValue.$[linkedAttribute] || defaultLink;
-                        if (mapping[linkValue]) {
-                            const { allowedCodes } = mapping[linkValue];
-                            const valid = allowedCodes.has(curValue.toString());
-                            if (!valid)
-                                cacheError(
-                                    codelistDefinition,
-                                    xpath,
-                                    curValue,
-                                    attribute,
-                                    linkedAttribute,
-                                    linkValue
-                                );
-                        }
-                    } else {
-                        const { allowedCodes } = codelistDefinition[attribute];
-                        const curValue = newValue.$[attribute].toString();
-                        const valid = allowedCodes.has(curValue);
-                        if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
-
-                        // edge case for country-budget-items/budget-item
-                        // Remove in v3.x of standard
-                        if (
-                            xpath === '/iati-activities/iati-activity/country-budget-items' &&
-                            attribute === 'vocabulary' &&
-                            curValue === '1'
-                        ) {
-                            const codelistSubDefinition =
-                                codelistRules[
-                                    '/iati-activities/iati-activity/country-budget-items/budget-item'
-                                ];
-                            const allowedBudgetCodes =
-                                codelistSubDefinition.code.conditions.mapping['1'].allowedCodes;
-                            newValue['budget-item'].forEach((item) => {
-                                const value = item.$.code;
-                                const validBudget = allowedBudgetCodes.has(value.toString());
-                                if (!validBudget)
-                                    cacheError(
-                                        codelistSubDefinition,
-                                        '/iati-activities/iati-activity/country-budget-items/budget-item',
-                                        value,
-                                        'code',
-                                        'vocabulary',
-                                        '1'
-                                    );
-                            });
-                        }
-                    }
-                });
-            }
-        }
-
-        // save activity-level errors to error object
-        if (xpath === '/iati-activities/iati-activity') {
-            if (newValue['iati-identifier']) {
-                const identifier = newValue['iati-identifier'].join();
-                errors[identifier] = errCache;
-            } else {
-                errors.unidentified = errCache;
-            }
-            errCache = [];
-        }
-        // save organisation-level errors to error object
-        if (xpath === '/iati-organisations/iati-organisation') {
-            if (newValue['organisation-identifier']) {
-                const identifier = newValue['organisation-identifier'].join();
-                errors[identifier] = errCache;
-            } else {
-                errors.unidentified = errCache;
-            }
-            errCache = [];
-        }
-
-        // save file level errors to error object
-        if (xpath === '/iati-activities' || xpath === '/iati-organisations') {
-            errors.file = errCache;
-            errCache = [];
-        }
-
-        // we're not modifying anything through the validation because we want the full json out
-        return newValue;
-    };
-
     // Metric: File Size (Mb)
     state.fileSize = Number(Buffer.byteLength(body) / 1000000).toFixed(4);
     client.trackMetric({ name: 'File Size (Mb)', value: state.fileSize });
@@ -220,6 +123,8 @@ exports.validate = async (context, req) => {
 
     try {
         const fileInfoStart = getStartTime();
+        logMemoryUseage(context, 'fileInfoStart');
+
         let xmlDoc;
         try {
             ({
@@ -260,6 +165,8 @@ exports.validate = async (context, req) => {
             };
             return;
         }
+
+        logMemoryUseage(context, 'fileInfoEnd');
         state.fileInfoTime = getElapsedTime(fileInfoStart);
         context.log({ name: 'FileInfo Parse Time (s)', value: state.fileInfoTime });
 
@@ -292,6 +199,8 @@ exports.validate = async (context, req) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
+            errors = null;
+            errCache = null;
             return;
         }
 
@@ -328,14 +237,18 @@ exports.validate = async (context, req) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
+            errors = null;
+            errCache = null;
             return;
         }
 
         // Schema Validation
+        logMemoryUseage(context, 'schemaStart');
+
         const schemaStart = getStartTime();
 
-        const xsd = getSchema(state.fileType, state.iatiVersion);
-        if (!xmlDoc.validate(xsd)) {
+        // const xsd = getSchema(state.fileType, state.iatiVersion);
+        if (!xmlDoc.validate(getSchema(state.fileType, state.iatiVersion))) {
             const schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
                 category: 'schema',
@@ -363,18 +276,135 @@ exports.validate = async (context, req) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
+            errors = null;
+            errCache = null;
             return;
         }
 
+        xmlDoc = null;
+
+        logMemoryUseage(context, 'schemaEnd');
         state.schemaTime = getElapsedTime(schemaStart);
         context.log({ name: 'Schema Validation Time (s)', value: state.schemaTime });
 
         // Codelist Validation
         const codelistStart = getStartTime();
+        let codelistRules = getVersionCodelistRules(state.iatiVersion);
+
+        const validator = (xpath, previousValues, newValue) => {
+            // if rule exists for xpath
+            if (_.has(codelistRules, xpath)) {
+                const codelistDefinition = codelistRules[xpath];
+
+                // edge case for crs-add/channel-code
+                // Remove in v3.x of standard
+                if (_.has(codelistDefinition, 'text()')) {
+                    const { allowedCodes } = codelistDefinition['text()'];
+                    const valid = allowedCodes.has(newValue.toString());
+                    if (!valid) cacheError(codelistDefinition, xpath, newValue, 'text()');
+
+                    // if current element has attributes to check, do the validation
+                } else if (_.has(newValue, '$')) {
+                    // see if the attributes match any rules
+                    const attrs = Object.keys(newValue.$);
+                    const ruleAttrs = Object.keys(codelistDefinition);
+                    const matches = _.intersection(attrs, ruleAttrs);
+
+                    // loop on matches to validate
+                    matches.forEach((attribute) => {
+                        // linked code to vocabulary case
+                        if (_.has(codelistDefinition[attribute], 'conditions')) {
+                            const { linkedAttribute, defaultLink, mapping } =
+                                codelistDefinition[attribute].conditions;
+                            const curValue = newValue.$[attribute];
+                            const linkValue = newValue.$[linkedAttribute] || defaultLink;
+                            if (mapping[linkValue]) {
+                                const { allowedCodes } = mapping[linkValue];
+                                const valid = allowedCodes.has(curValue.toString());
+                                if (!valid)
+                                    cacheError(
+                                        codelistDefinition,
+                                        xpath,
+                                        curValue,
+                                        attribute,
+                                        linkedAttribute,
+                                        linkValue
+                                    );
+                            }
+                        } else {
+                            const { allowedCodes } = codelistDefinition[attribute];
+                            const curValue = newValue.$[attribute].toString();
+                            const valid = allowedCodes.has(curValue);
+                            if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
+
+                            // edge case for country-budget-items/budget-item
+                            // Remove in v3.x of standard
+                            if (
+                                xpath === '/iati-activities/iati-activity/country-budget-items' &&
+                                attribute === 'vocabulary' &&
+                                curValue === '1'
+                            ) {
+                                const codelistSubDefinition =
+                                    codelistRules[
+                                        '/iati-activities/iati-activity/country-budget-items/budget-item'
+                                    ];
+                                const allowedBudgetCodes =
+                                    codelistSubDefinition.code.conditions.mapping['1'].allowedCodes;
+                                newValue['budget-item'].forEach((item) => {
+                                    const value = item.$.code;
+                                    const validBudget = allowedBudgetCodes.has(value.toString());
+                                    if (!validBudget)
+                                        cacheError(
+                                            codelistSubDefinition,
+                                            '/iati-activities/iati-activity/country-budget-items/budget-item',
+                                            value,
+                                            'code',
+                                            'vocabulary',
+                                            '1'
+                                        );
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+            // save activity-level errors to error object
+            if (xpath === '/iati-activities/iati-activity') {
+                if (newValue['iati-identifier']) {
+                    const identifier = newValue['iati-identifier'].join();
+                    errors[identifier] = errCache;
+                } else {
+                    errors.unidentified = errCache;
+                }
+                errCache = [];
+            }
+            // save organisation-level errors to error object
+            if (xpath === '/iati-organisations/iati-organisation') {
+                if (newValue['organisation-identifier']) {
+                    const identifier = newValue['organisation-identifier'].join();
+                    errors[identifier] = errCache;
+                } else {
+                    errors.unidentified = errCache;
+                }
+                errCache = [];
+            }
+
+            // save file level errors to error object
+            if (xpath === '/iati-activities' || xpath === '/iati-organisations') {
+                errors.file = errCache;
+                errCache = [];
+            }
+
+            // we're not modifying anything through the validation because we want the full json out
+            return newValue;
+        };
+
         await xml2js.parseStringPromise(body, {
             validator,
             async: true,
         });
+        codelistRules = null;
 
         state.codelistTime = getElapsedTime(codelistStart);
         context.log({ name: 'Codelist Validate Time (s)', value: state.codelistTime });
@@ -424,6 +454,9 @@ exports.validate = async (context, req) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(validationReport),
         };
+        errors = null;
+        errCache = null;
+        body = null;
         return;
     } catch (error) {
         context.log(error);
