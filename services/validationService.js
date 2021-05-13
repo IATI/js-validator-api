@@ -289,7 +289,9 @@ exports.validate = async (context, req) => {
 
         // Codelist Validation
         const codelistStart = getStartTime();
+        logMemoryUseage(context, 'getCodelistStart');
         let codelistRules = getVersionCodelistRules(state.iatiVersion);
+        logMemoryUseage(context, 'getCodelistEnd');
 
         const validator = (xpath, previousValues, newValue) => {
             // if rule exists for xpath
@@ -399,6 +401,7 @@ exports.validate = async (context, req) => {
             // we're not modifying anything through the validation because we want the full json out
             return newValue;
         };
+        logMemoryUseage(context, 'codelistStart');
 
         await xml2js.parseStringPromise(body, {
             validator,
@@ -406,14 +409,23 @@ exports.validate = async (context, req) => {
         });
         codelistRules = null;
 
+        logMemoryUseage(context, 'codelistEnd');
+
         state.codelistTime = getElapsedTime(codelistStart);
         context.log({ name: 'Codelist Validate Time (s)', value: state.codelistTime });
 
         // Ruleset Validation
         const ruleStart = getStartTime();
+        logMemoryUseage(context, 'getRulesetStart');
 
         const ruleset = getRuleset(state.iatiVersion);
+
+        logMemoryUseage(context, 'getRulesetEnd');
+        logMemoryUseage(context, 'rulesetStart');
+
         const rulesResult = await validateIATI(ruleset, body);
+
+        logMemoryUseage(context, 'rulesetEnd');
 
         state.ruleTime = getElapsedTime(ruleStart);
         context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });
@@ -457,6 +469,7 @@ exports.validate = async (context, req) => {
         errors = null;
         errCache = null;
         body = null;
+        logMemoryUseage(context, 'theEnd');
         return;
     } catch (error) {
         context.log(error);
