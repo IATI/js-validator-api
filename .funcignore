@@ -1,0 +1,13 @@
+# vscode
+.vscode
+
+# tests
+integration-tests
+ruleset-unit-tests
+
+# github
+.github
+
+# documentation
+docs
+validation_report.schema.json
