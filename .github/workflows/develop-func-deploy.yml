@@ -10,7 +10,7 @@ on:
 
 env:
   STAGE: dev # prefix to indicate environment stage
-  NAME: func-validator
+  NAME: func-iativalidator
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
@@ -57,7 +57,7 @@ jobs:
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1.3.2
         with:
-          app-name: ${{ env.STAGE }}-${{ env.NAME }}
+          app-name: ${{ env.NAME }}-${{ env.STAGE }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
 
   integration-test:
@@ -73,4 +73,4 @@ jobs:
 
       - name: 'Run integration tests'
         run: |
-          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/dev-func-validator.postman_environment.json --working-dir integration-tests/test-files
+          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-dev.postman_environment.json --working-dir integration-tests/test-files
