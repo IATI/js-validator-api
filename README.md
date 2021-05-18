@@ -97,11 +97,35 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   Returns
 
-```json
-{
-    "error": "Max Filesize of { env.MAX_FILESIZE } exceeded. File supplied is <fileSize> MiB"
-}
-```
+#### HTTP Response Codes
+
+`200 OK`:
+
+-   Full validation has run (fullValidation)
+
+`400 Bad Request` aka can't read it:
+
+-   No Body
+-   Body not application/xml string
+-   Not parseable XML (xmlError)
+
+`404 Not Found`:
+
+-   This can happen in cases where the Azure Function has crashed and hasn't restarted yet to present the API Route
+
+`413 Payload Too Large`:
+
+-   Body is larger than 60 MiB
+
+`422 Unprocessable Entity` aka can read it but it doesn't make sense:
+
+-   Not recognisable as IATI (notIati)
+-   Not a current version of IATI (notSupportedVersion)
+-   Schema Errors (schemaErrors)
+
+`500 Internal Server Error`:
+
+-   Unhandled server error, contact the IATI Tech Team
 
 ## Creating a new route
 
