@@ -35,7 +35,7 @@ exports.validate = async (context, req) => {
     // No body
     if (!body || JSON.stringify(body) === '{}') {
         context.res = {
-            status: 422,
+            status: 400,
             headers: { 'Content-Type': 'application/json' },
             body: { error: 'No body' },
         };
@@ -46,7 +46,7 @@ exports.validate = async (context, req) => {
     // Body should be a string
     if (typeof body !== 'string') {
         context.res = {
-            status: 422,
+            status: 400,
             headers: { 'Content-Type': 'application/json' },
             body: { error: 'Body must be an application/xml string' },
         };
@@ -125,7 +125,7 @@ exports.validate = async (context, req) => {
             logValidationSummary(context, state);
 
             context.res = {
-                status: 422,
+                status: 400,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
@@ -144,6 +144,7 @@ exports.validate = async (context, req) => {
                 valid: false,
                 fileType: state.fileType,
                 iatiVersion: state.iatiVersion,
+                summary,
                 errors: {
                     file: [
                         {
@@ -161,7 +162,7 @@ exports.validate = async (context, req) => {
             logValidationSummary(context, state);
 
             context.res = {
-                status: 200,
+                status: 422,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
@@ -176,6 +177,7 @@ exports.validate = async (context, req) => {
                 valid: true,
                 fileType: state.fileType,
                 iatiVersion: state.iatiVersion,
+                summary,
                 errors: {
                     file: [
                         {
@@ -197,7 +199,7 @@ exports.validate = async (context, req) => {
             logValidationSummary(context, state);
 
             context.res = {
-                status: 200,
+                status: 422,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
@@ -216,10 +218,13 @@ exports.validate = async (context, req) => {
                 message: error.message,
                 ...error,
             }));
+            summary.critical = (summary.critical || 0) + 1;
+
             const validationReport = {
                 valid: false,
                 fileType: state.fileType,
                 iatiVersion: state.iatiVersion,
+                summary,
                 errors: {
                     file: schemaErrors,
                 },
@@ -233,7 +238,7 @@ exports.validate = async (context, req) => {
             logValidationSummary(context, state);
 
             context.res = {
-                status: 200,
+                status: 422,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(validationReport),
             };
