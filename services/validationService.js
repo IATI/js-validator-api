@@ -70,10 +70,22 @@ exports.validate = async (context, req) => {
     };
     const summary = { critical: 0, error: 0, warning: 0 };
 
-    // Metric: File Size (Mb)
-    state.fileSize = Number(Buffer.byteLength(body) / 1000000).toFixed(4);
-    client.trackMetric({ name: 'File Size (Mb)', value: state.fileSize });
-    context.log({ name: 'File Size (Mb)', value: state.fileSize });
+    // Metric: File Size (MiB)
+    state.fileSize = Number(Buffer.byteLength(body) / (1024 * 1024)).toFixed(4);
+    client.trackMetric({ name: 'File Size (MiB)', value: state.fileSize });
+    context.log({ name: 'File Size (MiB)', value: state.fileSize });
+
+    if (state.fileSize > config.MAX_FILESIZE) {
+        context.res = {
+            status: 413,
+            headers: { 'Content-Type': 'application/json' },
+            body: {
+                error: `Max Filesize of ${config.MAX_FILESIZE} MiB exceeded. File supplied is ${state.fileSize} MiB`,
+            },
+        };
+
+        return;
+    }
 
     try {
         const fileInfoStart = getStartTime();

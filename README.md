@@ -76,6 +76,21 @@ Version <0.0.0>
 Hello, <Name>. This HTTP triggered function executed successfully.
 ```
 
+### `POST /pub/validate`
+
+-   Request Body
+
+    -   application/xml
+    -   IATI XML
+
+-   Returns
+
+```json
+{
+    "error": "Max Filesize of { env.MAX_FILESIZE } exceeded. File supplied is <fileSize> MiB"
+}
+```
+
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "anonymous"`
