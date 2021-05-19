@@ -5,7 +5,7 @@
     "scripts": {
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",
-        "rules:test": "mocha './ruleset-unit-tests/**/test.js' --v8-prof",
+        "rules:test": "mocha './ruleset-unit-tests/**/test.js'",
         "int:test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install"
     },
