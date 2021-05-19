@@ -43,8 +43,7 @@ const schemas = {};
 config.VERSIONS.forEach(async (version) => {
     // load 'allowedCodes' Arrays in as Set's for faster .has() lookup
     codelistRules[version] = JSON.parse(
-        await fs.readFile(`codelists/${version}/codelist_rules.json`),
-        (key, value) => (key === 'allowedCodes' ? new Set(value) : value)
+        await fs.readFile(`codelists/${version}/codelist_rules.json`)
     );
 
     // load rulesets
