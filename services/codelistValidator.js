@@ -18,6 +18,7 @@ exports.validateCodelists = async (body, version) => {
     ) => {
         let ruleInfo;
         let errContext;
+        let context;
         if (linkedAttribute) {
             ruleInfo = codelistDefinition[attribute].conditions.mapping[linkedAttributeValue];
         } else {
@@ -30,7 +31,8 @@ exports.validateCodelists = async (body, version) => {
             errContext = `"${curValue}" is not a valid value for attribute @${attribute}`;
         }
         if (linkedAttribute) {
-            errContext += ` and linked @${linkedAttribute}=${linkedAttributeValue}`;
+            context = `@${linkedAttribute} = ${linkedAttributeValue}`;
+            errContext += ` and linked ${context}`;
         }
         const validationError = {
             xpath,
@@ -39,6 +41,7 @@ exports.validateCodelists = async (body, version) => {
             severity,
             priority,
             category,
+            context,
             message,
             errContext,
         };

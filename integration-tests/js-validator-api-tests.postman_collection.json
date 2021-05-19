@@ -1344,7 +1344,7 @@
 							"});",
 							"pm.test(\"There is a codelist error that references linked default codelist\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => ({codelist: obj.codelist, errContext: obj.errContext}))).to.be.an('array').that.deep.includes({codelist: 'Region', errContext: \"\\\"ZZA123\\\" is not a valid value for attribute @code and linked @vocabulary=1\"});",
+							"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => ({codelist: obj.codelist, errContext: obj.errContext}))).to.be.an('array').that.deep.includes({codelist: 'Region', errContext: \"\\\"ZZA123\\\" is not a valid value for attribute @code and linked @vocabulary = 1\"});",
 							"});",
 							""
 						],
