@@ -4,18 +4,18 @@ const config = require('./config');
 
 try {
     let connectionOptions = {};
-    if (config.REDISCACHEKEY && config.REDISCACHEHOSTNAME) {
+    if (config.REDIS_KEY && config.REDIS_HOSTNAME) {
         connectionOptions = {
-            auth_pass: config.REDISCACHEKEY,
-            tls: { servername: config.REDISCACHEHOSTNAME },
+            auth_pass: config.REDIS_KEY,
+            tls: { servername: config.REDIS_HOSTNAME },
         };
     }
     const client = redis
-        .createClient(config.REDIS_PORT, config.REDISCACHEHOSTNAME, connectionOptions)
+        .createClient(config.REDIS_PORT, config.REDIS_HOSTNAME, connectionOptions)
         .on('ready', () => {
             console.log({
                 name: 'redisConnect',
-                value: `Redis: Connection to ${config.REDISCACHEHOSTNAME || 'local'} ready`,
+                value: `Redis: Connection to ${config.REDIS_HOSTNAME || 'local'} ready`,
             });
             return client;
         })

@@ -11,4 +11,6 @@ module.exports = {
     GITHUB_BASIC_TOKEN: process.env.GITHUB_BASIC_TOKEN,
     REDIS_PORT: process.env.REDIS_PORT || 6379,
     REDIS_CACHE_SEC: process.env.REDIS_CACHE_SEC || 86400,
+    REDIS_KEY: process.env.REDIS_KEY,
+    REDIS_HOSTNAME: process.env.REDIS_HOSTNAME,
 };
