@@ -57,30 +57,56 @@ const ruleset = {};
 const schemas = {};
 
 config.VERSIONS.forEach(async (version) => {
-    // load 'allowedCodes' Arrays in as Set's for faster .has() lookup
+    // load codelists
+    const codelistBranch = `v${version}/validatorCodelist`;
     try {
-        codelistRules[version] = await fetchJSONfromGitHub(
-            'IATI-Codelists',
-            `v${version}/validatorCodelist`,
-            'codelist_rules.json'
-        );
+        const cachedCodelistRule = JSON.parse(await aGet(`codelistRules${version}`));
+
+        if (!cachedCodelistRule) {
+            console.log({
+                name: `Fetching codelist rules for version: ${version}, repo: IATI-Codelists, branch: ${codelistBranch} `,
+                value: true,
+            });
+            codelistRules[version] = await fetchJSONfromGitHub(
+                'IATI-Codelists',
+                codelistBranch,
+                'codelist_rules.json'
+            );
+        } else {
+            console.log({
+                name: `Using redis cache codelist rules for version: ${version}`,
+                value: true,
+            });
+            codelistRules[version] = cachedCodelistRule;
+        }
     } catch (error) {
-        console.error(
-            `Error fetching Codelists for version ${version} from GitHub. Error: ${error}`
-        );
+        console.error(`Error fetching Codelists for version ${version}. Error: ${error}`);
     }
 
     // load rulesets
+    const rulesetBranch = `v${version}/validatorV2`;
     try {
-        ruleset[version] = await fetchJSONfromGitHub(
-            'IATI-Rulesets',
-            `v${version}/validatorV2`,
-            'rulesets/standard.json'
-        );
+        const cachedRuleset = JSON.parse(await aGet(`ruleset${version}`));
+
+        if (!cachedRuleset) {
+            console.log({
+                name: `Fetching ruleset for version: ${version}, repo: IATI-Rulesets, branch: ${rulesetBranch} `,
+                value: true,
+            });
+            ruleset[version] = await fetchJSONfromGitHub(
+                'IATI-Rulesets',
+                rulesetBranch,
+                'rulesets/standard.json'
+            );
+        } else {
+            console.log({
+                name: `Using redis cache rulesets for version: ${version}`,
+                value: true,
+            });
+            ruleset[version] = cachedRuleset;
+        }
     } catch (error) {
-        console.error(
-            `Error fetching Rulesets for version ${version} from GitHub. Error: ${error}`
-        );
+        console.error(`Error fetching Rulesets for version ${version}. Error: ${error}`);
     }
 
     // load schemas
