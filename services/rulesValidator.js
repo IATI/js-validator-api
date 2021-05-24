@@ -299,7 +299,7 @@ class Rules {
 
     startsWith(oneCase) {
         // ORG ID Prefix case
-        if (oneCase.prefix === 'ORG-ID-PREFIX') {
+        if (oneCase.prefix.length === 1 && oneCase.prefix[0] === 'ORG-ID-PREFIX') {
             return this.pathMatchesText.every((pathMatchText) => {
                 // Get prefix as everything left of the 2nd "-"
                 const split = pathMatchText.split('-');
