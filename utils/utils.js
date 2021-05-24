@@ -2,6 +2,7 @@ const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
 
+const { aSetex, aGet } = require('../config/redis');
 const config = require('../config/config');
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
@@ -56,30 +57,56 @@ const ruleset = {};
 const schemas = {};
 
 config.VERSIONS.forEach(async (version) => {
-    // load 'allowedCodes' Arrays in as Set's for faster .has() lookup
+    // load codelists
+    const codelistBranch = `v${version}/validatorCodelist`;
     try {
-        codelistRules[version] = await fetchJSONfromGitHub(
-            'IATI-Codelists',
-            `v${version}/validatorCodelist`,
-            'codelist_rules.json'
-        );
+        const cachedCodelistRule = JSON.parse(await aGet(`codelistRules${version}`));
+
+        if (!cachedCodelistRule) {
+            console.log({
+                name: `Fetching codelist rules for version: ${version}, repo: IATI-Codelists, branch: ${codelistBranch} `,
+                value: true,
+            });
+            codelistRules[version] = await fetchJSONfromGitHub(
+                'IATI-Codelists',
+                codelistBranch,
+                'codelist_rules.json'
+            );
+        } else {
+            console.log({
+                name: `Using redis cache codelist rules for version: ${version}`,
+                value: true,
+            });
+            codelistRules[version] = cachedCodelistRule;
+        }
     } catch (error) {
-        console.error(
-            `Error fetching Codelists for version ${version} from GitHub. Error: ${error}`
-        );
+        console.error(`Error fetching Codelists for version ${version}. Error: ${error}`);
     }
 
     // load rulesets
+    const rulesetBranch = `v${version}/validatorV2`;
     try {
-        ruleset[version] = await fetchJSONfromGitHub(
-            'IATI-Rulesets',
-            `v${version}/validatorV2`,
-            'rulesets/standard.json'
-        );
+        const cachedRuleset = JSON.parse(await aGet(`ruleset${version}`));
+
+        if (!cachedRuleset) {
+            console.log({
+                name: `Fetching ruleset for version: ${version}, repo: IATI-Rulesets, branch: ${rulesetBranch} `,
+                value: true,
+            });
+            ruleset[version] = await fetchJSONfromGitHub(
+                'IATI-Rulesets',
+                rulesetBranch,
+                'rulesets/standard.json'
+            );
+        } else {
+            console.log({
+                name: `Using redis cache rulesets for version: ${version}`,
+                value: true,
+            });
+            ruleset[version] = cachedRuleset;
+        }
     } catch (error) {
-        console.error(
-            `Error fetching Rulesets for version ${version} from GitHub. Error: ${error}`
-        );
+        console.error(`Error fetching Rulesets for version ${version}. Error: ${error}`);
     }
 
     // load schemas
@@ -119,18 +146,39 @@ let orgIdPrefixes = '';
 
 exports.getOrgIdPrefixes = async () => {
     if (orgIdPrefixes === '') {
-        console.log({ name: 'Loading OrgId Prefixes', value: true });
-        // const res = await fetch('http://org-id.guide/download.json');
-        // const fullOrgIdInfo = await res.json();
-        const fullOrgIdInfo = await JSON.parse(
-            await fs.readFile('identifiers/org-id-45a64726cf.json')
-        );
-        orgIdPrefixes = fullOrgIdInfo.lists.reduce((acc, orgId) => {
-            if (orgId.confirmed) {
-                acc.add(orgId.code);
+        const ORG_ID_PREFIX_URL = 'http://org-id.guide/download.json';
+        try {
+            let fullOrgIdPrefixInfo = JSON.parse(await aGet('fullOrgIdPrefixInfo'));
+
+            if (fullOrgIdPrefixInfo === null) {
+                console.log({
+                    name: `Fetching OrgId Prefixes from ${ORG_ID_PREFIX_URL}`,
+                    value: true,
+                });
+                const res = await fetch(ORG_ID_PREFIX_URL);
+                fullOrgIdPrefixInfo = await res.json();
+
+                // cache to redis for REDIS_CACHE_SEC seconds
+                await aSetex(
+                    'fullOrgIdPrefixInfo',
+                    config.REDIS_CACHE_SEC,
+                    JSON.stringify(fullOrgIdPrefixInfo)
+                );
             }
-            return acc;
-        }, new Set());
+            // const fullOrgIdPrefixInfo = await JSON.parse(
+            //     await fs.readFile('identifiers/org-id-45a64726cf.json')
+            // );
+            orgIdPrefixes = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
+                if (orgId.confirmed) {
+                    acc.add(orgId.code);
+                }
+                return acc;
+            }, new Set());
+        } catch (error) {
+            console.error(
+                `Error fetching Organsiation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`
+            );
+        }
     }
     return orgIdPrefixes;
 };
@@ -139,17 +187,51 @@ let orgIds = '';
 
 exports.getOrgIds = async () => {
     if (orgIds === '') {
-        console.log({ name: 'Loading OrgIds', value: true });
-        const fullOrgIdInfo = await JSON.parse(
-            await fs.readFile('identifiers/iati_publishers_list.json')
-        );
-        orgIds = fullOrgIdInfo.reduce((acc, orgId) => {
-            acc.add(orgId['IATI Organisation Identifier']);
-            return acc;
-        }, new Set());
+        const PUBLISHERS_URL = 'https://iatiregistry.org/publisher/download/json';
+        try {
+            let fullOrgIdInfo = JSON.parse(await aGet('fullOrgIdInfo'));
+
+            if (fullOrgIdInfo === null) {
+                // console.log({
+                //     name: `Fetching Publishers (orgIds) from ${PUBLISHERS_URL}`,
+                //     value: true,
+                // });
+                // const res = await fetch(PUBLISHERS_URL);
+                // fullOrgIdInfo = await res.json();
+
+                console.log({
+                    name: `Loading Publishers (orgIds) from local file`,
+                    value: true,
+                });
+                fullOrgIdInfo = await JSON.parse(
+                    await fs.readFile('identifiers/iati_publishers_list.json')
+                );
+
+                // cache to redis for REDIS_CACHE_SEC seconds
+                await aSetex(
+                    'fullOrgIdInfo',
+                    config.REDIS_CACHE_SEC,
+                    JSON.stringify(fullOrgIdInfo)
+                );
+            }
+
+            orgIds = fullOrgIdInfo.reduce((acc, orgId) => {
+                acc.add(orgId['IATI Organisation Identifier']);
+                return acc;
+            }, new Set());
+        } catch (error) {
+            console.error(
+                `Error fetching Organsiation IDs from ${PUBLISHERS_URL}. Error: ${error}`
+            );
+        }
     }
     return orgIds;
 };
+
+exports.getIdSets = async () => ({
+    'ORG-ID-PREFIX': await this.getOrgIdPrefixes(),
+    'ORG-ID': await this.getOrgIds(),
+});
 
 // returns an array of branch info from the GitHub API, filtered to "version-X.XX" branches only
 exports.getVersionBranches = async (repo) => {

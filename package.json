@@ -17,6 +17,7 @@
         "libxmljs2": "^0.27.0",
         "node-fetch": "^2.6.1",
         "numeral": "^2.0.6",
+        "redis": "^3.1.2",
         "underscore": "^1.13.1",
         "xml2js": "^0.4.23",
         "xmldom": "^0.6.0",

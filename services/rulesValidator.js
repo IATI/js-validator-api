@@ -3,7 +3,6 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
-const { getOrgIdPrefixes, getOrgIds } = require('../utils/utils');
 
 const ruleNameMap = require('../ruleNameMap.json');
 
@@ -300,7 +299,10 @@ class Rules {
 
     startsWith(oneCase) {
         // ORG ID Prefix case
-        if (oneCase.prefix === 'ORG-ID-PREFIX') {
+        if (
+            oneCase.prefix === 'ORG-ID-PREFIX' ||
+            (oneCase.prefix.length === 1 && oneCase.prefix[0] === 'ORG-ID-PREFIX')
+        ) {
             return this.pathMatchesText.every((pathMatchText) => {
                 // Get prefix as everything left of the 2nd "-"
                 const split = pathMatchText.split('-');
@@ -463,16 +465,13 @@ exports.allRulesResult = (ruleset, xml) => {
     return results.every((res) => res.result);
 };
 
-exports.validateIATI = async (ruleset, xml) => {
+exports.validateIATI = async (ruleset, xml, idSets) => {
     const document = new DOMParser().parseFromString(xml);
     const isActivity = xpath('//iati-activities', document).length > 0;
     const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
     const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
     const elements = xpath(`//${fileType}`, document);
     const results = {};
-    const orgIdPrefixes = await getOrgIdPrefixes();
-    const orgIds = await getOrgIds();
-    const idSets = { 'ORG-ID-PREFIX': orgIdPrefixes, 'ORG-ID': orgIds };
     const dupCounter = {};
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');

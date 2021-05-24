@@ -1,6 +1,6 @@
 const _ = require('underscore');
 const numeral = require('numeral');
-const { getFileInformation, getRuleset, getSchema } = require('../utils/utils');
+const { getFileInformation, getRuleset, getSchema, getIdSets } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateCodelists } = require('./codelistValidator');
 const { validateIATI } = require('./rulesValidator');
@@ -273,7 +273,8 @@ exports.validate = async (context, req) => {
 
         logMemoryUseage(context, 'rulesetStart');
 
-        const rulesResult = await validateIATI(ruleset, body);
+        const idSets = await getIdSets();
+        const rulesResult = await validateIATI(ruleset, body, idSets);
 
         logMemoryUseage(context, 'rulesetEnd');
 
