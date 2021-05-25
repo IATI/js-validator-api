@@ -1,5 +1,4 @@
 const _ = require('underscore');
-const numeral = require('numeral');
 const { getFileInformation, getRuleset, getSchema, getIdSets } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateCodelists } = require('./codelistValidator');
@@ -15,18 +14,6 @@ const logValidationSummary = (context, state) => {
     };
     client.trackEvent(validationSummary);
     context.log(validationSummary);
-};
-
-const logMemoryUseage = (context, tag) => {
-    const { rss, heapTotal } = process.memoryUsage();
-
-    context.log({
-        name: tag,
-        value: {
-            rss: numeral(rss).format('0.0 ib'),
-            heapTotal: numeral(heapTotal).format('0.0 ib'),
-        },
-    });
 };
 
 exports.validate = async (context, req) => {
@@ -89,7 +76,6 @@ exports.validate = async (context, req) => {
 
     try {
         const fileInfoStart = getStartTime();
-        logMemoryUseage(context, 'fileInfoStart');
 
         let xmlDoc;
         try {
@@ -132,7 +118,6 @@ exports.validate = async (context, req) => {
             return;
         }
 
-        logMemoryUseage(context, 'fileInfoEnd');
         state.fileInfoTime = getElapsedTime(fileInfoStart);
         context.log({ name: 'FileInfo Parse Time (s)', value: state.fileInfoTime });
 
@@ -207,8 +192,6 @@ exports.validate = async (context, req) => {
         }
 
         // Schema Validation
-        logMemoryUseage(context, 'schemaStart');
-
         const schemaStart = getStartTime();
 
         if (!xmlDoc.validate(getSchema(state.fileType, state.iatiVersion))) {
@@ -247,13 +230,11 @@ exports.validate = async (context, req) => {
 
         xmlDoc = null;
 
-        logMemoryUseage(context, 'schemaEnd');
         state.schemaTime = getElapsedTime(schemaStart);
         context.log({ name: 'Schema Validation Time (s)', value: state.schemaTime });
 
         // Codelist Validation
         const codelistStart = getStartTime();
-        logMemoryUseage(context, 'codelistStart');
 
         const { errors, summary: newSum } = await validateCodelists(body, state.iatiVersion);
 
@@ -262,8 +243,6 @@ exports.validate = async (context, req) => {
             summary[severity] = count + (newSum[severity] || 0);
         });
 
-        logMemoryUseage(context, 'codelistEnd');
-
         state.codelistTime = getElapsedTime(codelistStart);
         context.log({ name: 'Codelist Validate Time (s)', value: state.codelistTime });
 
@@ -271,12 +250,8 @@ exports.validate = async (context, req) => {
         const ruleStart = getStartTime();
         const ruleset = getRuleset(state.iatiVersion);
 
-        logMemoryUseage(context, 'rulesetStart');
-
         const idSets = await getIdSets();
         const rulesResult = await validateIATI(ruleset, body, idSets);
-
-        logMemoryUseage(context, 'rulesetEnd');
 
         state.ruleTime = getElapsedTime(ruleStart);
         context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });
@@ -318,7 +293,6 @@ exports.validate = async (context, req) => {
             body: JSON.stringify(validationReport),
         };
         body = null;
-        logMemoryUseage(context, 'theEnd');
         return;
     } catch (error) {
         context.log(error);
