@@ -13,6 +13,9 @@ env:
   STAGE: dev # suffix to indicate environment stage
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x'
+  REDIS_HOSTNAME: ${{ secrets.DEV_REDIS_HOSTNAME }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+  REDIS_KEY: ${{ secrets.DEV_REDIS_KEY }}
 
 jobs:
   build-test-deploy:
@@ -47,12 +50,39 @@ jobs:
           npm run rules:test
           popd
 
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1.3.0
+        with:
+          creds: ${{ secrets.DEV_AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
+
+      - name: Set Env variables for connecting to Redis instance
+        uses: Azure/appservice-settings@v1.1.1
+        with:
+          app-name: ${{env.NAME}}-${{env.STAGE}}
+          app-settings-json: |
+            [
+                {
+                    "name": "REDIS_HOSTNAME",
+                    "value": "${{ env.REDIS_HOSTNAME }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "REDIS_KEY",
+                    "value": "${{ env.REDIS_KEY }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "value": "${{ env.REDIS_PORT }}",
+                    "slotSetting": false
+                }
+            ]
+
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1.4.0
         with:
           app-name: ${{ env.NAME }}-${{ env.STAGE }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           respect-funcignore: true
 
   integration-test:
