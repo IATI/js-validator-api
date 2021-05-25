@@ -48,7 +48,7 @@ jobs:
           popd
 
       - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1.3.2
+        uses: Azure/functions-action@v1.4.0
         with:
           app-name: ${{ env.NAME }}-${{ env.STAGE }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
