@@ -198,6 +198,7 @@ exports.validate = async (context, req) => {
             const schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
                 category: 'schema',
+                severity: 'crtical',
                 message: error.message,
                 ...error,
             }));
