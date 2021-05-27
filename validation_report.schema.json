@@ -48,6 +48,7 @@
             "items": {
                 "error": {
                     "type": "object",
+                    "description": "Information about the rule used by the validator",
                     "required": ["id", "severity", "context", "message"],
                     "properties": {
                         "id": {
@@ -62,7 +63,7 @@
                         },
                         "severity": {
                             "type": "string",
-                            "enum": ["critical", "danger", "warning"],
+                            "enum": ["critical", "error", "warning"],
                             "description": "The severity level of the error"
                         },
                         "xpath": {
