@@ -2,7 +2,7 @@
 <iati-activities
     xmlns:usg="https://explorer.usaid.gov"
     generated-datetime="2020-06-26T12:52:06.368Z"
-    version="2.04"
+    version="2.03"
 >
    <iati-activity
         default-currency="USD"
@@ -10,7 +10,7 @@
         last-updated-datetime="2020-06-26T12:52:06.368Z"
         xml:lang="en"
     >
-      <iati-identifier>US-GOV-1-095C1CFE75CD</iati-identifier>
+      <iati-identifier></iati-identifier>
       <reporting-org ref="US-GOV-1" type="">
          <narrative>U.S. Agency for International Development</narrative>
       </reporting-org>
@@ -34,7 +34,7 @@
       <participating-org ref="" role="4">
          <narrative>Enterprise - Non United States Unknown</narrative>
       </participating-org>
-      <activity-status code="36" />
+      <activity-status code="3" />
       <activity-date iso-date="2015-10-01" type="1" />
       <activity-date iso-date="2015-10-01" type="2" />
       <activity-date iso-date="2016-09-30" type="3" />
@@ -53,7 +53,7 @@
             <narrative>1300 Pennsylvania Ave NW, Washington DC 20004</narrative>
          </mailing-address>
       </contact-info>
-      <activity-scope code="90" />
+      <activity-scope code="4" />
       <collaboration-type code="1" />
       <default-flow-type code="10" />
       <default-finance-type code="110" />
@@ -321,7 +321,7 @@
         last-updated-datetime="2020-06-26T12:52:06.368Z"
         xml:lang="en"
     >
-      <iati-identifier>US-GOV-1-117B4089387B</iati-identifier>
+      <iati-identifier></iati-identifier>
       <reporting-org ref="US-GOV-1" type="10">
          <narrative>U.S. Agency for International Development</narrative>
       </reporting-org>

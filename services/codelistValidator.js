@@ -49,6 +49,7 @@ exports.validateCodelists = async (body, version) => {
         summary[severity] = (summary[severity] || 0) + 1;
         errCache.push(validationError);
     };
+    const dupCounter = {};
 
     const validator = (xpath, previousValues, newValue) => {
         // if rule exists for xpath
@@ -130,21 +131,26 @@ exports.validateCodelists = async (body, version) => {
 
         // save activity-level errors to error object
         if (xpath === '/iati-activities/iati-activity') {
+            let identifier;
             if (newValue['iati-identifier']) {
-                const identifier = newValue['iati-identifier'].join();
-                errors[identifier] = errCache;
+                identifier = newValue['iati-identifier'].join() || 'noIdentifier';
             } else {
-                errors.unidentified = errCache;
+                identifier = 'noIdentifier';
             }
+            if (_.has(errors, identifier)) {
+                dupCounter[identifier] = (dupCounter[identifier] || 1) + 1;
+                identifier = `${identifier}(${dupCounter[identifier]})`;
+            }
+            errors[identifier] = errCache;
             errCache = [];
         }
         // save organisation-level errors to error object
         if (xpath === '/iati-organisations/iati-organisation') {
             if (newValue['organisation-identifier']) {
-                const identifier = newValue['organisation-identifier'].join();
+                const identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
                 errors[identifier] = errCache;
             } else {
-                errors.unidentified = errCache;
+                errors.noIdentifier = errCache;
             }
             errCache = [];
         }
