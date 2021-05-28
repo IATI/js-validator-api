@@ -12,7 +12,7 @@
     "author": "IATI",
     "dependencies": {
         "applicationinsights": "^2.0.0",
-        "date-fns": "^2.21.3",
+        "date-fns": "^2.22.0",
         "dotenv": "^10.0.0",
         "libxmljs2": "^0.27.0",
         "node-fetch": "^2.6.1",
