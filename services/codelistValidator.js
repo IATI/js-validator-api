@@ -141,23 +141,31 @@ exports.validateCodelists = async (body, version) => {
                 dupCounter[identifier] = (dupCounter[identifier] || 1) + 1;
                 identifier = `${identifier}(${dupCounter[identifier]})`;
             }
-            errors[identifier] = errCache;
+            if (errCache.length > 0) {
+                errors[identifier] = errCache;
+            }
             errCache = [];
         }
         // save organisation-level errors to error object
         if (xpath === '/iati-organisations/iati-organisation') {
+            let identifier;
             if (newValue['organisation-identifier']) {
-                const identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
+                identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
                 errors[identifier] = errCache;
             } else {
-                errors.noIdentifier = errCache;
+                identifier = 'noIdentifier';
+            }
+            if (errCache.length > 0) {
+                errors[identifier] = errCache;
             }
             errCache = [];
         }
 
         // save file level errors to error object
         if (xpath === '/iati-activities' || xpath === '/iati-organisations') {
-            errors.file = errCache;
+            if (errCache.length > 0) {
+                errors.file = errCache;
+            }
             errCache = [];
         }
 
