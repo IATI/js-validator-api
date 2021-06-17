@@ -472,12 +472,13 @@ exports.validateIATI = async (ruleset, xml, idSets) => {
     const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
     const elements = xpath(`//${fileType}`, document);
     const results = {};
-    const dupCounter = {};
+    const idTracker = {};
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
         singleElementDoc.firstChild.appendChild(element);
         let identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
-        if (isActivity && _.has(results, identifier)) {
+        idTracker[identifier] = (idTracker[identifier] || 0) + 1;
+        if (isActivity && idTracker[identifier] > 1) {
             // duplicate identifier, drop a file level error
             results.file = [
                 {
@@ -487,8 +488,8 @@ exports.validateIATI = async (ruleset, xml, idSets) => {
                     message: `The activity identifier must be unique for each activity. Duplicate found for ${identifier}`,
                 },
             ];
-            dupCounter[identifier] = (dupCounter[identifier] || 1) + 1;
-            identifier = `${identifier}(${dupCounter[identifier]})`;
+            identifier = `${identifier}(${idTracker[identifier]})`;
+            idTracker[identifier] += 1;
         }
         results[identifier] = [];
 
@@ -497,6 +498,9 @@ exports.validateIATI = async (ruleset, xml, idSets) => {
                 results[identifier].push(result);
             }
         });
+        if (results[identifier].length === 0) {
+            delete results[identifier];
+        }
     });
     return results;
 };

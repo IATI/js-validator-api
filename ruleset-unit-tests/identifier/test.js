@@ -7,11 +7,11 @@ const { expect } = chai;
 const { validateIATI } = require('../../services/rulesValidator');
 
 const testMap = [
-    { rule: 'two_deep.json', file: '3act_good.xml', expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'] },
+    { rule: 'two_deep.json', file: '3act_good.xml', expectedResult: [] },
     {
         rule: 'activity_level.json',
         file: '3act_good.xml',
-        expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'],
+        expectedResult: [],
     },
     { rule: 'two_deep.json', file: '3act_bad.xml', expectedResult: ['ACT-1', 'ACT-2', 'ACT-3'] },
     {
@@ -22,7 +22,7 @@ const testMap = [
     {
         rule: 'org_level.json',
         file: 'org_good.xml',
-        expectedResult: ['NP-SWC-1234'],
+        expectedResult: [],
     },
     {
         rule: 'org_level.json',
