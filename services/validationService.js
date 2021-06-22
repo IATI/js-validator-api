@@ -156,10 +156,10 @@ exports.validate = async (context, req) => {
 
         // Version Check
         if (!state.supportedVersion) {
-            summary.error = (summary.error || 0) + 1;
+            summary.critical = (summary.critical || 0) + 1;
 
             const validationReport = {
-                valid: true,
+                valid: false,
                 fileType: state.fileType,
                 iatiVersion: state.iatiVersion,
                 summary,
@@ -167,7 +167,7 @@ exports.validate = async (context, req) => {
                     file: [
                         {
                             id: '0.6.1',
-                            severity: 'error',
+                            severity: 'critical',
                             category: 'documents',
                             message: `Version ${
                                 state.iatiVersion
