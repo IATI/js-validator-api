@@ -192,9 +192,9 @@ exports.validate = async (context, req) => {
 
         // Schema Validation
         const schemaStart = getStartTime();
-
+        let schemaErrors = [];
         if (!xmlDoc.validate(getSchema(state.fileType, state.iatiVersion))) {
-            const schemaErrors = xmlDoc.validationErrors.map((error) => ({
+            schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
                 category: 'schema',
                 severity: 'critical',
@@ -202,30 +202,6 @@ exports.validate = async (context, req) => {
                 ...error,
             }));
             summary.critical = (summary.critical || 0) + 1;
-
-            const validationReport = {
-                valid: false,
-                fileType: state.fileType,
-                iatiVersion: state.iatiVersion,
-                summary,
-                errors: {
-                    file: schemaErrors,
-                },
-            };
-
-            state.schemaTime = getElapsedTime(schemaStart);
-            context.log({ name: 'Schema Validate Time (s)', value: state.schemaTime });
-
-            state.exitCategory = 'schemaErrors';
-
-            logValidationSummary(context, state);
-
-            context.res = {
-                status: 422,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(validationReport),
-            };
-            return;
         }
 
         xmlDoc = null;
@@ -274,6 +250,15 @@ exports.validate = async (context, req) => {
             }
         });
 
+        // add schema errors into combined errors
+        if (schemaErrors.length > 0) {
+            if ('file' in combinedErrors) {
+                combinedErrors.file = [...combinedErrors.file, ...schemaErrors];
+            } else {
+                combinedErrors.file = [...schemaErrors];
+            }
+        }
+
         state.exitCategory = 'fullValidation';
 
         logValidationSummary(context, state);
@@ -287,7 +272,7 @@ exports.validate = async (context, req) => {
         };
 
         context.res = {
-            status: 200,
+            status: schemaErrors.length > 0 ? 422 : 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(validationReport),
         };

@@ -2631,13 +2631,13 @@
 		"type": "apikey",
 		"apikey": [
 			{
-				"key": "key",
-				"value": "{{apiKeyName}}",
+				"key": "value",
+				"value": "{{keyValue}}",
 				"type": "string"
 			},
 			{
-				"key": "value",
-				"value": "{{apiKeyValue}}",
+				"key": "key",
+				"value": "{{keyName}}",
 				"type": "string"
 			}
 		]

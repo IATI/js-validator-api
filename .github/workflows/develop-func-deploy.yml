@@ -99,4 +99,4 @@ jobs:
 
       - name: 'Run integration tests'
         run: |
-          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-dev.postman_environment.json --working-dir integration-tests/test-files --env-var apiKeyValue=$API_KEY
+          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-dev.postman_environment.json --working-dir integration-tests/test-files --env-var keyValue=$API_KEY
