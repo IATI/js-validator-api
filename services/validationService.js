@@ -192,7 +192,7 @@ exports.validate = async (context, req) => {
 
         // Schema Validation
         const schemaStart = getStartTime();
-        let schemaErrors = {};
+        let schemaErrors = [];
         if (!xmlDoc.validate(getSchema(state.fileType, state.iatiVersion))) {
             schemaErrors = xmlDoc.validationErrors.map((error) => ({
                 id: '0.3.1',
@@ -250,6 +250,15 @@ exports.validate = async (context, req) => {
             }
         });
 
+        // add schema errors into combined errors
+        if (schemaErrors.length > 0) {
+            if ('file' in combinedErrors) {
+                combinedErrors.file = [...combinedErrors.file, ...schemaErrors];
+            } else {
+                combinedErrors.file = [...schemaErrors];
+            }
+        }
+
         state.exitCategory = 'fullValidation';
 
         logValidationSummary(context, state);
@@ -259,12 +268,11 @@ exports.validate = async (context, req) => {
             fileType: state.fileType,
             iatiVersion: state.iatiVersion,
             summary,
-            schemaErrors,
             errors: combinedErrors,
         };
 
         context.res = {
-            status: 200,
+            status: schemaErrors.length > 0 ? 422 : 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(validationReport),
         };
