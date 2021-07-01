@@ -1,4 +1,4 @@
-const { validate } = require('../services/validationService.js');
+const { validate } = require('../services/validationService');
 const { appInsights } = require('../config/appInsights');
 
 const pubValidatePost = async (context, req) => {

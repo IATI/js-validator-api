@@ -49,6 +49,7 @@ exports.validateCodelists = async (body, version) => {
         summary[severity] = (summary[severity] || 0) + 1;
         errCache.push(validationError);
     };
+    const dupCounter = {};
 
     const validator = (xpath, previousValues, newValue) => {
         // if rule exists for xpath
@@ -130,28 +131,41 @@ exports.validateCodelists = async (body, version) => {
 
         // save activity-level errors to error object
         if (xpath === '/iati-activities/iati-activity') {
+            let identifier;
             if (newValue['iati-identifier']) {
-                const identifier = newValue['iati-identifier'].join();
-                errors[identifier] = errCache;
+                identifier = newValue['iati-identifier'].join() || 'noIdentifier';
             } else {
-                errors.unidentified = errCache;
+                identifier = 'noIdentifier';
+            }
+            if (_.has(errors, identifier)) {
+                dupCounter[identifier] = (dupCounter[identifier] || 1) + 1;
+                identifier = `${identifier}(${dupCounter[identifier]})`;
+            }
+            if (errCache.length > 0) {
+                errors[identifier] = errCache;
             }
             errCache = [];
         }
         // save organisation-level errors to error object
         if (xpath === '/iati-organisations/iati-organisation') {
+            let identifier;
             if (newValue['organisation-identifier']) {
-                const identifier = newValue['organisation-identifier'].join();
+                identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
                 errors[identifier] = errCache;
             } else {
-                errors.unidentified = errCache;
+                identifier = 'noIdentifier';
+            }
+            if (errCache.length > 0) {
+                errors[identifier] = errCache;
             }
             errCache = [];
         }
 
         // save file level errors to error object
         if (xpath === '/iati-activities' || xpath === '/iati-organisations') {
-            errors.file = errCache;
+            if (errCache.length > 0) {
+                errors.file = errCache;
+            }
             errCache = [];
         }
 

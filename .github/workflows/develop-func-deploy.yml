@@ -16,6 +16,7 @@ env:
   REDIS_HOSTNAME: ${{ secrets.DEV_REDIS_HOSTNAME }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
   REDIS_KEY: ${{ secrets.DEV_REDIS_KEY }}
+  API_KEY: ${{ secrets.DEV_API_KEY }}
 
 jobs:
   build-test-deploy:
@@ -25,12 +26,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: 'Setup Node ${{ env.NODE_VERSION }} Environment'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v2.2.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache node modules
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         env:
           cache-name: cache-node-modules
         with:
@@ -98,4 +99,4 @@ jobs:
 
       - name: 'Run integration tests'
         run: |
-          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-dev.postman_environment.json --working-dir integration-tests/test-files
+          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-dev.postman_environment.json --working-dir integration-tests/test-files --env-var apiKeyValue=$API_KEY

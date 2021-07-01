@@ -30,8 +30,11 @@ exports.getFileInformation = (body) => {
     if (body.toString() !== `<?xml version="1.0"?>\n`) {
         xmlDoc = libxml.parseXml(body);
         if (xmlDoc) {
-            fileType = xmlDoc.root().name();
-            isIati = fileType === 'iati-activities' || fileType === 'iati-organisations';
+            const root = xmlDoc.root().name();
+
+            isIati = root === 'iati-activities' || root === 'iati-organisations';
+            // set fileType to '' for non IATI files
+            fileType = isIati ? root : '';
 
             if (xmlDoc.get(`/${fileType}/@version`) !== undefined) {
                 version = xmlDoc.get(`/${fileType}/@version`).value();

@@ -52,7 +52,6 @@ exports.validate = async (context, req) => {
         schemaTime: '',
         codelistTime: '',
         ruleTime: '',
-        numberActivities: '',
         exitCategory: '',
     };
     const summary = { critical: 0, error: 0, warning: 0 };
@@ -156,10 +155,10 @@ exports.validate = async (context, req) => {
 
         // Version Check
         if (!state.supportedVersion) {
-            summary.error = (summary.error || 0) + 1;
+            summary.critical = (summary.critical || 0) + 1;
 
             const validationReport = {
-                valid: true,
+                valid: false,
                 fileType: state.fileType,
                 iatiVersion: state.iatiVersion,
                 summary,
@@ -167,7 +166,7 @@ exports.validate = async (context, req) => {
                     file: [
                         {
                             id: '0.6.1',
-                            severity: 'error',
+                            severity: 'critical',
                             category: 'documents',
                             message: `Version ${
                                 state.iatiVersion
@@ -250,7 +249,6 @@ exports.validate = async (context, req) => {
                 });
             }
         });
-        state.numberActivities = Object.keys(errors).length - 1;
 
         state.exitCategory = 'fullValidation';
 

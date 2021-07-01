@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<iati-activities
+    xmlns:usg="https://explorer.usaid.gov"
+    generated-datetime="2020-06-26T12:52:06.368Z"
+    version="2.03"
+>
+   <iati-activity
+        default-currency="USD"
+        hierarchy="1"
+        last-updated-datetime="2020-06-26T12:52:06.368Z"
+        xml:lang="en"
+    >
+      <iati-identifier>US-GOV-1-A</iati-identifier>
+      <reporting-org ref="US-GOV-1" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </reporting-org>
+      <title>
+         <narrative xml:lang="en">Staff Travel Costs</narrative>
+      </title>
+      <description>
+         <narrative
+                xml:lang="en"
+            >This award is for a staff travel costs of the U.S. Agency for International Development.</narrative>
+      </description>
+      <participating-org ref="US-GOV-1" role="1" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="2" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="3" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="4" type="10">
+         <narrative>Enterprise - Non United States Unknown</narrative>
+      </participating-org>
+      <activity-status code="3" />
+      <activity-date iso-date="2015-10-01" type="1" />
+      <activity-date iso-date="2015-10-01" type="2" />
+      <activity-date iso-date="2016-09-30" type="3" />
+      <activity-date iso-date="2016-09-30" type="4" />
+      <contact-info type="1">
+         <organisation>
+            <narrative>U.S. Agency for International Development</narrative>
+         </organisation>
+         <person-name>
+            <narrative>Christine Gleichert</narrative>
+         </person-name>
+         <telephone>+1 202-261-3115</telephone>
+         <email>aidtransparency@usaid.gov</email>
+         <website>https://www.usaid.gov/pakistan</website>
+         <mailing-address>
+            <narrative>1300 Pennsylvania Ave NW, Washington DC 20004</narrative>
+         </mailing-address>
+      </contact-info>
+      <activity-scope code="4" />
+      <collaboration-type code="1" />
+      <default-flow-type code="10" />
+      <default-finance-type code="110" />
+      <default-aid-type code="G01" />
+      <default-tied-status code="4" />
+      <transaction ref="E25F85F616F6">
+         <transaction-type code="2" />
+         <transaction-date iso-date="2015-12-31" />
+         <value value-date="2015-12-31">3766.00</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2013" end="2014" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="3C56BCD8EBA8">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2015-12-31" />
+         <value value-date="2015-12-31">806.80</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2013" end="2014" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="3D370DA7D862">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2016-06-30" />
+         <value value-date="2016-06-30">689.04</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2013" end="2014" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="0D80DA9CA6D5">
+         <transaction-type code="2" />
+         <transaction-date iso-date="2016-09-30" />
+         <value value-date="2016-09-30">-1422.32</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2013" end="2014" />
+         </usg:treasury-account>
+      </transaction>
+      <conditions attached="0" />
+      <usg:mechanism-signing-date iso-date="2019-10-01" />
+      <usg:duns-number>
+         <narrative>123456787</narrative>
+      </usg:duns-number>
+      <usg:tec1>
+         <narrative />
+      </usg:tec1>
+      <usg:state-location>
+         <narrative>Pakistan</narrative>
+      </usg:state-location>
+   </iati-activity>
+   <iati-activity
+        default-currency="USD"
+        hierarchy="1"
+        last-updated-datetime="2020-06-26T12:52:06.368Z"
+        xml:lang="en"
+    >
+      <iati-identifier>US-GOV-1-B</iati-identifier>
+      <reporting-org ref="US-GOV-1" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </reporting-org>
+      <title>
+         <narrative xml:lang="en">Staff Travel Costs</narrative>
+      </title>
+      <description>
+         <narrative
+                xml:lang="en"
+            >This award is for a staff travel costs of the U.S. Agency for International Development.</narrative>
+      </description>
+      <participating-org ref="US-GOV-1" role="1" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="2" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="3" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="4">
+         <narrative>U.S. Government - U.S. Agency for International Development</narrative>
+      </participating-org>
+      <activity-status code="3" />
+      <activity-date iso-date="2013-10-01" type="1" />
+      <activity-date iso-date="2013-10-01" type="2" />
+      <activity-date iso-date="2014-09-30" type="3" />
+      <activity-date iso-date="2014-09-30" type="4" />
+      <contact-info type="1">
+         <organisation>
+            <narrative>U.S. Agency for International Development</narrative>
+         </organisation>
+         <person-name>
+            <narrative>Christine Gleichert</narrative>
+         </person-name>
+         <telephone>+1 202-261-3115</telephone>
+         <email>aidtransparency@usaid.gov</email>
+         <website>https://www.usaid.gov/pakistan</website>
+         <mailing-address>
+            <narrative>1300 Pennsylvania Ave NW, Washington DC 20004</narrative>
+         </mailing-address>
+      </contact-info>
+      <activity-scope code="4" />
+      <collaboration-type code="1" />
+      <default-flow-type code="10" />
+      <default-finance-type code="110" />
+      <default-aid-type code="G01" />
+      <default-tied-status code="4" />
+      <transaction ref="4CE13D05534E">
+         <transaction-type code="2" />
+         <transaction-date iso-date="2014-03-31" />
+         <value value-date="2014-03-31">2454.70</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2009" end="2010" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="FE8690397A25">
+         <transaction-type code="2" />
+         <transaction-date iso-date="2014-09-30" />
+         <value value-date="2014-09-30">-1153.23</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2009" end="2010" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="C0927AC3E252">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2014-09-30" />
+         <value value-date="2014-09-30">2305.00</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2009" end="2010" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="7D3D7150EE87">
+         <transaction-type code="2" />
+         <transaction-date iso-date="2014-03-31" />
+         <value value-date="2014-03-31">26240.88</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2011" end="2012" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="F296E56B4B70">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2014-03-31" />
+         <value value-date="2014-03-31">2260.00</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2011" end="2012" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="947026A771B3">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2014-06-30" />
+         <value value-date="2014-06-30">4964.74</value>
+         <disbursement-channel code="2" />
+         <sector code="91010" vocabulary="1">
+            <narrative>Operating Expenses</narrative>
+         </sector>
+         <sector code="8001" vocabulary="99">
+            <narrative>Direct Administrative Costs</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2011" end="2012" />
+         </usg:treasury-account>
+      </transaction>
+      <conditions attached="0" />
+      <usg:mechanism-signing-date iso-date="2019-10-01" />
+      <usg:tec1>
+         <narrative />
+      </usg:tec1>
+      <usg:state-location>
+         <narrative>Pakistan</narrative>
+      </usg:state-location>
+   </iati-activity>
+   <iati-activity
+        default-currency="USD"
+        hierarchy="1"
+        last-updated-datetime="2020-06-26T12:52:06.368Z"
+        xml:lang="en"
+    >
+      <iati-identifier>US-GOV-1-C</iati-identifier>
+      <reporting-org ref="US-GOV-1" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </reporting-org>
+      <title>
+         <narrative xml:lang="en">Administration and Oversight (Protection)</narrative>
+      </title>
+      <description>
+         <narrative
+                xml:lang="en"
+            >This award is for a direct administrative costs or operating expenses of the U.S. Agency for International Development.</narrative>
+      </description>
+      <participating-org ref="US-GOV-1" role="1" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="2" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="US-GOV-1" role="3" type="10">
+         <narrative>U.S. Agency for International Development</narrative>
+      </participating-org>
+      <participating-org ref="" role="4">
+         <narrative>Vendor implementing direct administrative services</narrative>
+      </participating-org>
+      <activity-status code="3" />
+      <activity-date iso-date="2014-10-01" type="1" />
+      <activity-date iso-date="2014-10-01" type="2" />
+      <activity-date iso-date="2015-09-30" type="3" />
+      <activity-date iso-date="2015-09-30" type="4" />
+      <contact-info type="1">
+         <organisation>
+            <narrative>U.S. Agency for International Development</narrative>
+         </organisation>
+         <person-name>
+            <narrative>Christine Gleichert</narrative>
+         </person-name>
+         <telephone>+1 202-261-3115</telephone>
+         <email>aidtransparency@usaid.gov</email>
+         <website>https://www.usaid.gov/pakistan</website>
+         <mailing-address>
+            <narrative>1300 Pennsylvania Ave NW, Washington DC 20004</narrative>
+         </mailing-address>
+      </contact-info>
+      <activity-scope code="4" />
+      <collaboration-type code="1" />
+      <default-flow-type code="10" />
+      <default-finance-type code="110" />
+      <default-aid-type code="G01" />
+      <default-tied-status code="5" />
+      <transaction ref="46A4211D8E36">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2014-12-31" />
+         <value value-date="2014-12-31">2900.00</value>
+         <disbursement-channel code="2" />
+         <sector code="720599999" vocabulary="1">
+            <narrative>Relief co-ordination; protection and support services</narrative>
+         </sector>
+         <sector code="7001" vocabulary="99">
+            <narrative>Protection, Assistance and Solutions</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2019" end="2020" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="67E404C5303C">
+         <transaction-type code="2" />
+         <transaction-date iso-date="2015-06-30" />
+         <value value-date="2015-06-30">977.55</value>
+         <disbursement-channel code="2" />
+         <sector code="72050" vocabulary="1">
+            <narrative>Relief co-ordination; protection and support services</narrative>
+         </sector>
+         <sector code="7001" vocabulary="99">
+            <narrative>Protection, Assistance and Solutions</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2019" end="2020" />
+         </usg:treasury-account>
+      </transaction>
+      <transaction ref="AAF58F583427">
+         <transaction-type code="3" />
+         <transaction-date iso-date="2015-09-30" />
+         <value value-date="2015-09-30">977.55</value>
+         <disbursement-channel code="2" />
+         <sector code="72050" vocabulary="1">
+            <narrative>Relief co-ordination; protection and support services</narrative>
+         </sector>
+         <sector code="7001" vocabulary="99">
+            <narrative>Protection, Assistance and Solutions</narrative>
+         </sector>
+         <recipient-country code="PK" />
+         <usg:treasury-account>
+            <usg:regular-account code="72" />
+            <usg:main-account code="1037">Economic Support Fund</usg:main-account>
+            <usg:fiscal-funding-year begin="2019" end="2020" />
+         </usg:treasury-account>
+      </transaction>
+      <conditions attached="0" />
+      <usg:mechanism-signing-date iso-date="2019-10-01" />
+      <usg:tec1>
+         <narrative />
+      </usg:tec1>
+      <usg:state-location>
+         <narrative>Pakistan</narrative>
+      </usg:state-location>
+   </iati-activity>
+</iati-activities>
