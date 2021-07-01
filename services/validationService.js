@@ -52,7 +52,6 @@ exports.validate = async (context, req) => {
         schemaTime: '',
         codelistTime: '',
         ruleTime: '',
-        numberActivities: '',
         exitCategory: '',
     };
     const summary = { critical: 0, error: 0, warning: 0 };
@@ -274,7 +273,6 @@ exports.validate = async (context, req) => {
                 });
             }
         });
-        state.numberActivities = Object.keys(errors).length - 1;
 
         state.exitCategory = 'fullValidation';
 
