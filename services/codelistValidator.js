@@ -2,6 +2,16 @@ const xml2js = require('xml2js');
 const _ = require('underscore');
 const { getVersionCodelistRules } = require('../utils/utils');
 
+const shortenPath = (path) => {
+    if (path.includes('/iati-activities')) {
+        return path.replace('/iati-activities', '/');
+    }
+    if (path.includes('/iati-organisations')) {
+        return path.replace('/iati-organisations', '/');
+    }
+    return path;
+};
+
 exports.validateCodelists = async (body, version) => {
     const summary = {};
     const errors = {};
@@ -16,34 +26,42 @@ exports.validateCodelists = async (body, version) => {
         linkedAttribute,
         linkedAttributeValue
     ) => {
+        let path;
         let ruleInfo;
         let errContext;
-        let context;
+        let linkedContext;
         if (linkedAttribute) {
             ruleInfo = codelistDefinition[attribute].conditions.mapping[linkedAttributeValue];
         } else {
             ruleInfo = codelistDefinition[attribute];
         }
-        const { id, severity, priority, category, message, codelist } = ruleInfo;
+        const { id, severity, category, message, codelist } = ruleInfo;
+        path = shortenPath(xpath);
         if (attribute === 'text()') {
-            errContext = `"${curValue}" is not a valid value for <${xpath.split('/').pop()}>`;
+            path += `/text()`;
+            errContext = `"${curValue}" is not a valid value for element <${xpath
+                .split('/')
+                .pop()}>`;
         } else {
-            errContext = `"${curValue}" is not a valid value for attribute @${attribute}`;
+            path += `/@${attribute}`;
+            errContext = `"${curValue}" is not a valid value for attribute @${attribute}, in element <${xpath
+                .split('/')
+                .pop()}>`;
         }
         if (linkedAttribute) {
-            context = `@${linkedAttribute} = ${linkedAttributeValue}`;
-            errContext += ` and linked ${context}`;
+            linkedContext = `@${linkedAttribute} = ${linkedAttributeValue}`;
+            errContext += ` and linked ${linkedContext}`;
         }
         const validationError = {
-            xpath,
             id,
-            codelist,
-            severity,
-            priority,
             category,
-            context,
+            severity,
             message,
-            errContext,
+            context: errContext,
+            details: {
+                xpath: path,
+                codelist,
+            },
         };
         // increment summary object
         summary[severity] = (summary[severity] || 0) + 1;

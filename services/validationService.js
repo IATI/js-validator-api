@@ -89,6 +89,12 @@ exports.validate = async (context, req) => {
         } catch (error) {
             summary.critical = (summary.critical || 0) + 1;
 
+            let errContext;
+            const { str1, str2, str3, line, level, int1, domain, column } = error;
+            if (line) {
+                errContext = `At line: ${error.line}`;
+            }
+
             const validationReport = {
                 valid: false,
                 fileType: state.fileType,
@@ -101,6 +107,8 @@ exports.validate = async (context, req) => {
                             severity: 'critical',
                             category: 'iati',
                             message: error.message,
+                            context: errContext,
+                            details: { str1, str2, str3, line, level, int1, domain, column },
                         },
                     ],
                 },
@@ -136,6 +144,7 @@ exports.validate = async (context, req) => {
                             severity: 'critical',
                             category: 'iati',
                             message: 'The file is not an IATI file.',
+                            context: '',
                         },
                     ],
                 },
@@ -173,6 +182,7 @@ exports.validate = async (context, req) => {
                             } of the IATI Standard is no longer supported. Supported versions: ${config.VERSIONS.join(
                                 ', '
                             )}`,
+                            context: '',
                         },
                     ],
                 },
@@ -194,13 +204,21 @@ exports.validate = async (context, req) => {
         const schemaStart = getStartTime();
         let schemaErrors = [];
         if (!xmlDoc.validate(getSchema(state.fileType, state.iatiVersion))) {
-            schemaErrors = xmlDoc.validationErrors.map((error) => ({
-                id: '0.3.1',
-                category: 'schema',
-                severity: 'critical',
-                message: error.message,
-                ...error,
-            }));
+            schemaErrors = xmlDoc.validationErrors.map((error) => {
+                let errContext;
+                const { line } = error;
+                if (line) {
+                    errContext = `At line: ${error.line}`;
+                }
+                return {
+                    id: '0.3.1',
+                    category: 'schema',
+                    severity: 'critical',
+                    message: error.message,
+                    context: errContext,
+                    details: error,
+                };
+            });
             summary.critical = (summary.critical || 0) + 1;
         }
 
