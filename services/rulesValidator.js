@@ -478,7 +478,7 @@ exports.validateIATI = async (ruleset, xml, idSets) => {
         singleElementDoc.firstChild.appendChild(element);
         let identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
         idTracker[identifier] = (idTracker[identifier] || 0) + 1;
-        if (isActivity && idTracker[identifier] > 1) {
+        if (idTracker[identifier] > 1) {
             // duplicate identifier, drop a file level error
             results.file = [
                 {

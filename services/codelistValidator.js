@@ -151,7 +151,6 @@ exports.validateCodelists = async (body, version) => {
             let identifier;
             if (newValue['organisation-identifier']) {
                 identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
-                errors[identifier] = errCache;
             } else {
                 identifier = 'noIdentifier';
             }
