@@ -234,7 +234,11 @@ exports.validate = async (context, req) => {
         // Codelist Validation
         const codelistStart = getStartTime();
 
-        const { errors, summary: newSum } = await validateCodelists(body, state.iatiVersion);
+        const { errors, summary: newSum } = await validateCodelists(
+            body,
+            state.iatiVersion,
+            showDetails
+        );
 
         // Update main summary counts
         _.forEach(summary, (count, severity) => {

@@ -1242,13 +1242,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/pub/validate",
+							"raw": "{{baseURL}}/pub/validate?showDetails=true",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pub",
 								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true"
+								}
 							]
 						}
 					},
@@ -1317,13 +1323,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/pub/validate",
+							"raw": "{{baseURL}}/pub/validate?showDetails=true",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pub",
 								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true"
+								}
 							]
 						}
 					},
@@ -1382,7 +1394,7 @@
 									"});",
 									"pm.test(\"There is a codelist error that references linked default codelist\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => ({context: obj.context}))).to.be.an('array').that.deep.includes({ context: \"\\\"ZZA123\\\" is not a valid value for attribute @code, in element <recipient-region> and linked @vocabulary = 1\"});",
+									"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => ({context: obj.context[0].text}))).to.be.an('array').that.deep.includes({ context: \"\\\"ZZA123\\\" is not a valid value for attribute @code, in element <recipient-region> and linked @vocabulary = 1\"});",
 									"});",
 									""
 								],
@@ -1414,13 +1426,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/pub/validate",
+							"raw": "{{baseURL}}/pub/validate?showDetails=true",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pub",
 								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true"
+								}
 							]
 						}
 					},

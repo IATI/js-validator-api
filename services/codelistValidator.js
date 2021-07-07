@@ -12,7 +12,7 @@ const shortenPath = (path) => {
     return path;
 };
 
-exports.validateCodelists = async (body, version) => {
+exports.validateCodelists = async (body, version, showDetails) => {
     const summary = {};
     const errors = {};
     let errCache = [];
@@ -52,20 +52,31 @@ exports.validateCodelists = async (body, version) => {
             linkedContext = `@${linkedAttribute} = ${linkedAttributeValue}`;
             errContext += ` and linked ${linkedContext}`;
         }
-        const validationError = {
-            id,
-            category,
-            severity,
-            message,
-            context: errContext,
-            details: {
-                xpath: path,
-                codelist,
-            },
-        };
+
         // increment summary object
         summary[severity] = (summary[severity] || 0) + 1;
-        errCache.push(validationError);
+
+        if (showDetails) {
+            errCache.push({
+                id,
+                category,
+                severity,
+                message,
+                context: [{ text: errContext }],
+                details: {
+                    xpath: path,
+                    codelist,
+                },
+            });
+        } else {
+            errCache.push({
+                id,
+                category,
+                severity,
+                message,
+                context: [{ text: errContext }],
+            });
+        }
     };
     const dupCounter = {};
 
