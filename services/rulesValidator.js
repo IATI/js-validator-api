@@ -23,6 +23,24 @@ const getText = (elementOrAttribute) => {
     return elementOrAttribute;
 };
 
+const getAttributes = (node) => {
+    if (_.has(node, 'attributes') && node.attributes.length > 0) {
+        return Array.from(node.attributes).map((attr) => ({
+            name: attr.name,
+            value: attr.value,
+        }));
+    }
+    return [];
+};
+
+const getParentNode = (elementOrAttribute) => {
+    if ('parentNode' in elementOrAttribute && elementOrAttribute.parentNode !== null)
+        return elementOrAttribute.parentNode;
+    if ('ownerElement' in elementOrAttribute && elementOrAttribute.ownerElement !== null)
+        return elementOrAttribute.ownerElement.parentNode;
+    return null;
+};
+
 const getObjVal = (obj, key, def) => {
     if (_.has(obj, key)) return obj[key];
     return def;
@@ -54,18 +72,12 @@ class Rules {
             this.caseContext.paths = _.flatten(
                 this.nestedMatches.map((pathMatch, i) =>
                     pathMatch.map((path) => {
-                        let attributes = [];
                         let text;
                         let parentNodeName;
                         if (_.has(path.parentNode, 'nodeName')) {
                             parentNodeName = path.parentNode.nodeName;
                         }
-                        if (_.has(path, 'attributes') && path.attributes.length > 0) {
-                            attributes = Array.from(path.attributes).map((attr) => ({
-                                name: attr.name,
-                                value: attr.value,
-                            }));
-                        }
+                        const attributes = getAttributes(path);
                         if (path.nodeName === 'reference') {
                             text = `For the ${parentNodeName} "${xpath(
                                 'string(../title/narrative)',
@@ -96,6 +108,23 @@ class Rules {
                 )
             );
         }
+        if ('prefix' in oneCase) {
+            this.caseContext.prefix = _.flatten(
+                oneCase.prefix.map((path) => {
+                    if (path !== 'ORG-ID-PREFIX') {
+                        return xpath(path, element).map((node) => ({
+                            xpath: path,
+                            attributes: getAttributes(node),
+                            name: node.nodeName,
+                            value: getText(node),
+                            lineNumber: node.lineNumber,
+                            columnNumber: node.columnNumber,
+                        }));
+                    }
+                    return {};
+                })
+            );
+        }
         ['less', 'more', 'start', 'date', 'end'].forEach((timeCase) => {
             if (timeCase in oneCase) {
                 this[timeCase] = this.parseDate(oneCase[timeCase]);
@@ -121,23 +150,36 @@ class Rules {
 
     addFailureContext(node) {
         let text;
-        const parentNodeName = node.parentNode.nodeName;
+        const parentNode = getParentNode(node);
+        const parentNodeName = parentNode.nodeName;
+        const { nodeName: element, lineNumber, columnNumber } = node;
+        const value = getText(node);
         if (['budget', 'planned-disbursement'].includes(parentNodeName)) {
-            const startDate = xpath('string(period-start/@iso-date)', node.parentNode);
-            const endDate = xpath('string(period-end/@iso-date)', node.parentNode);
+            const startDate = xpath('string(period-start/@iso-date)', parentNode);
+            const endDate = xpath('string(period-end/@iso-date)', parentNode);
             text = `In the ${parentNodeName} of ${startDate} to ${endDate}`;
-        }
-        if (['transaction'].includes(parentNodeName)) {
-            const transDate = xpath('string(transaction-date/@iso-date)', node.parentNode);
+        } else if (['transaction'].includes(parentNodeName)) {
+            const transDate = xpath('string(transaction-date/@iso-date)', parentNode);
             text = `In the transaction of ${transDate}`;
+        } else if (['transaction'].includes(element)) {
+            const transDate = xpath('string(transaction-date/@iso-date)', node);
+            text = `In the transaction of ${transDate}`;
+        } else if (['budget-line'].includes(parentNodeName)) {
+            const grandParent = getParentNode(parentNode);
+            const startDate = xpath('string(period-start/@iso-date)', grandParent);
+            const endDate = xpath('string(period-end/@iso-date)', grandParent);
+            const narrative = xpath('string(narrative)', parentNode);
+            text = `In the ${parentNode.nodeName} '${narrative}' of ${grandParent.nodeName} of ${startDate} to ${endDate}`;
+        } else {
+            text = `For <${element}> '${value}' at line: ${lineNumber}, column: ${columnNumber}`;
         }
         this.failContext.push({
             text,
             parent: parentNodeName,
-            element: node.nodeName,
-            value: getText(node),
-            lineNumber: node.lineNumber,
-            columnNumber: node.columnNumber,
+            element,
+            value,
+            lineNumber,
+            columnNumber,
         });
     }
 
@@ -171,33 +213,42 @@ class Rules {
             return true;
         }
         const currencyPaths = ['value', 'forecast', 'loan-status'];
+        let result = true;
         switch (oneCase.all) {
             case 'lang':
-                return xpath('descendant::narrative', this.element).every((narrative) => {
-                    if (xpath('@xml:lang', narrative).length === 0) return false;
-                    return true;
+                xpath('descendant::narrative', this.element).forEach((narrative) => {
+                    if (xpath('@xml:lang', narrative).length === 0) {
+                        this.addFailureContext(narrative);
+                        result = false;
+                    }
                 });
+                return result;
             case 'sector':
-                return xpath('transaction', this.element).every((transaction) => {
-                    if (xpath('sector', transaction).length === 0) return false;
-                    return true;
+                xpath('transaction', this.element).forEach((transaction) => {
+                    if (xpath('sector', transaction).length === 0) {
+                        this.addFailureContext(transaction);
+                        result = false;
+                    }
                 });
+                return result;
             case 'recipient-country|recipient-region':
                 return xpath('transaction', this.element).every((transaction) => {
-                    if (xpath('recipient-country|recipient-region', transaction).length === 0)
+                    if (xpath('recipient-country|recipient-region', transaction).length === 0) {
+                        this.addFailureContext(transaction);
                         return false;
+                    }
                     return true;
                 });
             case 'currency':
-                return currencyPaths.every((cpath) =>
-                    xpath(`descendant::${cpath}`, this.element).every((currency) => {
+                currencyPaths.forEach((cpath) =>
+                    xpath(`descendant::${cpath}`, this.element).forEach((currency) => {
                         if (xpath('@currency', currency).length === 0) {
                             this.addFailureContext(currency);
-                            return false;
+                            result = false;
                         }
-                        return true;
                     })
                 );
+                return result;
             default:
                 return true;
         }
@@ -267,8 +318,11 @@ class Rules {
         return '';
     }
 
-    betweenDates() {
+    betweenDates(oneCase) {
         if (this.date !== null) {
+            if ('date' in oneCase) {
+                this.addFailureContext(xpath(oneCase.date, this.element)[0]);
+            }
             return (
                 compareAsc(this.start.parsedDate, this.date.parsedDate) <= 0 &&
                 compareAsc(this.date.parsedDate, this.end.parsedDate) <= 0
@@ -465,7 +519,157 @@ exports.allRulesResult = (ruleset, xml) => {
     return results.every((res) => res.result);
 };
 
-exports.validateIATI = async (ruleset, xml, idSets) => {
+const createPathsContext = (caseContext, xpathContext, concatenate) => {
+    if ('paths' in caseContext && caseContext.paths.length > 0) {
+        if (concatenate) {
+            const text = caseContext.paths.reduce(
+                (acc, path, i) =>
+                    `${acc}${i === 0 ? 'For ' : ' and '}${xpathContext.xpath}/${path.xpath} = '${
+                        path.value
+                    }' at line: ${path.lineNumber}, column: ${path.columnNumber}`,
+                ''
+            );
+            return [{ text }];
+        }
+        return caseContext.paths.map((path) => ({
+            text: `For ${xpathContext.xpath}/${path.xpath} = '${path.value}' at line: ${path.lineNumber}, column: ${path.columnNumber}`,
+        }));
+    }
+    return [];
+};
+
+const standardiseResultFormat = (result, showDetails) => {
+    let context = [];
+    let id;
+    let severity;
+    let category;
+    let message;
+    const { xpathContext, ruleName, ruleCase, caseContext, failContext } = result;
+    if ('ruleInfo' in ruleCase) {
+        ({ id, severity, category, message } = ruleCase.ruleInfo);
+    }
+    switch (ruleName) {
+        case 'atLeastOne':
+            context.push({
+                text: `For <${xpathContext.xpath.split('/').pop()}> at line: ${
+                    xpathContext.lineNumber
+                }, column: ${xpathContext.columnNumber}`,
+            });
+            break;
+        case 'dateNow':
+            if (caseContext && 'date' in caseContext) {
+                context.push({
+                    text: `For date ${caseContext.date.parsedDate.toISOString()} at line: ${
+                        caseContext.date.lineNumber
+                    }, column: ${caseContext.date.columnNumber}`,
+                });
+            }
+            break;
+        case 'dateOrder':
+            if (caseContext && 'less' in caseContext && 'more' in caseContext) {
+                let text = `${
+                    ruleCase.less
+                } = '${caseContext.less.parsedDate.toISOString()}' at line: ${
+                    caseContext.less.lineNumber
+                }, column: ${caseContext.less.columnNumber} is later than ${
+                    ruleCase.more
+                } = '${caseContext.more.parsedDate.toISOString()}'`;
+                if ('lineNumber' in caseContext.more && 'columnNumber' in caseContext.more) {
+                    text += ` at line: ${caseContext.more.lineNumber}, column: ${caseContext.more.columnNumber}`;
+                }
+                context.push({
+                    text,
+                });
+            }
+            break;
+        case 'timeLimit':
+            if (caseContext && 'start' in caseContext && 'end' in caseContext) {
+                let text = `${
+                    ruleCase.end
+                } = '${caseContext.end.parsedDate.toISOString()}' at line: ${
+                    caseContext.end.lineNumber
+                }, column: ${caseContext.end.columnNumber} is more than a year later than ${
+                    ruleCase.start
+                } = '${caseContext.start.parsedDate.toISOString()}'`;
+                if ('lineNumber' in caseContext.start && 'columnNumber' in caseContext.start) {
+                    text += ` at line: ${caseContext.start.lineNumber}, column: ${caseContext.start.columnNumber}`;
+                }
+                context.push({
+                    text,
+                });
+            }
+            break;
+        case 'oneOrAll':
+            if (failContext.length > 0) {
+                context = failContext.map((val) => ({ text: val.text }));
+            }
+            break;
+        case 'regexMatches':
+            context = createPathsContext(caseContext, xpathContext, false);
+            break;
+        case 'noSpaces':
+            context = createPathsContext(caseContext, xpathContext, false);
+            break;
+        case 'unique':
+            context = createPathsContext(caseContext, xpathContext, true);
+            break;
+        case 'range':
+            context = createPathsContext(caseContext, xpathContext, false);
+            break;
+        case 'ifThen':
+            context = createPathsContext(caseContext, xpathContext, true);
+            break;
+        case 'noMoreThanOne':
+            context = createPathsContext(caseContext, xpathContext, true);
+            break;
+        case 'startsWith':
+            context = _.flatten(
+                caseContext.prefix.map((prefixPath) =>
+                    caseContext.paths.map((casePath) => ({
+                        text: `For prefix: ${xpathContext.xpath}/${prefixPath.xpath} = '${prefixPath.value}' at line: ${prefixPath.lineNumber}, column: ${prefixPath.columnNumber} and ${xpathContext.xpath}/${casePath.xpath} = '${casePath.value}' at line: ${casePath.lineNumber}, column: ${casePath.columnNumber}`,
+                    }))
+                )
+            );
+            break;
+        case 'strictSum':
+            if (failContext.length > 0) {
+                context = failContext.map((val) => ({ text: val.text }));
+            }
+            break;
+        case 'betweenDates':
+            if (failContext.length > 0) {
+                context = failContext.map((val) => ({ text: val.text }));
+            }
+            break;
+        default:
+            break;
+    }
+    if (showDetails) {
+        return {
+            id,
+            severity,
+            category,
+            message,
+            context,
+            details: {
+                ruleName,
+                ruleCase,
+                xpathContext,
+                caseContext,
+                failContext,
+            },
+        };
+    }
+    return {
+        id,
+        severity,
+        category,
+        message,
+        context,
+    };
+};
+
+exports.validateIATI = async (ruleset, xml, idSets, showDetails) => {
     const document = new DOMParser().parseFromString(xml);
     const isActivity = xpath('//iati-activities', document).length > 0;
     const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
@@ -495,7 +699,7 @@ exports.validateIATI = async (ruleset, xml, idSets) => {
 
         this.testRuleset(ruleset, singleElementDoc, idSets).forEach((result) => {
             if (result.result === false) {
-                results[identifier].push(result);
+                results[identifier].push(standardiseResultFormat(result, showDetails));
             }
         });
         if (results[identifier].length === 0) {

@@ -18,6 +18,9 @@ const logValidationSummary = (context, state) => {
 
 exports.validate = async (context, req) => {
     let { body } = req;
+    let { showDetails } = req.query;
+
+    showDetails = showDetails === 'true' || showDetails === 'True';
 
     // No body
     if (!body || JSON.stringify(body) === '{}') {
@@ -42,6 +45,7 @@ exports.validate = async (context, req) => {
     }
 
     const state = {
+        showDetails,
         fileSize: '',
         fileType: '',
         iatiVersion: '',
@@ -245,7 +249,7 @@ exports.validate = async (context, req) => {
         const ruleset = getRuleset(state.iatiVersion);
 
         const idSets = await getIdSets();
-        const rulesResult = await validateIATI(ruleset, body, idSets);
+        const rulesResult = await validateIATI(ruleset, body, idSets, showDetails);
 
         state.ruleTime = getElapsedTime(ruleStart);
         context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });

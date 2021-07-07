@@ -1065,7 +1065,7 @@
 									"});",
 									"pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains identifier error 1.14.8\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('1.14.8');",
+									"    pm.expect(jsonData.errors['AA-AAA-123456789-ABC123'].map(obj => (obj.id))).to.include('1.14.8');",
 									"});",
 									""
 								],
@@ -1670,7 +1670,7 @@
 									"});",
 									"pm.test(\"noIdentifier(2) errors array includes a Ruleset Error\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors['noIdentifier(2)'].some((err) => err.ruleName)).to.eq(true);",
+									"    pm.expect(jsonData.errors['noIdentifier(2)'].some((err) => err.details.ruleName)).to.eq(true);",
 									"});",
 									""
 								],
@@ -1702,13 +1702,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/pub/validate",
+							"raw": "{{baseURL}}/pub/validate?showDetails=true",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pub",
 								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true"
+								}
 							]
 						}
 					},
@@ -1801,9 +1807,12 @@
 										"exec": [
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 6.11.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('6.11.1');",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.include('6.11.1');",
 											"});",
-											""
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -1830,13 +1839,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -1868,9 +1883,12 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 4.1.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('4.1.1');",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.include('4.1.1');",
 											"});",
-											""
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -1897,13 +1915,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -1935,9 +1959,12 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 11.1.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('11.1.1');",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.include('11.1.1');",
 											"});",
-											""
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -1964,13 +1991,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2002,9 +2035,12 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 11.1.4\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('11.1.4');",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.include('11.1.4','11.1.2','11.2.1');",
 											"});",
-											""
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2031,13 +2067,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2069,9 +2111,17 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 1.11.13\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('1.11.13');",
+											"    pm.expect(jsonData.errors['XM-DA&C-41127-123'].map(obj => (obj.id))).to.include('1.11.13');",
 											"});",
-											""
+											"pm.test(\"The 2 regexMatches errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DA&C-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'regexMatches') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(1);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2098,13 +2148,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2136,9 +2192,17 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 1.11.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('1.11.1');",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.include('1.11.1');",
 											"});",
-											""
+											"pm.test(\"The 1 noSpaces error contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'noSpaces') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2165,13 +2229,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2203,7 +2273,16 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 3.4.2 twice\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.eql([ '3.4.2', '3.4.2' ]);",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.eql([ '3.4.2', '3.4.2' ]);",
+											"});",
+											"pm.test(\"The 2 strictSum errors contain a context Array with at least 1 string each\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'strictSum') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(1);",
 											"});",
 											""
 										],
@@ -2232,13 +2311,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2266,7 +2351,25 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error ids 1.1.3 and 1.1.21\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.eql(['1.1.3', '1.1.21']);",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.eql(['1.1.3', '1.1.21']);",
+											"});",
+											"pm.test(\"The 2 unique errors contain a context Array with at least 1 string each\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'unique') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});",
+											"pm.test(\"The 2 startsWith errors contain a context Array with at least 1 string each\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'startsWith') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
 											"});",
 											""
 										],
@@ -2295,13 +2398,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2331,11 +2440,28 @@
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.errors).to.not.have.property('file');",
 											"});",
-											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 12.2.1 and 7.9.4\", function () {",
+											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 12.2.1, 7.9.4, 2.2.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.eql([ '7.9.4', '12.2.1' ]);",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.eql([ '7.9.4', '12.2.1', '2.2.1' ]);",
 											"});",
-											""
+											"pm.test(\"The 1 range error contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'range') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});",
+											"pm.test(\"The 2 ifThen errors contain a context Array with at least 1 string each\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'ifThen') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(1);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2362,13 +2488,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2400,9 +2532,17 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 7.5.3\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.eql([ '7.5.3' ]);",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.eql([ '7.5.3' ]);",
 											"});",
-											""
+											"pm.test(\"The 1 timeLimit error contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'timeLimit') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2429,13 +2569,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2467,9 +2613,17 @@
 											"});",
 											"pm.test(\"Activitiy identifier is equal to XM-DAC-41127-123 and contains error id 107.1.2\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.ruleCase.ruleInfo.id))).to.include('107.1.2');",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].map(obj => (obj.id))).to.include('107.1.2');",
 											"});",
-											""
+											"pm.test(\"The 1 noMoreThanOne error contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['XM-DAC-41127-123'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'noMoreThanOne') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2496,13 +2650,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},
@@ -2549,9 +2709,17 @@
 										"exec": [
 											"pm.test(\"Organisation identifier is equal to NP-SWC-1234 and contains error id 11.3.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors['NP-SWC-1234'].map(obj => (obj.ruleCase.ruleInfo.id))).to.eql([ '11.3.1' ]);",
+											"    pm.expect(jsonData.errors['NP-SWC-1234'].map(obj => (obj.id))).to.eql([ '11.3.1' ]);",
 											"});",
-											""
+											"pm.test(\"The 1 betweenDates error contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors['NP-SWC-1234'].reduce((acc, obj) => {",
+											"        if (obj.details.ruleName === 'betweenDates') {",
+											"            return acc.concat(obj.context)",
+											"        }",
+											"        return acc",
+											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -2578,13 +2746,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseURL}}/pub/validate",
+									"raw": "{{baseURL}}/pub/validate?showDetails=true",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pub",
 										"validate"
+									],
+									"query": [
+										{
+											"key": "showDetails",
+											"value": "true"
+										}
 									]
 								}
 							},

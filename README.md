@@ -90,6 +90,11 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 ### `POST /pub/validate`
 
+-   Query Params
+
+    -   `showDetails=true`
+        -   shows all context information for advanced use and debugging
+
 -   Request Body
 
     -   application/xml
