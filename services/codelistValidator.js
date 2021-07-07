@@ -56,27 +56,19 @@ exports.validateCodelists = async (body, version, showDetails) => {
         // increment summary object
         summary[severity] = (summary[severity] || 0) + 1;
 
-        if (showDetails) {
-            errCache.push({
-                id,
-                category,
-                severity,
-                message,
-                context: [{ text: errContext }],
+        errCache.push({
+            id,
+            category,
+            severity,
+            message,
+            context: [{ text: errContext }],
+            ...(showDetails && {
                 details: {
                     xpath: path,
                     codelist,
                 },
-            });
-        } else {
-            errCache.push({
-                id,
-                category,
-                severity,
-                message,
-                context: [{ text: errContext }],
-            });
-        }
+            }),
+        });
     };
     const dupCounter = {};
 

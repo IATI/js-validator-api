@@ -112,7 +112,9 @@ exports.validate = async (context, req) => {
                             category: 'iati',
                             message: error.message,
                             context: errContext,
-                            details: { str1, str2, str3, line, level, int1, domain, column },
+                            ...(showDetails && {
+                                details: { str1, str2, str3, line, level, int1, domain, column },
+                            }),
                         },
                     ],
                 },
@@ -220,7 +222,7 @@ exports.validate = async (context, req) => {
                     severity: 'critical',
                     message: error.message,
                     context: errContext,
-                    details: error,
+                    ...(showDetails && { details: error }),
                 };
             });
             summary.critical = (summary.critical || 0) + 1;

@@ -644,13 +644,14 @@ const standardiseResultFormat = (result, showDetails) => {
         default:
             break;
     }
-    if (showDetails) {
-        return {
-            id,
-            severity,
-            category,
-            message,
-            context,
+
+    return {
+        id,
+        severity,
+        category,
+        message,
+        context,
+        ...(showDetails && {
             details: {
                 ruleName,
                 ruleCase,
@@ -658,14 +659,7 @@ const standardiseResultFormat = (result, showDetails) => {
                 caseContext,
                 failContext,
             },
-        };
-    }
-    return {
-        id,
-        severity,
-        category,
-        message,
-        context,
+        }),
     };
 };
 

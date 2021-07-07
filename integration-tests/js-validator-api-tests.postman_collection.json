@@ -346,7 +346,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.valid).to.eql(false);",
 									"});",
-									"pm.test(\"Feedback message id is equal to 0.1.1\", function () {",
+									"pm.test(\"Error id is equal to 0.1.1\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.1.1');",
 									"});",
@@ -390,6 +390,84 @@
 							"path": [
 								"pub",
 								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "not-xml - 0.1.1 - showDetails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+									"pm.test(\"The file is not valid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.valid).to.eql(false);",
+									"});",
+									"pm.test(\"Error id is equal to 0.1.1\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.1.1');",
+									"});",
+									"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include(\"Start tag expected, '<' not found\\n\");",
+									"});",
+									"pm.test(\"Error object contains a details object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.file[0]).to.have.property('details');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "not-xml.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?showDetails=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true"
+								}
 							]
 						}
 					},
@@ -483,6 +561,10 @@
 									"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.file.map(obj => (obj.message))).to.include(\"Opening and ending tag mismatch: level1 line 2 and level2\\n\");",
+									"});",
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -549,7 +631,10 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.3.1');",
 									"});",
-									""
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -615,7 +700,10 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.3.1');",
 									"});",
-									""
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -658,6 +746,85 @@
 					"response": []
 				},
 				{
+					"name": "iati-act-schema-errors - expect 0.3.1 - showDetails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"The file is not valid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.valid).to.eql(false);",
+									"});",
+									"pm.test(\"fileType value is iati-activities\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+									"});",
+									"pm.test(\"version is 2.03\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"File level error includes error with id 0.3.1\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.3.1');",
+									"});",
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});",
+									"pm.test(\"Error object contains a details object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.file[0]).to.have.property('details');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "iati-act-schema-errors.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?showDetails=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "showDetails",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "iati-org-schema-errors - expect 0.3.1",
 					"event": [
 						{
@@ -681,7 +848,10 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.file.map(obj => (obj.id))).to.include('0.3.1');",
 									"});",
-									""
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
