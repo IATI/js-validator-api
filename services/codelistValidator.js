@@ -12,8 +12,37 @@ const shortenPath = (path) => {
     return path;
 };
 
+const getActivityTitle = (node) => {
+    if ('title' in node) {
+        const { title } = node;
+        if ('narrative' in title[0]) {
+            const { narrative } = title[0];
+            const [activityTitle] = narrative;
+            if (typeof activityTitle === 'string') {
+                return activityTitle;
+            }
+            return activityTitle._;
+        }
+    }
+    return 'No Activity Title Found';
+};
+
+const getOrgName = (node) => {
+    if ('name' in node) {
+        const { name } = node;
+        if ('narrative' in name[0]) {
+            const { narrative } = name[0];
+            const [orgName] = narrative;
+            if (typeof orgName === 'string') {
+                return orgName;
+            }
+            return orgName._;
+        }
+    }
+    return 'No Organisation Name Found';
+};
+
 exports.validateCodelists = async (body, version, showDetails) => {
-    const summary = {};
     const errors = {};
     let errCache = [];
     const codelistRules = getVersionCodelistRules(version);
@@ -52,9 +81,6 @@ exports.validateCodelists = async (body, version, showDetails) => {
             linkedContext = `@${linkedAttribute} = ${linkedAttributeValue}`;
             errContext += ` and linked ${linkedContext}`;
         }
-
-        // increment summary object
-        summary[severity] = (summary[severity] || 0) + 1;
 
         errCache.push({
             id,
@@ -153,6 +179,7 @@ exports.validateCodelists = async (body, version, showDetails) => {
         // save activity-level errors to error object
         if (xpath === '/iati-activities/iati-activity') {
             let identifier;
+            const activityTitle = getActivityTitle(newValue);
             if (newValue['iati-identifier']) {
                 identifier = newValue['iati-identifier'].join() || 'noIdentifier';
             } else {
@@ -163,20 +190,21 @@ exports.validateCodelists = async (body, version, showDetails) => {
                 identifier = `${identifier}(${dupCounter[identifier]})`;
             }
             if (errCache.length > 0) {
-                errors[identifier] = errCache;
+                errors[identifier] = { identifier, title: activityTitle, errors: errCache };
             }
             errCache = [];
         }
         // save organisation-level errors to error object
         if (xpath === '/iati-organisations/iati-organisation') {
             let identifier;
+            const orgName = getOrgName(newValue);
             if (newValue['organisation-identifier']) {
                 identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
             } else {
                 identifier = 'noIdentifier';
             }
             if (errCache.length > 0) {
-                errors[identifier] = errCache;
+                errors[identifier] = { identifier, title: orgName, errors: errCache };
             }
             errCache = [];
         }
@@ -184,7 +212,7 @@ exports.validateCodelists = async (body, version, showDetails) => {
         // save file level errors to error object
         if (xpath === '/iati-activities' || xpath === '/iati-organisations') {
             if (errCache.length > 0) {
-                errors.file = errCache;
+                errors.file = { identifier: 'file', title: 'File level errors', errors: errCache };
             }
             errCache = [];
         }
@@ -198,5 +226,5 @@ exports.validateCodelists = async (body, version, showDetails) => {
         async: true,
     });
 
-    return { errors, summary };
+    return { errors };
 };

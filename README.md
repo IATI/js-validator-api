@@ -92,8 +92,10 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   Query Params
 
-    -   `showDetails=true`
+    -   `details=true`
         -   shows all context information for advanced use and debugging
+    -   `group=false`
+        -   returns errors ungrouped in a "flat" structure, default is to group by Activity/Organisation identifier and Category
 
 -   Request Body
 

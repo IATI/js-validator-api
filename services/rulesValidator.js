@@ -623,13 +623,20 @@ const standardiseResultFormat = (result, showDetails) => {
             context = createPathsContext(caseContext, xpathContext, true);
             break;
         case 'startsWith':
-            context = _.flatten(
-                caseContext.prefix.map((prefixPath) =>
-                    caseContext.paths.map((casePath) => ({
-                        text: `For prefix: ${xpathContext.xpath}/${prefixPath.xpath} = '${prefixPath.value}' at line: ${prefixPath.lineNumber}, column: ${prefixPath.columnNumber} and ${xpathContext.xpath}/${casePath.xpath} = '${casePath.value}' at line: ${casePath.lineNumber}, column: ${casePath.columnNumber}`,
-                    }))
-                )
-            );
+            if (
+                ruleCase.prefix === 'ORG-ID-PREFIX' ||
+                (ruleCase.prefix.length === 1 && ruleCase.prefix[0] === 'ORG-ID-PREFIX')
+            ) {
+                context = createPathsContext(caseContext, xpathContext, true);
+            } else {
+                context = _.flatten(
+                    caseContext.prefix.map((prefixPath) =>
+                        caseContext.paths.map((casePath) => ({
+                            text: `For prefix: ${xpathContext.xpath}/${prefixPath.xpath} = '${prefixPath.value}' at line: ${prefixPath.lineNumber}, column: ${prefixPath.columnNumber} and ${xpathContext.xpath}/${casePath.xpath} = '${casePath.value}' at line: ${casePath.lineNumber}, column: ${casePath.columnNumber}`,
+                        }))
+                    )
+                );
+            }
             break;
         case 'strictSum':
             if (failContext.length > 0) {
@@ -663,11 +670,12 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
-exports.validateIATI = async (ruleset, xml, idSets, showDetails) => {
+exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
     const document = new DOMParser().parseFromString(xml);
     const isActivity = xpath('//iati-activities', document).length > 0;
     const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
     const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
+    const titleLocation = isActivity ? 'title/narrative' : 'name/narrative';
     const elements = xpath(`//${fileType}`, document);
     const results = {};
     const idTracker = {};
@@ -675,29 +683,38 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails) => {
         const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
         singleElementDoc.firstChild.appendChild(element);
         let identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
+        const title = xpath(`string(${titleLocation})`, element) || '';
         idTracker[identifier] = (idTracker[identifier] || 0) + 1;
         if (idTracker[identifier] > 1) {
             // duplicate identifier, drop a file level error
-            results.file = [
-                {
-                    id: '1.1.2',
-                    severity: 'error',
-                    category: 'identifiers',
-                    message: `The activity identifier must be unique for each activity. Duplicate found for ${identifier}`,
-                },
-            ];
+            results.file = {
+                identifier: 'file',
+                title: 'File level errors',
+                errors: [
+                    {
+                        id: '1.1.2',
+                        severity: 'error',
+                        category: 'identifiers',
+                        message: `The activity identifier must be unique for each activity.`,
+                        context: [
+                            { text: `Duplicate found for ${identifierElement} = '${identifier}'` },
+                        ],
+                    },
+                ],
+            };
             identifier = `${identifier}(${idTracker[identifier]})`;
             idTracker[identifier] += 1;
         }
-        results[identifier] = [];
 
-        this.testRuleset(ruleset, singleElementDoc, idSets).forEach((result) => {
+        const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
-                results[identifier].push(standardiseResultFormat(result, showDetails));
+                acc.push(standardiseResultFormat(result, showDetails));
             }
-        });
-        if (results[identifier].length === 0) {
-            delete results[identifier];
+            return acc;
+        }, []);
+
+        if (errors.length > 0) {
+            results[identifier] = { identifier, title, errors };
         }
     });
     return results;
