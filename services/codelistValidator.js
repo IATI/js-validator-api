@@ -2,8 +2,47 @@ const xml2js = require('xml2js');
 const _ = require('underscore');
 const { getVersionCodelistRules } = require('../utils/utils');
 
-exports.validateCodelists = async (body, version) => {
-    const summary = {};
+const shortenPath = (path) => {
+    if (path.includes('/iati-activities')) {
+        return path.replace('/iati-activities', '/');
+    }
+    if (path.includes('/iati-organisations')) {
+        return path.replace('/iati-organisations', '/');
+    }
+    return path;
+};
+
+const getActivityTitle = (node) => {
+    if ('title' in node) {
+        const { title } = node;
+        if ('narrative' in title[0]) {
+            const { narrative } = title[0];
+            const [activityTitle] = narrative;
+            if (typeof activityTitle === 'string') {
+                return activityTitle;
+            }
+            return activityTitle._;
+        }
+    }
+    return 'No Activity Title Found';
+};
+
+const getOrgName = (node) => {
+    if ('name' in node) {
+        const { name } = node;
+        if ('narrative' in name[0]) {
+            const { narrative } = name[0];
+            const [orgName] = narrative;
+            if (typeof orgName === 'string') {
+                return orgName;
+            }
+            return orgName._;
+        }
+    }
+    return 'No Organisation Name Found';
+};
+
+exports.validateCodelists = async (body, version, showDetails) => {
     const errors = {};
     let errCache = [];
     const codelistRules = getVersionCodelistRules(version);
@@ -16,38 +55,46 @@ exports.validateCodelists = async (body, version) => {
         linkedAttribute,
         linkedAttributeValue
     ) => {
+        let path;
         let ruleInfo;
         let errContext;
-        let context;
+        let linkedContext;
         if (linkedAttribute) {
             ruleInfo = codelistDefinition[attribute].conditions.mapping[linkedAttributeValue];
         } else {
             ruleInfo = codelistDefinition[attribute];
         }
-        const { id, severity, priority, category, message, codelist } = ruleInfo;
+        const { id, severity, category, message, codelist } = ruleInfo;
+        path = shortenPath(xpath);
         if (attribute === 'text()') {
-            errContext = `"${curValue}" is not a valid value for <${xpath.split('/').pop()}>`;
+            path += `/text()`;
+            errContext = `"${curValue}" is not a valid value for element <${xpath
+                .split('/')
+                .pop()}>`;
         } else {
-            errContext = `"${curValue}" is not a valid value for attribute @${attribute}`;
+            path += `/@${attribute}`;
+            errContext = `"${curValue}" is not a valid value for attribute @${attribute}, in element <${xpath
+                .split('/')
+                .pop()}>`;
         }
         if (linkedAttribute) {
-            context = `@${linkedAttribute} = ${linkedAttributeValue}`;
-            errContext += ` and linked ${context}`;
+            linkedContext = `@${linkedAttribute} = ${linkedAttributeValue}`;
+            errContext += ` and linked ${linkedContext}`;
         }
-        const validationError = {
-            xpath,
+
+        errCache.push({
             id,
-            codelist,
-            severity,
-            priority,
             category,
-            context,
+            severity,
             message,
-            errContext,
-        };
-        // increment summary object
-        summary[severity] = (summary[severity] || 0) + 1;
-        errCache.push(validationError);
+            context: [{ text: errContext }],
+            ...(showDetails && {
+                details: {
+                    xpath: path,
+                    codelist,
+                },
+            }),
+        });
     };
     const dupCounter = {};
 
@@ -132,6 +179,7 @@ exports.validateCodelists = async (body, version) => {
         // save activity-level errors to error object
         if (xpath === '/iati-activities/iati-activity') {
             let identifier;
+            const activityTitle = getActivityTitle(newValue);
             if (newValue['iati-identifier']) {
                 identifier = newValue['iati-identifier'].join() || 'noIdentifier';
             } else {
@@ -142,21 +190,21 @@ exports.validateCodelists = async (body, version) => {
                 identifier = `${identifier}(${dupCounter[identifier]})`;
             }
             if (errCache.length > 0) {
-                errors[identifier] = errCache;
+                errors[identifier] = { identifier, title: activityTitle, errors: errCache };
             }
             errCache = [];
         }
         // save organisation-level errors to error object
         if (xpath === '/iati-organisations/iati-organisation') {
             let identifier;
+            const orgName = getOrgName(newValue);
             if (newValue['organisation-identifier']) {
                 identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
-                errors[identifier] = errCache;
             } else {
                 identifier = 'noIdentifier';
             }
             if (errCache.length > 0) {
-                errors[identifier] = errCache;
+                errors[identifier] = { identifier, title: orgName, errors: errCache };
             }
             errCache = [];
         }
@@ -164,7 +212,7 @@ exports.validateCodelists = async (body, version) => {
         // save file level errors to error object
         if (xpath === '/iati-activities' || xpath === '/iati-organisations') {
             if (errCache.length > 0) {
-                errors.file = errCache;
+                errors.file = { identifier: 'file', title: 'File level errors', errors: errCache };
             }
             errCache = [];
         }
@@ -178,5 +226,5 @@ exports.validateCodelists = async (body, version) => {
         async: true,
     });
 
-    return { errors, summary };
+    return { errors };
 };

@@ -90,6 +90,13 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 ### `POST /pub/validate`
 
+-   Query Params
+
+    -   `details=true`
+        -   shows all context information for advanced use and debugging
+    -   `group=false`
+        -   returns errors ungrouped in a "flat" structure, default is to group by Activity/Organisation identifier and Category
+
 -   Request Body
 
     -   application/xml
