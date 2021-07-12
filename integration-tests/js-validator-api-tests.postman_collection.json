@@ -747,7 +747,7 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "/Users/nosvalds/Projects/validator-cli/iati-act-line-br.xml"
+								"src": "iati-act-line-br.xml"
 							}
 						},
 						"url": {
