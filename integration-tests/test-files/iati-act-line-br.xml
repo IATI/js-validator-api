@@ -1,0 +1,432 @@
+<iati-activities generated-datetime="2021-02-12T16:05:40" version="2.03" >
+<iati-activity xml:lang="en" default-currency="EUR" last-updated-datetime="2021-02-12T16:05:40">
+<iati-identifier>FI-3-2020- 2020000056</iati-identifier>
+<reporting-org ref="FI-3" type="10" secondary-reporter="0"><narrative>Ministry for Foreign Affairs of Finland</narrative></reporting-org>
+<title><narrative>Quality laboratory testing -training project in Benin</narrative>
+<narrative xml:lang="fi">Laadukas laboratoriotestaus -koulutushanke Beninissa</narrative>
+</title>
+<description type="1">
+<narrative>
+Antimicrobial resistance (AMR) is a serious fast-growing global problem threatening effectiveness of antibiotic treatment of infectious diseases. Detection of resistant pathogenic bacteria is crucial to prevention of their spread. In Benin clinical laborat
+ories cannot fulfill this task due to poor infrastructure and lack of skills of laboratory personnel. Furthermore physicians' understanding of  utilization of laboratory results in their treatment decisions is weak. Therefore we propose a capacity building
+project which aims to strengthen clinical laboratories in Benin concentrating especially in antimicrobial resistance testing and detection of resistant bacteria that cause potentially mortal blood infections including sepsis. We emphasize quality control 
+practices that ensure as short as possible turn-around time and reliability of results. This is essential for all testing activities of clinical laboratories also in facing epidemics such as the recent Covid-19.   In our project PSR will support Beninese p
+artners to carry out training of trainers for AMR and blood infections testing. In a training laboratory affiliated with the University of Abomey-Calavi a set of master trainers will be educated with the help of local and Finnish clinical laboratory expert
+s. These master trainers will further train clinical laboratory technicians from all the regions of Benin invited to attend by the Beninese Ministry of Health. Altogether 60 laboratory staff will be trained and certified. Workshops bringing together physic
+ians and laboratory experts will be arranged to design new practices facilitating efficient utilization of laboratory results in treatment of infections and reducing AMR. Evidence is collected on laboratory practices before and after the training to produc
+e information on efficacy of provided training and to propose further paths for improving clinical laboratories and in tackling AMR. A policy paper will be prepared summarizing the good practices to be transferred to the national and West- African health p
+olicies. The project also aims at catalyzing a wider policy dialogue on developing the Beninese laboratory system.
+</narrative>
+<narrative xml:lang="fi">
+Antibioottiresistenssi on nopeasti paheneva globaali ongelma joka uhkaa nykylaaketieteen perustana olevivaa tartuntatautien hoitoa. Antibiooteille vastustuskykyisten taudinaiheuttajien tunnistaminen on valttamatonta niiden leviaamisen estamiseksi. Beniniss
+a sairaaloiden laboratoriot eivat talla hetkella pysty tekemaan tata tyota heikon infrastruktuurin ja henkilokunnan taitotason vuoksi. Myos laakarien ymmarrys laboratoriotesteista ja niiden kayttaminen paatoksenteon pohjana on vahaista. Taman vuoksi ehdota
+mme kapasiteetin rakennushanketta jossa vahvistetaan Beninilaisten kliinisten laboratorioiden kykya viljella ja tunnistaa resistentteja bakteereja jotka aiheuttavat henkeauhkaavia infektioita erityisesti verenmykytyksia. Hankkeessa keskitytaan nopeaan ja s
+ystemaattiseen tyoskentelyyn jonka opit ovat sovellettavissa myos yleisemmin vaarallisten biologisten naytteiden kasittelyyn myos mahdollisissa pandemiatilanteissa.Hankkeessa LSV tukee Beninilaisia partnereita kouluttamaan sairaaloiden laboratoriohenkiloku
+ntaa antibioottiresistenssitutkimuksien ja veriviljelyiden. Hankkeessa koulutetaan ensin kokeneempia kouluttajia beninilaisten ja suomalaisen asiantuntijoiden tuella Abomey-Calavi a set of master trainers will be educated with the help of local and Finnish
+clinical laboratory experts. Nama kouluttajat kouluttavat ja tukevat 60 terveysministerion kutstumaa laboratorioteknikkoa eri puolilta Beninia. Laboratoriotulosten tehokasta hyodyntamista hoitopaatoksissa tarkastellaan tyopajoissa jossa laboratoriohenkilo
+kunta ja laakarit kohtaavat. Tietoa laboratorioiden toiminnasta ja tietojen hyodyntamisesta kerataan ennen ja ja jalkeen koulutusten hankkeen seuraamiseksi ja laboratorioiden tehokkaan kayton suunnitteluun jatkossa. Hankkeessa valmistellaan raportti joka l
+injaa hyvia kaytantoja Beninin ja Lansi-Afrikan kontekstissa ja uusia toimintatapoja kehitetaan terveysministerion sairaaloiden ja akateemisen yhteison dialogilla.</narrative>
+</description>
+<participating-org ref="FI-3" type="10" role="1"><narrative>Ministry for Foreign Affairs of Finland</narrative></participating-org>
+<participating-org ref="22000" type="22" role="3">
+<narrative>Laakarin Sosialinen Vastuu ry</narrative>
+</participating-org>
+<activity-status code="2" />
+<activity-date iso-date="2020-06-24" type="2"><narrative>Actual start date of the activity</narrative></activity-date> 
+<activity-date iso-date="2022-12-31" type="3"><narrative>Planned end date of the activity</narrative></activity-date> 
+<recipient-country code="BJ" percentage="100" />
+<sector vocabulary="1" code="12281" percentage="100" />
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 1, secondary"><narrative>Strengthening of the rights and status of women and girls is a secondary priority area in this 
+activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 2, primary"><narrative>Generating jobs, livelihood opportunities and well-being in a developing country is the main prio
+rity area in this activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 3, secondary"><narrative>Improving democracy in societies is a secondary priority area in this activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/48132/human_rights_based_approach_in_finlands_development_cooperation___guidance" code="2">
+<narrative>Human rights sensitive</narrative>
+<narrative xml:lang="fi">Ihmisoikeudet huomioiva</narrative>
+</tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/0/finlands-development-cooperation-appropriations-and-disbursements-1989-2019.pdf/fe42e62c-798c-359f-6180-e7e01fd9d89a?t=1588088517786" code="2430668">
+<narrative>Support for NGOs</narrative>
+<narrative xml:lang="fi">Tuki kansalaisjarjestojen kehitysyhteistyolle</narrative>
+</tag
+>
+<policy-marker code="1" vocabulary="1" significance="0"><narrative>Gender Equality</narrative></policy-marker>
+<policy-marker code="2" significance="0" vocabulary="1"><narrative>Aid to Environment</narrative></policy-marker>
+<policy-marker code="3" significance="0" vocabulary="1"><narrative>Participatory Development/Good Governance</narrative></policy-marker>
+<policy-marker code="4" significance="0" vocabulary="1"><narrative>Trade Development</narrative></policy-marker>
+<policy-marker code="5" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention on Biological Diversity
+</narrative></policy-marker>
+<policy-marker code="6" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Mitigation</narrative></policy-marker>
+<policy-marker code="7" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Adaptation</narrative></policy-marker>
+<policy-marker code="8" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention to Combat Desertification
+</narrative></policy-marker>
+<policy-marker code="9" significance="0" vocabulary="1"><narrative>Reproductive, Maternal, Newborn and Child Health (RMNCH)
+</narrative></policy-marker>
+<policy-marker code="10" significance="0" vocabulary="1"><narrative>Disaster Risk Reduction(DRR)
+</narrative></policy-marker>
+<collaboration-type code="1" /><default-flow-type code="10" /><default-finance-type code="110" /><default-aid-type code="C01" /><default-tied-status code="5" />
+<budget status="1"><period-start iso-date="2021-01-01" /><period-end iso-date="2021-12-31" />
+<value currency="EUR" value-date="2020-01-01">128189</value></budget>
+<budget status="1"><period-start iso-date="2022-01-01" /><period-end iso-date="2022-12-31" />
+<value currency="EUR" value-date="2020-01-01">98461</value></budget>
+<capital-spend percentage="0" />
+<transaction ><transaction-type code="2" /><transaction-date iso-date="2020-06-24" /><value value-date="2020-01-01">226650</value></transaction>
+</iati-activity>
+<iati-activity xml:lang="en" default-currency="EUR" last-updated-datetime="2021-02-12T16:05:40">
+<iati-identifier>FI-3-2020- 2020000161</iati-identifier>
+<reporting-org ref="FI-3" type="10" secondary-reporter="0"><narrative>Ministry for Foreign Affairs of Finland</narrative></reporting-org>
+    <title><narrative>Promoting Gender Equality in Eritrea through Teacher Education</narrative>
+<narrative xml:lang="fi">Sukupuolten valisen tasa-arvon edistaminen Eritreassa opettajankoulutuksen avulla</narrative>
+</title>
+<description type="1">
+<narrative>
+The project contributes to more inclusive Eritrean society in which women and men can enjoy equal rights and which is free from gender based discrimination violence and harmful practices. It seeks to promote right to quality education especially of girls a
+nd women by contributing to more inclusive and gender sensitive education system in Eritrea that increases school enrolment prevents dropout and offers equal opportunities for women and men to be successful in the society. The project promotes gender equal
+ity in education sector by ensuring that evidence-based gender specific content is included in teachers? education with the potential of reaching teachers and pupils throughout the country. Teacher training institute gains deeper understanding on gender as
+pects in education and through pilot training programme forthcoming teachers are equipped with tools skills and views which make them more knowledgeable in gender issues in their profession. The teacher training institute?s capacity is improved to prepare 
+teachers with good understanding of gender related challenges and opportunities in education and able to tackle gender disparities at schools incl. gender based violence (GBV). This is done by curricula revisions training of trainers on gender issues in sc
+hools and Higher Education Institutions training courses for staff and new intake of the teacher students and promoting knowledge sharing with neighboring countries and Finland by international conferences and short exchanges. The project generates in-dept
+h evidence on gender specific issues in the Eritrean Education Sector with emphasis on schools and uses it to enhance staff and students? research skills organizes Educational Fora for education authorities professionals and students to share research resu
+lts and discuss policy implications to tackle gender disparities and concerns as well as evidence-based advocacy initiatives related to international Human Rights instruments. Schoolteachers from remote areas are supported to promote gender equality by sem
+inars providing further education and sharing information and tools for gender mainstreaming to implement gender sensitive education in schools.
+</narrative>
+<narrative xml:lang="fi">
+Hanke pyrkii edistamaan inklusiivisempaa yhteiskuntaa Eritreassa jossa naisilla ja miehilla ovat yhtalaiset oikeudet ja jossa ei esiinny sukupuoleen perustuvaa syrjintaa vakivaltaa ja haitallisia kaytantoja. Se edistaa etenkin tyttojen ja naisten oikeutta 
+laadukkaaseen koulutukseen parantamalla koulutusjarjestelman inklusiivi-suutta ja sukupuolisensitiivisyytta mika lisaa koulutukseen osallistumista vahentaa koulutuksen keskeyttamis-ta ja tarjoaa naisille ja miehille yhtalaiset mahdollisuudet menestya yhtei
+skunnassa. Hanke edistaa sukupuol-ten valista tasa-arvoa koulutusalalla varmistamalla etta tutkimukseen perustuva tieto sisallytetaan opettajan-koulutukseen jotta se tavoittaisi opettajat ja oppilaat koko maassa. Opettajankoulutuslaitos saa syvemman kasity
+ksen tasa-arvonakokohdista koulutukseen liittyen ja pilottikoulutusohjelman avulla tulevat opettajat saa-vat tyokalut ja taidot seka nakokulmia jotka tekevat heista osaavampia ammatissaan. Opettajakoulutuslaitok-sen osaamista parannetaan jotta ne pystyisiv
+at tuottamaan opettajia joilla on hyva kasitys tasa-arvoon liittyvis-ta haasteista ja mahdollisuuksista koulutuksessa ja jotka pystyvat kasittelemaan sukupuolten valiseen tasa-arvoon liittyvia eroja kouluissa ml. sukupuoleen perustuva vakivalta. Tama tapah
+tuu opetussuunnitelmien paivityksella kouluttamalla kouluttajia sukupuolten valisen tasa-arvon nakokulmista kouluissa ja korkeakou-luissa kouluttamalla henkilostoa ja opettajaopiskelijoita ja mahdollistamalla paasyn kansainvalisiin konfe-rensseihin ja vaih
+toihin nain edistaen tiedon jakamista Eritrean ja sen naapurimaiden ja Suomen kanssa. Hanke keraa tietoa tasa-arvokysymyksista Eritrean kouluissa parantaa henkiloston ja opiskelijoiden tutkimus-osaamista jarjestaa koulutusfoorumeita viranomaisille ammattil
+aisille ja opiskelijoille tutkimustulosten levit-tamista ja politiikan vaikutuksista keskustelemista varten ja tekee aloitteita kansainvalisiin ihmisoikeusinstru-mentteihin liittyen. Syrjaseutujen opettajia tuetaan jarjestamalla seminaareja seka tarjoamall
+a mahdollisuutta lisakoulutukseen ja tietoa ja valineita sukupuolten valisen tasa-arvon valtavirtaistamiseen ja jotta heilla olisi keinoja toteuttaa sukupuolisensitiivisyytta edistavaa opetusta kouluissaan.</narrative>
+</description>
+<participating-org ref="FI-3" type="10" role="1"><narrative>Ministry for Foreign Affairs of Finland</narrative></participating-org>
+<participating-org ref="22000" type="22" role="3">
+<narrative>Kirkon Ulkomaanavun saatio</narrative>
+</participating-org>
+<activity-status code="2" />
+<activity-date iso-date="2020-04-02" type="2"><narrative>Actual start date of the activity</narrative></activity-date> 
+<activity-date iso-date="2021-12-31" type="3"><narrative>Planned end date of the activity</narrative></activity-date> 
+<recipient-country code="ER" percentage="100" />
+<sector vocabulary="1" code="11130" percentage="100" />
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 1, secondary"><narrative>Strengthening of the rights and status of women and girls is a secondary priority area in this 
+activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 3, primary"><narrative>Improving democracy in societies is the main priority area in this activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/48132/human_rights_based_approach_in_finlands_development_cooperation___guidance" code="0">
+<narrative>Not defined</narrative>
+<narrative xml:lang="fi">Ei maaritelty</narrative>
+</tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/0/finlands-development-cooperation-appropriations-and-disbursements-1989-2019.pdf/fe42e62c-798c-359f-6180-e7e01fd9d89a?t=1588088517786" code="2430668">
+<narrative>Support for NGOs</narrative>
+<narrative xml:lang="fi">Tuki kansalaisjarjestojen kehitysyhteistyolle</narrative>
+</tag>
+<tag vocabulary="3" code="4.c"/>
+<tag vocabulary="2" code="5"/>
+<policy-marker code="1" vocabulary="1" significance="1"><narrative>Gender Equality</narrative></policy-marker>
+<policy-marker code="2" significance="0" vocabulary="1"><narrative>Aid to Environment</narrative></policy-marker>
+<policy-marker code="3" significance="0" vocabulary="1"><narrative>Participatory Development/Good Governance</narrative></policy-marker>
+<policy-marker code="4" significance="0" vocabulary="1"><narrative>Trade Development</narrative></policy-marker>
+<policy-marker code="5" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention on Biological Diversity
+</narrative></policy-marker>
+<policy-marker code="6" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Mitigation</narrative></policy-marker>
+<policy-marker code="7" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Adaptation</narrative></policy-marker>
+<policy-marker code="8" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention to Combat Desertification
+</narrative></policy-marker>
+<policy-marker code="9" significance="0" vocabulary="1"><narrative>Reproductive, Maternal, Newborn and Child Health (RMNCH)
+</narrative></policy-marker>
+<policy-marker code="10" significance="0" vocabulary="1"><narrative>Disaster Risk Reduction(DRR)
+</narrative></policy-marker>
+<collaboration-type code="1" /><default-flow-type code="10" /><default-finance-type code="110" /><default-aid-type code="C01" /><default-tied-status code="5" />
+<budget status="1"><period-start iso-date="2020-01-01" /><period-end iso-date="2020-12-31" />
+<value currency="EUR" value-date="2020-01-01">21564</value></budget>
+<capital-spend percentage="0" />
+<transaction ><transaction-type code="2" /><transaction-date iso-date="2020-04-02" /><value value-date="2020-01-01">21564</value></transaction>
+</iati-activity>
+<iati-activity xml:lang="en" default-currency="EUR" last-updated-datetime="2021-02-12T16:05:40">
+<iati-identifier>FI-3-2020-1993933060</iati-identifier>
+<reporting-org ref="FI-3" type="10" secondary-reporter="0"><narrative>Ministry for Foreign Affairs of Finland</narrative></reporting-org>
+    <title><narrative>ETI/Kehitysyhteistyon suunnittelu</narrative>
+</title>
+<description type="1">
+<narrative>
+The purpose of the planning funds for Ethiopia is to ensure needed resources for planning monitoring and evaluation of the development cooperation projests in the country. The planning funds are needed to implement high quality development projects that pr
+oduce results. The objectives of the cooperation are based on Ethiopia Growth and Transformatio Plan (GTP) and Finland's development policy priorities. The sectors of the bilateral cooperation include WASH (Water sanitation and Hygiene) education and rural
+    economic cooperation. Additional 75 000 euros is applied for planning funds.
+</narrative>
+<narrative xml:lang="fi">
+Etiopian maaohjelman suunnitteluun myonnetyn rahan tarkoitus on taata riittavat resurssit hankkeiden valmisteluun arviointiin ja seurantaan. Rahan avulla pyritaan Etiopiassa toteuttamaan laadukkaita ja tuloksellisia kehitysyhteistyohankkeita. Suomen ja Eti
+opian valinen kehitysyhteistyo perustuu Etiopian kehitysohjelman (Growth and Transformation Plan eli GTP)  tavoitteisiin ja toteuttaa Suomen kehityspoliittisia prioriteetteja. Kahdenvalinen kehitysyhteistyo keskittyy opetukseen veteen (vesihuolto hygienia 
+ja sanitaatio eli WASH)  ja maaseudun taloudelliseen kehitykseen.  Etiopian suunnitteluvaroiksi haetaan lisaa 75 000 euroa.</narrative>
+</description>
+<participating-org ref="FI-3" type="10" role="1"><narrative>Ministry for Foreign Affairs of Finland</narrative></participating-org>
+<participating-org ref="11000" type="10" role="3">
+<narrative>Donor Government</narrative>
+<narrative xml:lang="fi">Suomen julkinen sektori</narrative>
+</participating-org>
+<other-identifier ref="FI-3-2019-1993933060" type="A3"></other-identifier>
+<activity-status code="2" />
+<activity-date iso-date="1999-11-16" type="2"><narrative>Actual start date of the activity</narrative></activity-date> 
+<activity-date iso-date="2021-12-31" type="3"><narrative>Planned end date of the activity</narrative></activity-date> 
+<recipient-region code="998" vocabulary="1" percentage="100"  />
+<sector vocabulary="1" code="91010" percentage="100" />
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/48132/human_rights_based_approach_in_finlands_development_cooperation___guidance" code="0">
+<narrative>Not defined</narrative>
+<narrative xml:lang="fi">Ei maaritelty</narrative>
+</tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/0/finlands-development-cooperation-appropriations-and-disbursements-1989-2019.pdf/fe42e62c-798c-359f-6180-e7e01fd9d89a?t=1588088517786" code="2430662">
+<narrative>Country-specific and regional development cooperation</narrative>
+<narrative xml:lang="fi">Maa-ja aluekohtainen kehitysyhteistyo</narrative>
+</tag>
+<tag vocabulary="2" code="0"/>
+<policy-marker code="1" vocabulary="1" significance="0"><narrative>Gender Equality</narrative></policy-marker>
+<policy-marker code="2" significance="0" vocabulary="1"><narrative>Aid to Environment</narrative></policy-marker>
+<policy-marker code="3" significance="0" vocabulary="1"><narrative>Participatory Development/Good Governance</narrative></policy-marker>
+<policy-marker code="4" significance="0" vocabulary="1"><narrative>Trade Development</narrative></policy-marker>
+<policy-marker code="5" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention on Biological Diversity
+</narrative></policy-marker>
+<policy-marker code="6" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Mitigation</narrative></policy-marker>
+<policy-marker code="7" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Adaptation</narrative></policy-marker>
+<policy-marker code="8" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention to Combat Desertification
+</narrative></policy-marker>
+<policy-marker code="9" significance="0" vocabulary="1"><narrative>Reproductive, Maternal, Newborn and Child Health (RMNCH)
+</narrative></policy-marker>
+<policy-marker code="10" significance="0" vocabulary="1"><narrative>Disaster Risk Reduction(DRR)
+</narrative></policy-marker>
+<collaboration-type code="1" /><default-flow-type code="10" /><default-finance-type code="110" /><default-aid-type code="G01" /><default-tied-status code="5" />
+<budget status="1"><period-start iso-date="2020-01-01" /><period-end iso-date="2020-12-31" />
+<value currency="EUR" value-date="2020-01-01">75000</value></budget>
+<budget status="1"><period-start iso-date="2023-01-01" /><period-end iso-date="2023-12-31" />
+<value currency="EUR" value-date="2020-01-01">200000</value></budget>
+<capital-spend percentage="0" />
+<transaction ><transaction-type code="2" /><transaction-date iso-date="2020-06-08" /><value value-date="2020-01-01">75000</value></transaction>
+<transaction ><transaction-type code="3" /><transaction-date iso-date="2020-12-14" /><value value-date="2020-01-01">166819.43</value></transaction>
+<related-activity ref="FI-3-2019-1993933060" type="1" />
+    </iati-activity>
+<iati-activity xml:lang="en" default-currency="EUR" last-updated-datetime="2021-02-12T16:05:40">
+<iati-identifier>FI-3-2020-2013130044</iati-identifier>
+<reporting-org ref="FI-3" type="10" secondary-reporter="0"><narrative>Ministry for Foreign Affairs of Finland</narrative></reporting-org>
+    <title><narrative>Creating a safe and equitable living and learning environment for children with disabilities in Ethiopia</narrative>
+<narrative xml:lang="fi">Turvallinen ja oikeudenmukainen elinymparisto vammaisille lapsille Etiopiassa</narrative>
+</title>
+<description type="1">
+<narrative>
+This project is a three-year intervention for creating a safe and equitable living and learning environment for children with disabilities in Bishoftu and Dukem towns. Berhan Lehetsanat is responsible for implementation with Interpedia Finland both child r
+ights organizations with a long experience of working with CwDs.In Ethiopia disability is still a source of social and economic exclusion. Since 2008 BL + Interpedia have initiated disability programs in 12 kebeles of Bishoftu directly reaching over 800 Cw
+Ds enabling over 450 CwDs to access rehabilitation over 660 CwDs to access inclusive/special education enhancing capacity of government and community structures to engage in disability creating access to skills trainings constructing a skills training cent
+er enhancing income of over 400 families of CwDs enhancing accessibility of schools and increasing community awareness. This project will especially address the last remaining two kebeles of Bishoftu town and three kebeles of Dukem and create a fully funct
+ional referral linkage for CwDs.The direct beneficiaries are over 200 CwDs and their parents + 60 CwDs in skills training as well as schools government representatives and community structures. The project will strive to enhance the overall wellbeing and i
+ntegration of CwDs and their families via improved access to disability prevention and rehabilitation services; to enhance access to quality and inclusive education for CwDs; improved access to inclusive vocational and skills trainings + to increase the co
+mmitment and actions of duty bearers and community-based structures in coordinating and mainstreaming disability issues.The project?s main strategy is Community Based Rehabilitation along with rehabilitation livelihood + skills trainings awareness raising 
+and building capacities of stakeholders. The project applies the rights based approach building capacities of CwDs and families as rights-holders also supporting capacity of duty bearers to ensure structures resources and mecha nisms for accountability are
+    in place. The project will also contribute to reduction of inequality gender equality as well as climate sustainability.
+</narrative>
+<narrative xml:lang="fi">
+Tama kolmevuotinen hanke luo turvallisen ja oikeudenmukaisen elinympariston vammaisille lapsille Bishoftun ja Dukemin kaupungeissa. Berhan Lehetsanat (BL) on vastuussa hankkeen toimeenpanosta yhdessa Interpedia ry:n kanssa. Molemmilla jarjestoilla on pitka
+    kokemus tyoskentelysta vammaisten lasten parissa.Etiopiassa vammaisuus on edelleen syy sosiaaliseen ja taloudelliseen osattomuuteen. Vuodesta 2008 BL ja Interpedia ovat kaynnistaneet vammaisohjelmia 12 Bishoftun kebelessa tavoittaen suoraan 800 vammaista 
+lasta ja mahdollistaen yli 450 lapselle paasyn kuntoutukseen. Yli 660 lasta on paassyt soveltuvan opetuksen piiriin hallinnon ja yhteison kapasiteettia vammaisasioissa on vahvistettu on pidetty erilaisia taitokoulutuksia rakennettu koulutuskeskus parannett
+u yli 400 vammaisen lapsen perheen tuloja edistetty koulujen esteettomyytta ja kasvatettu yhteison tietoisuutta vammaisuudesta. Tama hanke tavoittaa erityisesti kaksi jaljella olevaa Bishoftun kebelea seka kolme Dukemin kebelea luoden lisaksi kestavan palv
+eluohjausjarjestelman.Suoria hyodynsaajia ovat yli 200 vammaista lasta ja heidan vanhempansa 60 taitokoulutuksiin osallistuvaa lasta/nuorta seka koulut hallinnon edustajat ja yhteisot. Hanke pyrkii parantamaan vammaisten lasten ja heidan perheidensa kokona
+isvaltaista hyvinvointia ja integraatiota parantamalla paasya ehkaiseviin ja kuntouttaviin palveluihin edistamalla paasya laadukkaaseen ja inklusiiviseen opetukseen ja parantamalla mahdollisuuksia ammatilliseen ja taitokoulutukseen seka lisaamalla vastuunk
+antajien ja yhteison sitoutumista ja toimia vammaisasioiden koordinaatiossa ja valtavirtaistamisessa.Hankkeen paaasiallinen toimintatapa on yhteisoperustainen kuntoutus yhdessa kuntoutuksen toimeentulo- ja taitokoulutusten tietoisuuden kasvattamisen ja sid
+osryhmien kapasiteetin vahvistamisen kanssa. Projekti soveltaa oikeusperustaista lahestymistapaa rakentamalla vammaisten lasten ja perheiden kapasiteettia oikeudenhaltijoina ja myos vastuunkantajien kapasiteettia varmistamalla rakenteiden resurssien ja vas
+tuumekanismien toimivuus. Hanke myotavaikuttaa myos epatasa-arvon vahentamiseen sukupuolten tasa-arvoon seka ilmastokestavyyteen.</narrative>
+</description>
+<participating-org ref="FI-3" type="10" role="1"><narrative>Ministry for Foreign Affairs of Finland</narrative></participating-org>
+<participating-org ref="22000" type="22" role="3">
+<narrative>Interpedia</narrative>
+<narrative xml:lang="fi">Interpedia rf</narrative>
+</participating-org>
+<other-identifier ref="FI-3-2019-2013130044" type="A3"></other-identifier>
+<activity-status code="2" />
+<activity-date iso-date="2013-12-03" type="2"><narrative>Actual start date of the activity</narrative></activity-date> 
+<activity-date iso-date="2021-12-31" type="3"><narrative>Planned end date of the activity</narrative></activity-date> 
+<recipient-country code="ET" percentage="100" />
+<sector vocabulary="1" code="11220" percentage="100" />
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 1, secondary"><narrative>Strengthening of the rights and status of women and girls is a secondary priority area in this 
+activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 2, secondary"><narrative>Generating jobs, livelihood opportunities and well-being in a developing country is a secondary
+    priority area in this activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 3, primary"><narrative>Improving democracy in societies is the main priority area in this activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/48132/human_rights_based_approach_in_finlands_development_cooperation___guidance" code="2">
+<narrative>Human rights sensitive</narrative>
+<narrative xml:lang="fi">Ihmisoikeudet huomioiva</narrative>
+</tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/0/finlands-development-cooperation-appropriations-and-disbursements-1989-2019.pdf/fe42e62c-798c-359f-6180-e7e01fd9d89a?t=1588088517786" code="2430668">
+<narrative>Support for NGOs</narrative>
+<narrative xml:lang="fi">Tuki kansalaisjarjestojen kehitysyhteistyolle</narrative>
+</tag>
+<policy-marker code="1" vocabulary="1" significance="0"><narrative>Gender Equality</narrative></policy-marker>
+<policy-marker code="2" significance="0" vocabulary="1"><narrative>Aid to Environment</narrative></policy-marker>
+<policy-marker code="3" significance="2" vocabulary="1"><narrative>Participatory Development/Good Governance</narrative></policy-marker>
+<policy-marker code="4" significance="0" vocabulary="1"><narrative>Trade Development</narrative></policy-marker>
+<policy-marker code="5" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention on Biological Diversity
+</narrative></policy-marker>
+<policy-marker code="6" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Mitigation</narrative></policy-marker>
+<policy-marker code="7" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Adaptation</narrative></policy-marker>
+<policy-marker code="8" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention to Combat Desertification
+</narrative></policy-marker>
+<policy-marker code="9" significance="0" vocabulary="1"><narrative>Reproductive, Maternal, Newborn and Child Health (RMNCH)
+</narrative></policy-marker>
+<collaboration-type code="1" /><default-flow-type code="10" /><default-finance-type code="110" /><default-aid-type code="C01" /><default-tied-status code="5" />
+<budget status="1"><period-start iso-date="2020-01-01" /><period-end iso-date="2020-12-31" />
+<value currency="EUR" value-date="2020-01-01">90000</value></budget>
+<budget status="1"><period-start iso-date="2021-01-01" /><period-end iso-date="2021-12-31" />
+<value currency="EUR" value-date="2020-01-01">90000</value></budget>
+<capital-spend percentage="0" />
+<transaction ><transaction-type code="3" /><transaction-date iso-date="2020-06-15" /><value value-date="2020-01-01">90000</value></transaction>
+<related-activity ref="FI-3-2019-2013130044" type="1" />
+    </iati-activity>
+<iati-activity xml:lang="en" default-currency="EUR" last-updated-datetime="2021-02-12T16:05:40">
+<iati-identifier>FI-3-2020-2015150332</iati-identifier>
+<reporting-org ref="FI-3" type="10" secondary-reporter="0"><narrative>Ministry for Foreign Affairs of Finland</narrative></reporting-org>
+    <title><narrative>Community-Led Accelerated Water Sanitation and Hygiene in Ethiopia phase III</narrative>
+<narrative xml:lang="fi">Vesihuolto- sanitaatio ja hygieniahanke vaihe III</narrative>
+</title>
+<description type="1">
+<narrative>
+COWASH (Community-led Accelerated Water Sanitation and Hygiene ProjectI) increases the availability of safe water and sanitation in rural areas of Ethiopia. The aimed long term impact is to improve the health of the population. The project is based on comm
+unity led approach: the villages are themselves in charge of the management of the building of the water points. Institutional WASH is targeted to schools and health facilities. The project is in alignment with the Government of Ethiopia?s long term plan (
+GTP II) and the One WASH National Program II (OWNP II). Moreover it contributes towards the SDGs 6.1 and 6.2.Due to Covid-19 pandemic the planning of Phase IV is delayed. In order to avoid any gap between the phases the Ethiopian government supports the id
+ea to continue the Phase III with an extension from June to December 2020. WASH sector is in addition to health sector the most critical one in fighting the pandemic. Therefore the extension includes elements of emergency and humanitarian aid as well as bu
+ilding resilience against the spread of Covid-19 in all of the current five regions: Tigray Amhara SNNPR Benishangul Gumuz and Oromia. These include supporting the functioning of water supply and sanitation facilities in the health units isolation quaranti
+ne and treatment centres. The rules and restrictions declared in the Federal State of Emergency as well as additional Regional State of Emergency rules and regulations will be applied throughout. The extension also enables the continuation of the project?s
+    usual functions which also contributes to Covid-19 prevention and response. The project has a specific focus on women and girls as well as on people with disabilities; the specific needs of them will be applied in the project and emergency activities.
+</narrative>
+<narrative xml:lang="fi">
+COWASH III (Community-led Accelerated Water Sanitation and Hygiene Project) vesihuolto- sanitaatio- ja hygieniahankkeen tavoitteena on puhtaan veden saatavuuden ja sanitaation lisaaminen Etiopian maaseudulla ja sita kautta vaeston terveydentilan parantamin
+en. Hankkeessa on kaytossa yhteisojohtoinen toimintamalli CMP (community managed project approach) jossa kylalaiset itse vastaavat vesihankkeen hallinnasta toteutuksesta ja huoltotoiminnasta. COWASH III-hankkeen tavoitteet on asetettu Etiopian kasvu- ja mu
+utossuunnitelman (GTP II) ja kansallisen vesiohjelman One Wash National Plan (OWNP II) seka kestavan kehityksen tavoitteiden 6.1 ja 6.2 mukaisesti. Hankkeen IV-vaihe oli tarkoitus alkaa heinakuussa 2020 mutta korona-pandemian alkaessa suunnittelutyo viivas
+tyi. Hankkeeseen toivottiin Etiopian puolelta jatkokautta etenkin tilanteessa jossa vesi- sanitaatio- ja hygieniatoiminnalla (WASH) on terveyssektorin ohella kriittisin rooli vaeston suojelemisessa korona-pandemialta. III-vaiheen jatko kesa-joulukuulle 202
+0 sisaltaa siten raataloityja aktiviteetteja koronan vastaisiin toimenpiteisiin ml. humanitaarista toimintaa seka kriisinsietokyvyn rakentamista pandemiaa vastaan hankkeen nykyisilla toiminta-alueilla Amharan Tigrayn Oromian Benishangul Gumuzin ja SNNPR:n 
+osavaltioissa. Suunnitellut aktiviteetit terveys- karanteeni- ja eristyskeskuksissa ja yhteisoissa vaikuttavat suoraan pandemian torjuntaan. Toiminnassa noudatetaan kansallisen hatatilan saadoksia ja rajoituksia seka osavaltioiden mahdollisesti asettamia s
+aadoksia. Jatkokaudella pidettaisiin ylla myos hankkeen ns. perustoimintoja eli vesi- ja sanitaatiopisteita rakennetaan seka yhteisoissa etta instituutioissa ml. kouluissa ja terveysasemilla namakin kontribuoivat pandemian vastaisessa tyossa. Hankkeen kaut
+ta parannetaan myos naisten nuorten tyttojen ja vammaisten asemaa ja naiden ryhmien erityistarpeet otetaan huomioon pandemiaan vastatessa seka hankkeen aktiviteettien suunnittelussa.</narrative>
+</description>
+<participating-org ref="FI-3" type="10" role="1"><narrative>Ministry for Foreign Affairs of Finland</narrative></participating-org>
+<participating-org ref="61009" type="70" role="3">
+<narrative>Ramboll Finland oy</narrative>
+</participating-org>
+<other-identifier ref="FI-3-2019-2015150332" type="A3"></other-identifier>
+<activity-status code="2" />
+<activity-date iso-date="2015-12-09" type="2"><narrative>Actual start date of the activity</narrative></activity-date> 
+<activity-date iso-date="2021-12-31" type="3"><narrative>Planned end date of the activity</narrative></activity-date> 
+<recipient-country code="ET" percentage="100" />
+<sector vocabulary="1" code="14030" percentage="100" />
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 1, secondary"><narrative>Strengthening of the rights and status of women and girls is a secondary priority area in this 
+activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 3, secondary"><narrative>Improving democracy in societies is a secondary priority area in this activity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/goals-and-principles-of-finland-s-development-policy#Priorities" code="Priority area 4, primary"><narrative>Improving food security, access to water and sustainability is the main priority area in this act
+ivity</narrative></tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/48132/human_rights_based_approach_in_finlands_development_cooperation___guidance" code="3">
+<narrative>Human rights progressive</narrative>
+<narrative xml:lang="fi">Ihmisoikeuksia edistava</narrative>
+</tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/0/finlands-development-cooperation-appropriations-and-disbursements-1989-2019.pdf/fe42e62c-798c-359f-6180-e7e01fd9d89a?t=1588088517786" code="2430662">
+<narrative>Country-specific and regional development cooperation</narrative>
+<narrative xml:lang="fi">Maa-ja aluekohtainen kehitysyhteistyo</narrative>
+</tag>
+<tag vocabulary="2" code="6"/>
+<tag vocabulary="2" code="3"/>
+<tag vocabulary="2" code="5"/>
+<tag vocabulary="2" code="13"/>
+<policy-marker code="1" vocabulary="1" significance="1"><narrative>Gender Equality</narrative></policy-marker>
+<policy-marker code="2" significance="0" vocabulary="1"><narrative>Aid to Environment</narrative></policy-marker>
+<policy-marker code="3" significance="1" vocabulary="1"><narrative>Participatory Development/Good Governance</narrative></policy-marker>
+<policy-marker code="4" significance="0" vocabulary="1"><narrative>Trade Development</narrative></policy-marker>
+<policy-marker code="5" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention on Biological Diversity
+</narrative></policy-marker>
+<policy-marker code="6" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Mitigation</narrative></policy-marker>
+<policy-marker code="7" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Adaptation</narrative></policy-marker>
+<policy-marker code="8" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention to Combat Desertification
+</narrative></policy-marker>
+<policy-marker code="9" significance="0" vocabulary="1"><narrative>Reproductive, Maternal, Newborn and Child Health (RMNCH)
+</narrative></policy-marker>
+<policy-marker code="10" significance="0" vocabulary="1"><narrative>Disaster Risk Reduction(DRR)
+</narrative></policy-marker>
+<collaboration-type code="1" /><default-flow-type code="10" /><default-finance-type code="110" /><default-aid-type code="C01" /><default-tied-status code="5" />
+<budget status="1"><period-start iso-date="2020-01-01" /><period-end iso-date="2020-12-31" />
+<value currency="EUR" value-date="2020-01-01">2957800</value></budget>
+<capital-spend percentage="0" />
+<transaction ><transaction-type code="2" /><transaction-date iso-date="2020-06-08" /><value value-date="2020-01-01">2670000</value></transaction>
+<transaction ><transaction-type code="3" /><transaction-date iso-date="2020-12-31" /><value value-date="2020-01-01">3228013.6201</value></transaction>
+<related-activity ref="FI-3-2019-2015150332" type="1" />
+</iati-activity>
+<iati-activity xml:lang="en" default-currency="EUR" last-updated-datetime="2021-02-12T16:05:40">
+<iati-identifier>FI-3-2020-2020200344</iati-identifier>
+<reporting-org ref="FI-3" type="10" secondary-reporter="0"><narrative>Ministry for Foreign Affairs of Finland</narrative></reporting-org>
+<title><narrative>Framework arrangement for development evaluation services</narrative>
+<narrative xml:lang="fi">Kehitysevaluointipalveluja koskeva puitejarjestely</narrative>
+</title>
+<description type="1">
+<narrative>
+The Development Evaluation Unit (EVA-11) of the Ministry for Foreign Affairs of Finland (MFA) carries out regular strategic level and policy evaluations meta-evaluations and syntheses of decentralized and centralised evaluations. In addition different type
+s of preliminary evaluability reviews or background reviews on wider evaluations or on other issues of importance to the organisation are commissioned by EVA-11.The unit also supports other operational units in their programme evaluation activities by prov
+iding capacity development evaluation guidelines as well as help desk services during planning and implementation of decentralized evaluations.All evaluations and reviews are commissioned to independent evaluators. Due to the volume of concurrent evaluatio
+ns and unit's limited human resources external services are required for the function to be efficient.  The rationale for the evaluation management service framework (EMS) is to provide a new service based management and facilitation of evaluations. The se
+rvice-based approach allows a more flexible use of evaluation expertise also during the planning phases. External expertise is needed especially when finalizing the evaluation design methodologies as well as when defining the required team expertise in eva
+luation. The EMS also strengthens a coordinated approach to the multiple parallel evaluations commissioned thus increasing effectiveness and synergies. The use of EMS provides a platform for accumulating knowledge also within the commisioning organization.
+MFA experiences with the first EMS-arrangement were positive and support the continuation of this model with some modifications. Furthermore MFA wishes to strengthen the utility and usefulness of development evaluations and to that end to develop this fra
+mework further including innovative approaches and communication.    The role of the MFA as the commissioner of evaluations (planning and taking decisions on the design and implementation of evaluation quality assurance of evaluation deliverables dissemina
+tion and use of the evaluations). The role of the EMS Service Provider is that of a manager (coordination facilitation of evaluation teams and missions as well as backstopping services) and implementer of evaluations. EVA-11 intends to allocate 4 milliion 
+euros worth of contracting authorities and 600 000 euros worth of budget funding of 2020.
+</narrative>
+<narrative xml:lang="fi">
+Ulkominsterion kehitysevaluoinnin yksikko EVA-11 vastaa strategisten politiikkatason evaluointien  seka keskitettyjen ja hajautettujen arviointien synteesien ja meta-evaluointien teettamisesta.  Lisaksi yksikko teettaa evaluoitavuus- ja taustaselvityksia l
+aajempia evaluointeja varten tai ministeriolle muuten tarkeista asiakokonaisuuksista. EVA-11 tukee kehitysyhteistyota toimeenpaneniva yksikoita tarjomalla evaluointikapasiteetin kehittamiseen liittyvia palveluja julkaisemalla evaluointiohjeistuksia ja tarj
+oamalle neuvontapalveluja jotka liittyvat hajautettujen ohjelma- tai hanke-evaluointien suunnitteluun ja evaluointien toteutukseen.   Kaikki evaluoinnit ja katselmukset teetetaan riippumattomilla evaluointiasiantuntijoilla.Ulkoistettu palvelu on valttamato
+n kun otetaan huomioon yksikon rajalliset henkilostoresurssit ja toimintojen vaikuttavuuteen liittyvat tavoitteet. Kehitysevaluointipalveluja koskevna puitejarjestelyn tarkoitus on tarjota uusi evaluointien hallinnointiin ja fasilitointiin liittyva palvelu
+kokonaisuus. Palvelulahtoinen toimintatapa sallii joustavamman evaluointiosaamisen hyodyntamisen myos arviointeja suunniteltaessa. Ulkoisia asiantuntijoita tarvitaan erityisesti evaluointitoimeksiantojen viimeistelyssa metodologiaan liittyvissa kysymyksiss
+a ja maariteltaessa arviointitiimien kokoonpanoa ja osaamisprofiileja. Puitejarjestelylla vahvistetaan myos samanaikaisesti kaynnissa olevien arviointien koordinaatiota ja sita kautta lisataan vaikuttavuutta ja synergioita. Toimiva puitesopimus tarjoaa mah
+dollilsuudet evaluointiosaamisen kerryttamiseen ja syventamiseen myos organisaation sisalla. Ulkoministerion kokemukset ensimmaisesta evaluointipalveluja koskevasta puitejarjestelysta olivat hyvia ja tukevat kaytannon jatkamista pienin opittuihin asioihin 
+perustuvin muutoksin. Koska Ulkoministerio haluaa entisestaan vahvistaa kehitysevaluointien tulosten kaytettavyytta on tarkoituksen kehittaa puitesopimusjarjestelya edelleen ja sisallyttaa siihen uusia toimintatapoja ja viestintaan liittyvia ratkaisuja.Ulk
+oministerion rooli evaluointien toimeksiantajana ja paatoksenteossa sailyy. Palvelun tuottajan tehtavana on koordinoida arvioinnin toimeenpanoa ja arviointitiimeja ja toteuttaa arviointitoimeksiantoja. EVA-11 kayttaa tarkoitukseen 4 miljoonan euron edesta 
+vuoden 2020 sopimus- ja myontovaltuuksia ja 600 000 euroa vuoden 2020 maararahoja.</narrative>
+</description>
+<participating-org ref="FI-3" type="10" role="1"><narrative>Ministry for Foreign Affairs of Finland</narrative></participating-org>
+<participating-org ref="11000" type="10" role="3">
+<narrative>Donor Government</narrative>
+<narrative xml:lang="fi">Suomen julkinen sektori</narrative>
+</participating-org>
+<activity-status code="2" />
+<activity-date iso-date="2020-06-01" type="2"><narrative>Actual start date of the activity</narrative></activity-date> 
+<activity-date iso-date="2024-12-31" type="3"><narrative>Planned end date of the activity</narrative></activity-date> 
+<recipient-region code="998" vocabulary="1" percentage="100"  />
+<sector vocabulary="1" code="91010" percentage="100" />
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/48132/human_rights_based_approach_in_finlands_development_cooperation___guidance" code="0">
+<narrative>Not defined</narrative>
+<narrative xml:lang="fi">Ei maaritelty</narrative>
+</tag>
+<tag vocabulary="99" vocabulary-uri="https://um.fi/documents/35732/0/finlands-development-cooperation-appropriations-and-disbursements-1989-2019.pdf/fe42e62c-798c-359f-6180-e7e01fd9d89a?t=1588088517786" code="2430667">
+<narrative>Evaluation and internal audit of development cooperation</narrative>
+<narrative xml:lang="fi">Kehitysyhteistyon evaluointi</narrative>
+</tag>
+<tag vocabulary="2" code="0"/>
+<policy-marker code="1" vocabulary="1" significance="0"><narrative>Gender Equality</narrative></policy-marker>
+<policy-marker code="2" significance="0" vocabulary="1"><narrative>Aid to Environment</narrative></policy-marker>
+<policy-marker code="3" significance="0" vocabulary="1"><narrative>Participatory Development/Good Governance</narrative></policy-marker>
+<policy-marker code="4" significance="0" vocabulary="1"><narrative>Trade Development</narrative></policy-marker>
+<policy-marker code="5" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention on Biological Diversity
+</narrative></policy-marker>
+<policy-marker code="6" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Mitigation</narrative></policy-marker>
+<policy-marker code="7" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Framework Convention on Climate Change Adaptation</narrative></policy-marker>
+<policy-marker code="8" significance="0" vocabulary="1"><narrative>Aid Targeting the Objectives of the Convention to Combat Desertification
+</narrative></policy-marker>
+<policy-marker code="9" significance="0" vocabulary="1"><narrative>Reproductive, Maternal, Newborn and Child Health (RMNCH)
+</narrative></policy-marker>
+<policy-marker code="10" significance="0" vocabulary="1"><narrative>Disaster Risk Reduction(DRR)
+</narrative></policy-marker>
+<collaboration-type code="1" /><default-flow-type code="10" /><default-finance-type code="110" /><default-aid-type code="G01" /><default-tied-status code="5" />
+<budget status="1"><period-start iso-date="2020-01-01" /><period-end iso-date="2020-12-31" />
+<value currency="EUR" value-date="2020-01-01">600000</value></budget>
+<budget status="1"><period-start iso-date="2021-01-01" /><period-end iso-date="2021-12-31" />
+<value currency="EUR" value-date="2020-01-01">1200000</value></budget>
+<budget status="1"><period-start iso-date="2022-01-01" /><period-end iso-date="2022-12-31" />
+<value currency="EUR" value-date="2020-01-01">1200000</value></budget>
+<budget status="1"><period-start iso-date="2024-01-01" /><period-end iso-date="2099-12-31" />
+<value currency="EUR" value-date="2020-01-01">500000</value></budget>
+<capital-spend percentage="0" />
+<transaction ><transaction-type code="2" /><transaction-date iso-date="2020-06-01" /><value value-date="2020-01-01">4600000</value></transaction>
+<transaction ><transaction-type code="3" /><transaction-date iso-date="2020-12-10" /><value value-date="2020-01-01">35800</value></transaction>
+</iati-activity>
+</iati-activities>

@@ -142,7 +142,7 @@ exports.validate = async (context, req) => {
 
         return;
     }
-
+    let lineBreakErrors;
     try {
         const fileInfoStart = getStartTime();
 
@@ -155,6 +155,8 @@ exports.validate = async (context, req) => {
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
                 xmlDoc,
+                newXml: body,
+                lineBreakErrors,
             } = getFileInformation(body));
         } catch (error) {
             let errContext;
@@ -317,6 +319,7 @@ exports.validate = async (context, req) => {
 
         // combine all types of errors
         const combinedErrors = [
+            ...lineBreakErrors,
             ...schemaErrors,
             ...flattenErrors(codelistResult),
             ...flattenErrors(rulesResult),
