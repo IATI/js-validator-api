@@ -671,7 +671,7 @@ const standardiseResultFormat = (result, showDetails) => {
 };
 
 exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
-    const document = new DOMParser().parseFromString(xml);
+    const document = new DOMParser().parseFromString(xml, 'text/xml');
     const isActivity = xpath('//iati-activities', document).length > 0;
     const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
     const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
@@ -680,7 +680,10 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
     const results = {};
     const idTracker = {};
     elements.forEach((element) => {
-        const singleElementDoc = new DOMParser().parseFromString('<fakeroot></fakeroot>');
+        const singleElementDoc = new DOMParser().parseFromString(
+            '<fakeroot></fakeroot>',
+            'text/xml'
+        );
         singleElementDoc.firstChild.appendChild(element);
         let identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
         const title = xpath(`string(${titleLocation})`, element) || '';
@@ -705,7 +708,6 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
             identifier = `${identifier}(${idTracker[identifier]})`;
             idTracker[identifier] += 1;
         }
-
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
                 acc.push(standardiseResultFormat(result, showDetails));

@@ -19,6 +19,41 @@ const fetchJSONfromGitHub = async (repo, branch, fileName) => {
     return res.json();
 };
 
+const fixLineBreaks = (xml) => {
+    let newXml;
+    const errors = [];
+    const regexp = /(<\/\w+)(\r?\n|\r)\s*/gm;
+
+    const matches = [...xml.matchAll(regexp)];
+
+    if (matches.length > 0) {
+        newXml = xml.replace(regexp, '$1');
+        errors.push({
+            id: '0.4.1',
+            severity: 'warning',
+            category: 'iati',
+            message:
+                'Line breaks found in closing tags have been removed, therefore line numbers returned by the validator may not match source file.',
+            context: [
+                ...matches.map((match) => ({
+                    text: `For ${match[0]} start=${match.index} end=${
+                        match.index + match[0].length
+                    }`,
+                })),
+            ],
+            identifier: 'file',
+            title: 'File level errors',
+        });
+    } else {
+        newXml = xml;
+    }
+
+    return {
+        errors,
+        newXml,
+    };
+};
+
 // parse xml body to JSON to check the root element, don't attempt to parse if output from xmllint --recover was just blank XML doc
 exports.getFileInformation = (body) => {
     let fileType = '';
@@ -27,8 +62,11 @@ exports.getFileInformation = (body) => {
     let supportedVersion;
     let isIati;
     let xmlDoc;
+    let lineBreakErrors;
+    let newXml;
     if (body.toString() !== `<?xml version="1.0"?>\n`) {
-        xmlDoc = libxml.parseXml(body);
+        ({ errors: lineBreakErrors, newXml } = fixLineBreaks(body));
+        xmlDoc = libxml.parseXml(newXml);
         if (xmlDoc) {
             const root = xmlDoc.root().name();
 
@@ -51,7 +89,9 @@ exports.getFileInformation = (body) => {
         generatedDateTime,
         supportedVersion,
         isIati,
+        newXml,
         xmlDoc,
+        lineBreakErrors,
     };
 };
 

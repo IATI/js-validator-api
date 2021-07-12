@@ -698,6 +698,78 @@
 					"response": []
 				},
 				{
+					"name": "iati-act-line-br - expect 0.4.1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"The file is valid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.valid).to.eql(true);",
+									"});",
+									"pm.test(\"fileType value is iati-activities\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+									"});",
+									"pm.test(\"version is 2.03\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"File level error includes error with id 0.4.1\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('0.4.1');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "/Users/nosvalds/Projects/validator-cli/iati-act-line-br.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?group=false",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "iati-act-schema-errors - expect 0.3.1",
 					"event": [
 						{
