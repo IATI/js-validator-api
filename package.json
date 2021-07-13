@@ -11,7 +11,7 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.1.3",
+        "applicationinsights": "^2.1.4",
         "date-fns": "^2.22.1",
         "dotenv": "^10.0.0",
         "libxmljs2": "^0.27.0",
