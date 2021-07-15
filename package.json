@@ -23,7 +23,7 @@
         "xpath": "^0.0.32"
     },
     "devDependencies": {
-        "@prettier/plugin-xml": "^0.13.1",
+        "@prettier/plugin-xml": "^1.0.1",
         "chai": "*",
         "eslint": "^7.30.0",
         "eslint-config-airbnb-base": "^14.2.1",
