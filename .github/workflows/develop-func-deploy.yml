@@ -16,7 +16,11 @@ env:
   REDIS_HOSTNAME: ${{ secrets.DEV_REDIS_HOSTNAME }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
   REDIS_KEY: ${{ secrets.DEV_REDIS_KEY }}
+  REDIS_CACHE_SEC: 86400
   API_KEY: ${{ secrets.DEV_API_KEY }}
+  VALIDATOR_SERVICES_URL: ${{ secrets.DEV_VALIDATOR_SERVICES_URL }}
+  VALIDATOR_SERVICES_KEY_NAME: ${{ secrets.VALIDATOR_SERVICES_KEY_NAME }}
+  VALIDATOR_SERVICES_KEY_VALUE: ${{ secrets.DEV_VALIDATOR_SERVICES_KEY_VALUE }}
 
 jobs:
   build-test-deploy:
@@ -75,6 +79,26 @@ jobs:
                 {
                     "name": "REDIS_PORT",
                     "value": "${{ env.REDIS_PORT }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "REDIS_CACHE_SEC",
+                    "value": "${{ env.REDIS_CACHE_SEC }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "VALIDATOR_SERVICES_URL",
+                    "value": "${{ env.VALIDATOR_SERVICES_URL }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "VALIDATOR_SERVICES_KEY_NAME",
+                    "value": "${{ env.VALIDATOR_SERVICES_KEY_NAME }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "VALIDATOR_SERVICES_KEY_VALUE",
+                    "value": "${{ env.VALIDATOR_SERVICES_KEY_VALUE }}",
                     "slotSetting": false
                 }
             ]

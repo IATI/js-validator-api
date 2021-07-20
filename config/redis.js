@@ -27,6 +27,7 @@ try {
 
     exports.aSetex = promisify(client.setex).bind(client);
     exports.aGet = promisify(client.get).bind(client);
+    exports.aExists = promisify(client.exists).bind(client);
 } catch (error) {
     console.error('Redis: Unable to connect to the redis database: ', error);
 }
