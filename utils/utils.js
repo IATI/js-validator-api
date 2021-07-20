@@ -2,7 +2,7 @@ const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
 
-const { aSetex, aGet } = require('../config/redis');
+const { aSetex, aGet, aExists } = require('../config/redis');
 const config = require('../config/config');
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
@@ -191,9 +191,9 @@ exports.getOrgIdPrefixes = async () => {
     if (orgIdPrefixes === '') {
         const ORG_ID_PREFIX_URL = 'http://org-id.guide/download.json';
         try {
-            let fullOrgIdPrefixInfo = JSON.parse(await aGet('fullOrgIdPrefixInfo'));
+            let fullOrgIdPrefixInfo;
 
-            if (fullOrgIdPrefixInfo === null) {
+            if ((await aExists('fullOrgIdPrefixInfo')) === 0) {
                 console.log({
                     name: `Fetching OrgId Prefixes from ${ORG_ID_PREFIX_URL}`,
                     value: true,
@@ -207,10 +207,14 @@ exports.getOrgIdPrefixes = async () => {
                     config.REDIS_CACHE_SEC,
                     JSON.stringify(fullOrgIdPrefixInfo)
                 );
+            } else {
+                console.log({
+                    name: `Fetching OrgId Prefixes from Redis cache key: fullOrgIdPrefixInfo`,
+                    value: true,
+                });
+                fullOrgIdPrefixInfo = JSON.parse(await aGet('fullOrgIdPrefixInfo'));
             }
-            // const fullOrgIdPrefixInfo = await JSON.parse(
-            //     await fs.readFile('identifiers/org-id-45a64726cf.json')
-            // );
+
             orgIdPrefixes = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
                 if (orgId.confirmed) {
                     acc.add(orgId.code);
@@ -230,25 +234,22 @@ let orgIds = '';
 
 exports.getOrgIds = async () => {
     if (orgIds === '') {
-        const PUBLISHERS_URL = 'https://iatiregistry.org/publisher/download/json';
+        const PUBLISHERS_URL = `${config.VALIDATOR_SERVICES_URL}/pvt/publishers`;
+        const apiKeyName = config.VALIDATOR_SERVICES_KEY_NAME;
+        const apiKeyValue = config.VALIDATOR_SERVICES_KEY_VALUE;
         try {
-            let fullOrgIdInfo = JSON.parse(await aGet('fullOrgIdInfo'));
+            let fullOrgIdInfo;
 
-            if (fullOrgIdInfo === null) {
-                // console.log({
-                //     name: `Fetching Publishers (orgIds) from ${PUBLISHERS_URL}`,
-                //     value: true,
-                // });
-                // const res = await fetch(PUBLISHERS_URL);
-                // fullOrgIdInfo = await res.json();
-
+            if ((await aExists('fullOrgIdInfo')) === 0) {
                 console.log({
-                    name: `Loading Publishers (orgIds) from local file`,
+                    name: `Fetching Publishers (orgIds) from ${PUBLISHERS_URL}`,
                     value: true,
                 });
-                fullOrgIdInfo = await JSON.parse(
-                    await fs.readFile('identifiers/iati_publishers_list.json')
-                );
+                const res = await fetch(PUBLISHERS_URL, {
+                    method: 'GET',
+                    headers: { [apiKeyName]: apiKeyValue },
+                });
+                fullOrgIdInfo = await res.json();
 
                 // cache to redis for REDIS_CACHE_SEC seconds
                 await aSetex(
@@ -256,10 +257,16 @@ exports.getOrgIds = async () => {
                     config.REDIS_CACHE_SEC,
                     JSON.stringify(fullOrgIdInfo)
                 );
+            } else {
+                console.log({
+                    name: `Fetching Publishers (orgIds) from Redis cache key: fullOrgIdInfo `,
+                    value: true,
+                });
+                fullOrgIdInfo = JSON.parse(await aGet('fullOrgIdInfo'));
             }
 
             orgIds = fullOrgIdInfo.reduce((acc, orgId) => {
-                acc.add(orgId['IATI Organisation Identifier']);
+                acc.add(orgId.iati_id);
                 return acc;
             }, new Set());
         } catch (error) {
