@@ -13,9 +13,9 @@ const shortenPath = (path) => {
 };
 
 const getActivityTitle = (node) => {
-    if ('title' in node) {
+    if (typeof node === 'object' && 'title' in node) {
         const { title } = node;
-        if ('narrative' in title[0]) {
+        if (typeof title[0] === 'object' && 'narrative' in title[0]) {
             const { narrative } = title[0];
             const [activityTitle] = narrative;
             if (typeof activityTitle === 'string') {
@@ -28,9 +28,9 @@ const getActivityTitle = (node) => {
 };
 
 const getOrgName = (node) => {
-    if ('name' in node) {
+    if (typeof node === 'object' && 'name' in node) {
         const { name } = node;
-        if ('narrative' in name[0]) {
+        if (typeof name[0] === 'object' && 'narrative' in name[0]) {
             const { narrative } = name[0];
             const [orgName] = narrative;
             if (typeof orgName === 'string') {
