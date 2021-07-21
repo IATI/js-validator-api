@@ -22,6 +22,9 @@ env:
   VALIDATOR_SERVICES_URL: ${{ secrets.DEV_VALIDATOR_SERVICES_URL }}
   VALIDATOR_SERVICES_KEY_NAME: ${{ secrets.VALIDATOR_SERVICES_KEY_NAME }}
   VALIDATOR_SERVICES_KEY_VALUE: ${{ secrets.DEV_VALIDATOR_SERVICES_KEY_VALUE }}
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
 
 jobs:
   build-test-deploy:
@@ -38,14 +41,14 @@ jobs:
       - name: 'Docker Login'
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          login-server: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
 
       - name: 'Compose Customized Docker Image'
         run: |
-          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
+          docker build . -t ${{ env.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
+          docker push ${{ env.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
 
       - name: Set Env variables on app service
         uses: Azure/appservice-settings@v1.1.1
@@ -86,6 +89,21 @@ jobs:
                 {
                     "name": "VALIDATOR_SERVICES_KEY_VALUE",
                     "value": "${{ env.VALIDATOR_SERVICES_KEY_VALUE }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_URL",
+                    "value": "${{ env.ACR_LOGIN_SERVER }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                    "value": "${{ env.ACR_PASSWORD }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                    "value": "${{ env.ACR_USERNAME }}",
                     "slotSetting": false
                 }
             ]
