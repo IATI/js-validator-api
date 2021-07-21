@@ -11,6 +11,7 @@ on:
 env:
   NAME: func-iativalidator
   STAGE: dev # suffix to indicate environment stage
+  TAG: ${{ github.sha }}
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x'
   REDIS_HOSTNAME: ${{ secrets.DEV_REDIS_HOSTNAME }}
@@ -29,38 +30,24 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2
 
-      - name: 'Setup Node ${{ env.NODE_VERSION }} Environment'
-        uses: actions/setup-node@v2.3.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Cache node modules
-        uses: actions/cache@v2.1.6
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: bash
-        run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          npm install
-          npm run rules:test
-          popd
-
       - name: 'Login via Azure CLI'
         uses: azure/login@v1.3.0
         with:
           creds: ${{ secrets.DEV_AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
-      - name: Set Env variables for connecting to Redis instance
+      - name: 'Docker Login'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: 'Compose Customized Docker Image'
+        run: |
+          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
+
+      - name: Set Env variables on app service
         uses: Azure/appservice-settings@v1.1.1
         with:
           app-name: ${{env.NAME}}-${{env.STAGE}}
@@ -103,12 +90,11 @@ jobs:
                 }
             ]
 
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1.4.0
+      - name: 'Run Azure Functions Container Action'
+        uses: Azure/functions-container-action@v1
         with:
           app-name: ${{ env.NAME }}-${{ env.STAGE }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          respect-funcignore: true
+          image: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
 
   integration-test:
     needs: build-test-deploy

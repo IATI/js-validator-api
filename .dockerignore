@@ -1,0 +1,6 @@
+local.settings.json
+integration-tests
+ruleset-unit-tests
+identifiers
+docs
+node_modules

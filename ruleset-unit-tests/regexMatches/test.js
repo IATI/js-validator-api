@@ -11,6 +11,8 @@ const testMap = [
     { rule: 'regex_matches_element.json', file: 'good.xml', expectedResult: true },
     { rule: 'regex_matches_attribute.json', file: 'bad.xml', expectedResult: false },
     { rule: 'regex_matches_attribute.json', file: 'good.xml', expectedResult: true },
+    { rule: 'regex_matches_attribute.json', file: 'emptystring.xml', expectedResult: true },
+    { rule: 'regex_matches_element.json', file: 'emptystring.xml', expectedResult: true },
 ];
 
 describe('regexMatches rules', () => {

@@ -13,3 +13,11 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+
+  # Enable version updates for Docker
+  - package-ecosystem: 'docker'
+    # Look for a `Dockerfile` in the `root` directory
+    directory: '/'
+
+    schedule:
+      interval: 'daily'

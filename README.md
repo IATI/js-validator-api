@@ -9,13 +9,16 @@
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
 -   [Azure Functions Core Tools v3](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
+-   [Docker Engine](https://docs.docker.com/engine/install/#server)
+-   [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Getting Started
 
 1. Clone this repository
 1. Follow instructions for nvm/node prerequisties above
 1. Run `npm i` to install dependencies
-1. Run `npm start` to run the function locally using the Azure Functions Core Tools
+1. Run `npm start` to run the Function locally using the Azure Functions Core Tools
+1. Run `npm run docker:start` to run the Function inside a Docker container using docker-compose.yml to create a Redis instance.
 
 ## Environment Variables
 
@@ -150,23 +153,37 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   `npm run rules:test`
 
-There is a large set of Mocha unit tests for the Rulesets logic in `ruleset-unit-tests`. This may be moved to the IATI-Rulesets repo in the future.
+There is a large set of Mocha unit tests for the Rulesets logic in `ruleset-unit-tests`.
 
 ## Integration Tests
 
 ### Running
 
+Locally
+
 -   Install newman globally `npm i -g newman`
 -   Start function `npm start`
 -   Run Tests `npm int:test`
 
+In Docker container
+
+-   Install newman globally `npm i -g newman`
+-   Edit `function.json` files to set `"authLevel": "anonymous"`, don't forget to change back!
+-   Start function `npm run docker:start`
+-   Run Tests `npm docker:int:test`
+
 ### Modifying/Adding
 
 Integration tests are written in Postman v2.1 format and run with newman
-Import the `integrations-tests/dev-func-validator.postman_collection.json` into Postman and write additional tests there
+Import the `integration-tests/dev-func-validator.postman_collection.json` into Postman and write additional tests there
 Then once you are happy, export the collection and overwrite the file, then check into git.
+
+Using files:
+
+-   You must reference the file in the Postman file directory when working in the Postman GUI e.g. `~/Postman/files`
+-   When ready to export tests to the repo don't forget to copy file to `integration-tests/test-files`
+-   `--working-dir` cli parameter tells `newman` where to look
 
 ## Deployment
 
--   Update relevant items in `.github/workflows/develop-func-deploy.yml` (see comments inline)
--   Create a [Service Principal](https://github.com/IATI/IATI-Internal-Wiki/blob/main/IATI-Unified-Infra/ServicePrincipals.md) and set the DEV_AZURE_CREDENTIALS GitHub Secret
+-   Development environment is deployed using GitHub Actions on push
