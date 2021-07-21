@@ -15,6 +15,11 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
+      - name: 'Install libxml2-utils'
+        run: |
+          apt-get update && \
+          apt-get install -y git libxml2-utils
+
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2.3.4
 
