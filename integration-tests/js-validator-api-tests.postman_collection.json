@@ -698,7 +698,7 @@
 					"response": []
 				},
 				{
-					"name": "iati-act-line-br - expect 0.4.1",
+					"name": "iati-act-line-br",
 					"event": [
 						{
 							"listen": "test",
@@ -716,10 +716,6 @@
 									"pm.test(\"version is 2.03\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
-									"});",
-									"pm.test(\"File level error includes error with id 0.4.1\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('0.4.1');",
 									"});",
 									""
 								],

@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const { validateXMLrecover } = require('validate-with-xmllint');
 const { getFileInformation, getRuleset, getSchema, getIdSets } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateCodelists } = require('./codelistValidator');
@@ -80,71 +81,91 @@ const createValidationReport = (errors, state, groupResults) => {
 };
 
 exports.validate = async (context, req) => {
-    let { body } = req;
-    const { details, group } = req.query;
-
-    // details - default - false
-    const showDetails = details === 'true' || details === 'True';
-
-    // group - default - true
-    const groupResults = group !== 'false' && group !== 'False';
-
-    // No body
-    if (!body || JSON.stringify(body) === '{}') {
-        context.res = {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-            body: { error: 'No body' },
-        };
-
-        return;
-    }
-
-    // Body should be a string
-    if (typeof body !== 'string') {
-        context.res = {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-            body: { error: 'Body must be an application/xml string' },
-        };
-
-        return;
-    }
-
-    const state = {
-        showDetails,
-        fileSize: '',
-        fileType: '',
-        iatiVersion: '',
-        generatedDateTime: '',
-        supportedVersion: '',
-        isIati: '',
-        fileInfoTime: '',
-        schemaTime: '',
-        codelistTime: '',
-        ruleTime: '',
-        exitCategory: '',
-    };
-
-    // Metric: File Size (MiB)
-    state.fileSize = Number(Buffer.byteLength(body) / (1024 * 1024)).toFixed(4);
-    client.trackMetric({ name: 'File Size (MiB)', value: state.fileSize });
-    context.log({ name: 'File Size (MiB)', value: state.fileSize });
-
-    if (state.fileSize > config.MAX_FILESIZE) {
-        context.res = {
-            status: 413,
-            headers: { 'Content-Type': 'application/json' },
-            body: {
-                error: `Max Filesize of ${config.MAX_FILESIZE} MiB exceeded. File supplied is ${state.fileSize} MiB`,
-            },
-        };
-
-        return;
-    }
-    let lineBreakErrors;
     try {
+        let { body } = req;
+        const { details, group } = req.query;
+
+        // details - default - false
+        const showDetails = details === 'true' || details === 'True';
+
+        // group - default - true
+        const groupResults = group !== 'false' && group !== 'False';
+
+        // No body
+        if (!body || JSON.stringify(body) === '{}') {
+            context.res = {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: { error: 'No body' },
+            };
+
+            return;
+        }
+
+        // Body should be a string
+        if (typeof body !== 'string') {
+            context.res = {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: { error: 'Body must be an application/xml string' },
+            };
+
+            return;
+        }
+
+        const state = {
+            showDetails,
+            fileSize: '',
+            fileType: '',
+            iatiVersion: '',
+            generatedDateTime: '',
+            supportedVersion: '',
+            isIati: '',
+            fileInfoTime: '',
+            schemaTime: '',
+            codelistTime: '',
+            ruleTime: '',
+            exitCategory: '',
+        };
+
+        // Metric: File Size (MiB)
+        state.fileSize = Number(Buffer.byteLength(body) / (1024 * 1024)).toFixed(4);
+        client.trackMetric({ name: 'File Size (MiB)', value: state.fileSize });
+        context.log({ name: 'File Size (MiB)', value: state.fileSize });
+
+        if (state.fileSize > config.MAX_FILESIZE) {
+            context.res = {
+                status: 413,
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    error: `Max Filesize of ${config.MAX_FILESIZE} MiB exceeded. File supplied is ${state.fileSize} MiB`,
+                },
+            };
+
+            return;
+        }
+
         const fileInfoStart = getStartTime();
+
+        try {
+            // Clean input with xmllint for future steps, only need to replace body with this if no XML errors.
+            const { output, error: xmlError } = await validateXMLrecover(body);
+
+            if (!xmlError) {
+                body = output;
+            }
+        } catch (error) {
+            context.log(error);
+
+            context.res = {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    feedback: 'unhandled server error please contact the iati technical team',
+                    error,
+                },
+            };
+        }
 
         let xmlDoc;
         try {
@@ -155,8 +176,6 @@ exports.validate = async (context, req) => {
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
                 xmlDoc,
-                newXml: body,
-                lineBreakErrors,
             } = getFileInformation(body));
         } catch (error) {
             let errContext;
@@ -319,7 +338,6 @@ exports.validate = async (context, req) => {
 
         // combine all types of errors
         const combinedErrors = [
-            ...lineBreakErrors,
             ...schemaErrors,
             ...flattenErrors(codelistResult),
             ...flattenErrors(rulesResult),
