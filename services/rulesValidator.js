@@ -336,10 +336,11 @@ class Rules {
         return differenceInDays(this.end.parsedDate, this.start.parsedDate) <= 365;
     }
 
+    // note if pathMatch === '' we consider it passed for regex, follows V1.
     regex(oneCase, allMatches) {
         const regEx = new RegExp(oneCase.regex);
         return this.pathMatchesText.every(
-            (pathMatchText) => regEx.test(pathMatchText) === allMatches
+            (pathMatchText) => pathMatchText === '' || regEx.test(pathMatchText) === allMatches
         );
     }
 
