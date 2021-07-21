@@ -12,7 +12,6 @@ env:
   NAME: func-iativalidator
   STAGE: dev # suffix to indicate environment stage
   TAG: ${{ github.sha }}
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x'
   REDIS_HOSTNAME: ${{ secrets.DEV_REDIS_HOSTNAME }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
@@ -25,6 +24,7 @@ env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+  KV_NAME: ${{ secrets.DEV_KEY_VAULT_NAME }}
 
 jobs:
   build-test-deploy:
@@ -104,6 +104,16 @@ jobs:
                 {
                     "name": "DOCKER_REGISTRY_SERVER_USERNAME",
                     "value": "${{ env.ACR_USERNAME }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "AzureWebJobsSecretStorageType",
+                    "value": "keyvault",
+                    "slotSetting": false
+                },
+                {
+                    "name": "AzureWebJobsSecretStorageKeyVaultName",
+                    "value": "${{ env.KV_NAME }}",
                     "slotSetting": false
                 }
             ]
