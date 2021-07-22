@@ -6,17 +6,62 @@ const { aSetex, aGet, aExists } = require('../config/redis');
 const config = require('../config/config');
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
+const GITHUB_API = 'https://api.github.com';
 
-// https://raw.githubusercontent.com/IATI/IATI-Codelists/v2.03/validatorCodelist/codelist_rules.json
-const fetchJSONfromGitHub = async (repo, branch, fileName) => {
-    const res = await fetch(`${GITHUB_RAW}/IATI/${repo}/${branch}/${fileName}`, {
+const getFileBySha = async (owner, repo, sha, filePath) => {
+    // https://raw.githubusercontent.com/IATI/IATI-Codelists/34a421386d554ccefbb4067b8fc21493c562a793/codelist_rules.json
+    const res = await fetch(`${GITHUB_RAW}/${owner}/${repo}/${sha}/${filePath}`, {
         method: 'GET',
         headers: {
             Accept: 'text/plain',
             Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
         },
     });
-    return res.json();
+    const body = res.json();
+    if (res.status !== 200)
+        throw new Error(
+            `Error fetching file from github api. Status: ${res.status} Message: ${body.message} `
+        );
+    return body;
+};
+
+const getFileCommitSha = async (owner, repo, branch, filePath) => {
+    // https://api.github.com/repos/IATI/IATI-Codelists/branches/v2.03/validatorCodelist
+    const branchRes = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/branches/${branch}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/vnd.github.v3+json',
+            Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
+        },
+    });
+    const branchBody = await branchRes.json();
+    if (branchRes.status !== 200)
+        throw new Error(
+            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${branchBody.message} `
+        );
+    const { sha } = branchBody.commit;
+    // https://api.github.com/repos/IATI/IATI-Codelists/commits?sha=2ad9521a0e7604f44e4df33a8a8699927941e177&path=codelist_rules.json
+    const fileRes = await fetch(
+        `${GITHUB_API}/repos/${owner}/${repo}/commits?sha=${sha}&path=${filePath}`,
+        {
+            method: 'GET',
+            headers: {
+                Accept: 'application/vnd.github.v3+json',
+                Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
+            },
+        }
+    );
+    const fileBody = await fileRes.json();
+    if (fileRes.status !== 200)
+        throw new Error(
+            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${fileBody.message} `
+        );
+    // sort to get newest commit
+    fileBody.sort(
+        (first, second) =>
+            new Date(second.commit.committer.date) - new Date(first.commit.committer.date)
+    );
+    return fileBody[0].sha;
 };
 
 // parse xml body to JSON to check the root element, don't attempt to parse if output from xmllint --recover was just blank XML doc
@@ -63,16 +108,23 @@ config.VERSIONS.forEach(async (version) => {
     // load codelists
     const codelistBranch = `v${version}/validatorCodelist`;
     try {
-        const cachedCodelistRule = JSON.parse(await aGet(`codelistRules${version}`));
-
-        if (!cachedCodelistRule) {
+        codelistRules[version] = {};
+        if ((await aExists(`codelistRules${version}`)) === 0) {
             console.log({
                 name: `Fetching codelist rules for version: ${version}, repo: IATI-Codelists, branch: ${codelistBranch} `,
                 value: true,
             });
-            codelistRules[version] = await fetchJSONfromGitHub(
+
+            codelistRules[version].commitSha = await getFileCommitSha(
+                'IATI',
                 'IATI-Codelists',
                 codelistBranch,
+                'codelist_rules.json'
+            );
+            codelistRules[version].content = await getFileBySha(
+                'IATI',
+                'IATI-Codelists',
+                codelistRules[version].commitSha,
                 'codelist_rules.json'
             );
         } else {
@@ -80,7 +132,8 @@ config.VERSIONS.forEach(async (version) => {
                 name: `Using redis cache codelist rules for version: ${version}`,
                 value: true,
             });
-            codelistRules[version] = cachedCodelistRule;
+            const cachedCodelist = JSON.parse(await aGet(`codelistRules${version}`));
+            codelistRules[version] = cachedCodelist;
         }
     } catch (error) {
         console.error(`Error fetching Codelists for version ${version}. Error: ${error}`);
@@ -89,16 +142,23 @@ config.VERSIONS.forEach(async (version) => {
     // load rulesets
     const rulesetBranch = `v${version}/validatorV2`;
     try {
-        const cachedRuleset = JSON.parse(await aGet(`ruleset${version}`));
-
-        if (!cachedRuleset) {
+        ruleset[version] = {};
+        if ((await aExists(`ruleset${version}`)) === 0) {
             console.log({
                 name: `Fetching ruleset for version: ${version}, repo: IATI-Rulesets, branch: ${rulesetBranch} `,
                 value: true,
             });
-            ruleset[version] = await fetchJSONfromGitHub(
+
+            ruleset[version].commitSha = await getFileCommitSha(
+                'IATI',
                 'IATI-Rulesets',
                 rulesetBranch,
+                'rulesets/standard.json'
+            );
+            ruleset[version].content = await getFileBySha(
+                'IATI',
+                'IATI-Rulesets',
+                ruleset[version].commitSha,
                 'rulesets/standard.json'
             );
         } else {
@@ -106,6 +166,7 @@ config.VERSIONS.forEach(async (version) => {
                 name: `Using redis cache rulesets for version: ${version}`,
                 value: true,
             });
+            const cachedRuleset = JSON.parse(await aGet(`ruleset${version}`));
             ruleset[version] = cachedRuleset;
         }
     } catch (error) {
@@ -123,16 +184,34 @@ config.VERSIONS.forEach(async (version) => {
 
 exports.getVersionCodelistRules = (version) => {
     if (config.VERSIONS.includes(version)) {
-        return codelistRules[version];
+        return codelistRules[version].content;
     }
     throw new Error(`Unable to retrieve codelist_rules.json for version ${version}`);
 };
 
+exports.getVersionCodelistCommitSha = (version) => {
+    if (config.VERSIONS.includes(version)) {
+        if ('commitSha' in codelistRules[version]) {
+            return codelistRules[version].commitSha;
+        }
+    }
+    return '';
+};
+
 exports.getRuleset = (version) => {
     if (config.VERSIONS.includes(version)) {
-        return ruleset[version];
+        return ruleset[version].content;
     }
     throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
+};
+
+exports.getRulesetCommitSha = (version) => {
+    if (config.VERSIONS.includes(version)) {
+        if ('commitSha' in ruleset[version]) {
+            return ruleset[version].commitSha;
+        }
+    }
+    return '';
 };
 
 exports.getSchema = (fileType, version) => {

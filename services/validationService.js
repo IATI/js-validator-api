@@ -1,6 +1,13 @@
 const _ = require('underscore');
 const { validateXMLrecover } = require('validate-with-xmllint');
-const { getFileInformation, getRuleset, getSchema, getIdSets } = require('../utils/utils');
+const {
+    getFileInformation,
+    getRuleset,
+    getSchema,
+    getIdSets,
+    getRulesetCommitSha,
+    getVersionCodelistCommitSha,
+} = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateCodelists } = require('./codelistValidator');
 const { validateIATI } = require('./rulesValidator');
@@ -75,6 +82,8 @@ const createValidationReport = (errors, state, groupResults) => {
         valid: summary.critical === 0,
         fileType: state.fileType,
         iatiVersion: state.iatiVersion,
+        rulesetCommitSha: getRulesetCommitSha(state.iatiVersion),
+        codelistCommitSha: getVersionCodelistCommitSha(state.iatiVersion),
         apiVersion: config.VERSION,
         summary,
         errors: finalErrors,
