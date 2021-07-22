@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Main Tests",
+			"name": "Ping Tests",
 			"item": [
 				{
 					"name": "GET /pvt",
@@ -93,7 +93,12 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Basic Body Validation",
+			"item": [
 				{
 					"name": "No Body Empty",
 					"event": [
@@ -262,7 +267,12 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Main Tests",
+			"item": [
 				{
 					"name": "iati-org-XML-text-body",
 					"event": [
@@ -1364,9 +1374,17 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
 									"});",
+									"pm.test(\"rulesetCommitSha is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rulesetCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"codelistCommitSha is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.codelistCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
 									"pm.test(\"No file level errors are present\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors).to.not.have.property('file');",
+									"    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
 									"});",
 									"pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains identifier error 1.14.8\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -1436,6 +1454,14 @@
 									"pm.test(\"version is 2.02\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.iatiVersion).to.eql('2.02');",
+									"});",
+									"pm.test(\"rulesetCommitSha is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rulesetCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"codelistCommitSha is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.codelistCommitSha).to.be.a('string').with.length.greaterThan(0);",
 									"});",
 									"pm.test(\"Response contains no errors\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -1510,7 +1536,7 @@
 									"});",
 									"pm.test(\"No file level errors are present\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors).to.not.have.property('file');",
+									"    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
 									"});",
 									"pm.test(\"There is a codelist error for OrganisationRole Codelist\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -1604,7 +1630,7 @@
 									"});",
 									"pm.test(\"No file level errors are present\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors).to.not.have.property('file');",
+									"    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
 									"});",
 									"pm.test(\"There is a codelist error for OrganisationType Codelist\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -1689,7 +1715,7 @@
 									"});",
 									"pm.test(\"No file level errors are present\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors).to.not.have.property('file');",
+									"    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
 									"});",
 									"pm.test(\"There is a codelist error for Region Codelist\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -2290,6 +2316,29 @@
 						}
 					},
 					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});"
+						]
+					}
 				}
 			]
 		},
@@ -3181,6 +3230,10 @@
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});",
 							"pm.test(\"The file is valid\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.valid).to.eql(true);",
@@ -3188,7 +3241,8 @@
 							"pm.test(\"No file level errors are present\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.errors.map((err) => err.identifier)).to.not.include('file');",
-							"});"
+							"});",
+							""
 						]
 					}
 				}
