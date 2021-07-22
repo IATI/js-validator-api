@@ -75,6 +75,7 @@ const createValidationReport = (errors, state, groupResults) => {
         valid: summary.critical === 0,
         fileType: state.fileType,
         iatiVersion: state.iatiVersion,
+        apiVersion: config.VERSION,
         summary,
         errors: finalErrors,
     };

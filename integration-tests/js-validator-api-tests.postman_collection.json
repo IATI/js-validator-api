@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Main Tests",
+			"name": "Ping Tests",
 			"item": [
 				{
 					"name": "GET /pvt",
@@ -93,7 +93,12 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Basic Body Validation",
+			"item": [
 				{
 					"name": "No Body Empty",
 					"event": [
@@ -262,7 +267,12 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Main Tests",
+			"item": [
 				{
 					"name": "iati-org-XML-text-body",
 					"event": [
@@ -2291,6 +2301,29 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});"
+						]
+					}
+				}
 			]
 		},
 		{
@@ -3181,6 +3214,10 @@
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});",
 							"pm.test(\"The file is valid\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.valid).to.eql(true);",
@@ -3188,7 +3225,8 @@
 							"pm.test(\"No file level errors are present\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.errors.map((err) => err.identifier)).to.not.include('file');",
-							"});"
+							"});",
+							""
 						]
 					}
 				}
