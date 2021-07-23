@@ -87,11 +87,11 @@ exports.validateCodelists = async (body, version, showDetails) => {
             category,
             severity,
             message,
+            codelist,
             context: [{ text: errContext }],
             ...(showDetails && {
                 details: {
                     xpath: path,
-                    codelist,
                 },
             }),
         });
