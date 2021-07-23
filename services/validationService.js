@@ -7,6 +7,7 @@ const {
     getIdSets,
     getRulesetCommitSha,
     getVersionCodelistCommitSha,
+    getOrgIdPrefixFileName,
 } = require('../utils/utils');
 const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
 const { validateCodelists } = require('./codelistValidator');
@@ -63,7 +64,7 @@ const groupErrors = (errors, groupKey, additionalKeys) => {
     });
 };
 
-const createValidationReport = (errors, state, groupResults) => {
+const createValidationReport = async (errors, state, groupResults) => {
     let finalErrors;
     // make summary count
     const summary = countSeverities(errors);
@@ -84,6 +85,7 @@ const createValidationReport = (errors, state, groupResults) => {
         iatiVersion: state.iatiVersion,
         rulesetCommitSha: getRulesetCommitSha(state.iatiVersion),
         codelistCommitSha: getVersionCodelistCommitSha(state.iatiVersion),
+        orgIdPrefixFileName: state.fileType ? await getOrgIdPrefixFileName() : '',
         apiVersion: config.VERSION,
         summary,
         errors: finalErrors,
@@ -209,7 +211,7 @@ exports.validate = async (context, req) => {
                 },
             ];
 
-            const validationReport = createValidationReport(errors, state, groupResults);
+            const validationReport = await createValidationReport(errors, state, groupResults);
 
             state.exitCategory = 'xmlError';
 
@@ -240,7 +242,7 @@ exports.validate = async (context, req) => {
                 },
             ];
 
-            const validationReport = createValidationReport(errors, state, groupResults);
+            const validationReport = await createValidationReport(errors, state, groupResults);
 
             state.exitCategory = 'notIati';
 
@@ -272,7 +274,7 @@ exports.validate = async (context, req) => {
                 },
             ];
 
-            const validationReport = createValidationReport(errors, state, groupResults);
+            const validationReport = await createValidationReport(errors, state, groupResults);
 
             state.exitCategory = 'notSupportedVersion';
 
@@ -357,7 +359,7 @@ exports.validate = async (context, req) => {
 
         logValidationSummary(context, state);
 
-        const validationReport = createValidationReport(combinedErrors, state, groupResults);
+        const validationReport = await createValidationReport(combinedErrors, state, groupResults);
 
         context.res = {
             status: schemaErrors.length > 0 ? 422 : 200,
