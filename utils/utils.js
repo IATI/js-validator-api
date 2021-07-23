@@ -224,49 +224,63 @@ exports.getSchema = (fileType, version) => {
     throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
 };
 
-let orgIdPrefixes = '';
+let orgIdPrefixInfo = '';
 
 exports.getOrgIdPrefixes = async () => {
-    if (orgIdPrefixes === '') {
-        const ORG_ID_PREFIX_URL = 'http://org-id.guide/download.json';
+    if (orgIdPrefixInfo === '') {
+        const ORG_ID_PREFIX_URL = 'https://org-id.guide/download.json';
         try {
             let fullOrgIdPrefixInfo;
 
-            if ((await aExists('fullOrgIdPrefixInfo')) === 0) {
+            if ((await aExists('orgIdPrefixInfo')) === 0) {
                 console.log({
                     name: `Fetching OrgId Prefixes from ${ORG_ID_PREFIX_URL}`,
                     value: true,
                 });
                 const res = await fetch(ORG_ID_PREFIX_URL);
                 fullOrgIdPrefixInfo = await res.json();
+                if (res.status !== 200)
+                    throw new Error(
+                        `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, body: ${fullOrgIdPrefixInfo}`
+                    );
+                const fileName = res.headers
+                    .get('content-disposition')
+                    .match(/(org-id-[\w]{10}.json)/)[0];
+
+                const orgIdPrefixes = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
+                    if (orgId.confirmed) {
+                        acc.push(orgId.code);
+                    }
+                    return acc;
+                }, []);
+
+                orgIdPrefixInfo = { fileName, content: new Set(orgIdPrefixes) };
 
                 // cache to redis for REDIS_CACHE_SEC seconds
+                const orgIdPrefixInfoObject = { fileName, content: orgIdPrefixes };
                 await aSetex(
-                    'fullOrgIdPrefixInfo',
+                    'orgIdPrefixInfo',
                     config.REDIS_CACHE_SEC,
-                    JSON.stringify(fullOrgIdPrefixInfo)
+                    JSON.stringify(orgIdPrefixInfoObject)
                 );
             } else {
                 console.log({
-                    name: `Fetching OrgId Prefixes from Redis cache key: fullOrgIdPrefixInfo`,
+                    name: `Fetching OrgId Prefixes from Redis cache key: orgIdPrefixInfo`,
                     value: true,
                 });
-                fullOrgIdPrefixInfo = JSON.parse(await aGet('fullOrgIdPrefixInfo'));
+                const orgIdPrefixInfoObject = JSON.parse(await aGet('orgIdPrefixInfo'));
+                orgIdPrefixInfo = {
+                    ...orgIdPrefixInfoObject,
+                    content: new Set(orgIdPrefixInfoObject.content),
+                };
             }
-
-            orgIdPrefixes = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
-                if (orgId.confirmed) {
-                    acc.add(orgId.code);
-                }
-                return acc;
-            }, new Set());
         } catch (error) {
             console.error(
                 `Error fetching Organsiation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`
             );
         }
     }
-    return orgIdPrefixes;
+    return orgIdPrefixInfo;
 };
 
 let orgIds = '';
@@ -318,9 +332,11 @@ exports.getOrgIds = async () => {
 };
 
 exports.getIdSets = async () => ({
-    'ORG-ID-PREFIX': await this.getOrgIdPrefixes(),
+    'ORG-ID-PREFIX': (await this.getOrgIdPrefixes()).content,
     'ORG-ID': await this.getOrgIds(),
 });
+
+exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fileName;
 
 // returns an array of branch info from the GitHub API, filtered to "version-X.XX" branches only
 exports.getVersionBranches = async (repo) => {
