@@ -337,21 +337,3 @@ exports.getIdSets = async () => ({
 });
 
 exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fileName;
-
-// returns an array of branch info from the GitHub API, filtered to "version-X.XX" branches only
-exports.getVersionBranches = async (repo) => {
-    const response = await fetch(`https://api.github.com/repos/IATI/${repo}/branches`, {
-        method: 'GET',
-        headers: {
-            accept: 'application/vnd.github.v3+json',
-            Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
-        },
-    });
-    const data = await response.json();
-
-    // filter to "version-X.XX" branches that are in VERSIONS
-    return Array.from(data).filter((branch) => {
-        const ver = branch.name.split('-')[1];
-        return config.VERSIONS.includes(ver);
-    });
-};
