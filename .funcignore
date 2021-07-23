@@ -10,8 +10,6 @@ ruleset-unit-tests
 
 # documentation
 docs
-validation_report.schema.json
-example_response.json
 
 # linting/utils
 .eslintrc.json

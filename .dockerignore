@@ -1,6 +1,26 @@
-local.settings.json
+# dependencies
+node_modules
+
+# vscode
+.vscode
+
+# tests
 integration-tests
 ruleset-unit-tests
-identifiers
+
+# github
+.github
+
+# documentation
 docs
-node_modules
+
+# linting/utils
+.eslintrc.json
+.prettierignore
+.prettierrc.json
+.husky
+
+# env files
+.env
+.env.example
+local.settings.json

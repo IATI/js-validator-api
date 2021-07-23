@@ -4,7 +4,7 @@ const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
 
-const ruleNameMap = require('../ruleNameMap.json');
+const ruleNameMap = require('./ruleNameMap.json');
 
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
 const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
