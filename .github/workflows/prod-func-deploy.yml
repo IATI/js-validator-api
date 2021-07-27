@@ -7,7 +7,7 @@ on:
 
 env:
   NAME: func-iativalidator
-  STAGE: PROD # suffix to indicate environment stage
+  STAGE: prod # suffix to indicate environment stage
   TAG: ${{ github.sha }}
   NODE_VERSION: '14.x'
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
