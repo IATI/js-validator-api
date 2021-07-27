@@ -1,32 +1,28 @@
-name: Deploy_To_Dev_Function_On_Push
+name: Deploy_To_PROD_Function_On_Published_Release
 
+# Runs when a Release is published from GitHub UI
 on:
-  push:
-    paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
-      - '**/README.md' # don't run on README.md file updates anywhere in repo
-      - '**/dependabot.yml'
-      - '.github/workflows/prod-func-deploy.yml'
-    branches:
-      - develop
+  release:
+    types: [published]
 
 env:
   NAME: func-iativalidator
-  STAGE: dev # suffix to indicate environment stage
+  STAGE: PROD # suffix to indicate environment stage
   TAG: ${{ github.sha }}
   NODE_VERSION: '14.x'
-  AZURE_CREDENTIALS: ${{ secrets.DEV_AZURE_CREDENTIALS }}
-  REDIS_HOSTNAME: ${{ secrets.DEV_REDIS_HOSTNAME }}
+  AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
+  REDIS_HOSTNAME: ${{ secrets.PROD_REDIS_HOSTNAME }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
-  REDIS_KEY: ${{ secrets.DEV_REDIS_KEY }}
+  REDIS_KEY: ${{ secrets.PROD_REDIS_KEY }}
   REDIS_CACHE_SEC: 86400
-  API_KEY: ${{ secrets.DEV_API_KEY }}
-  VALIDATOR_SERVICES_URL: ${{ secrets.DEV_VALIDATOR_SERVICES_URL }}
+  API_KEY: ${{ secrets.PROD_API_KEY }}
+  VALIDATOR_SERVICES_URL: ${{ secrets.PROD_VALIDATOR_SERVICES_URL }}
   VALIDATOR_SERVICES_KEY_NAME: ${{ secrets.VALIDATOR_SERVICES_KEY_NAME }}
-  VALIDATOR_SERVICES_KEY_VALUE: ${{ secrets.DEV_VALIDATOR_SERVICES_KEY_VALUE }}
+  VALIDATOR_SERVICES_KEY_VALUE: ${{ secrets.PROD_VALIDATOR_SERVICES_KEY_VALUE }}
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-  KV_NAME: ${{ secrets.DEV_KEY_VAULT_NAME }}
+  KV_NAME: ${{ secrets.PROD_KEY_VAULT_NAME }}
 
 jobs:
   build-test-deploy:
@@ -139,4 +135,4 @@ jobs:
 
       - name: 'Run integration tests'
         run: |
-          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-dev.postman_environment.json --working-dir integration-tests/test-files --env-var keyValue=$API_KEY
+          newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/func-iativalidator-PROD.postman_environment.json --working-dir integration-tests/test-files --env-var keyValue=$API_KEY
