@@ -671,23 +671,41 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
+const fileDefinition = {
+    activity: {
+        root: 'iati-activities',
+        subRoot: 'iati-activity',
+        identifier: 'iati-identifier',
+        titleLocation: 'title/narrative',
+    },
+    organisation: {
+        root: 'iati-organisations',
+        subRoot: 'iati-organisation',
+        identifier: 'organisation-identifier',
+        titleLocation: 'name/narrative',
+    },
+};
+
 exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
     const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const isActivity = xpath('//iati-activities', document).length > 0;
-    const fileType = isActivity ? 'iati-activity' : 'iati-organisation';
-    const identifierElement = isActivity ? 'iati-identifier' : 'organisation-identifier';
-    const titleLocation = isActivity ? 'title/narrative' : 'name/narrative';
-    const elements = xpath(`//${fileType}`, document);
+    const isActivity = xpath('/iati-activities', document).length > 0;
+    const fileType = isActivity ? 'activity' : 'organisation';
+
+    const elements = xpath(
+        `/${fileDefinition[fileType].root}/${fileDefinition[fileType].subRoot}`,
+        document
+    );
     const results = {};
     const idTracker = {};
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString(
-            '<fakeroot></fakeroot>',
+            `<${fileDefinition[fileType].root}></${fileDefinition[fileType].root}>`,
             'text/xml'
         );
         singleElementDoc.firstChild.appendChild(element);
-        let identifier = xpath(`string(${identifierElement})`, element) || 'noIdentifier';
-        const title = xpath(`string(${titleLocation})`, element) || '';
+        let identifier =
+            xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
+        const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
         idTracker[identifier] = (idTracker[identifier] || 0) + 1;
         if (idTracker[identifier] > 1) {
             // duplicate identifier, drop a file level error
@@ -701,7 +719,9 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
                         category: 'identifiers',
                         message: `The activity identifier must be unique for each activity.`,
                         context: [
-                            { text: `Duplicate found for ${identifierElement} = '${identifier}'` },
+                            {
+                                text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
+                            },
                         ],
                     },
                 ],
