@@ -1,74 +1,20 @@
 [
-    {
-        "python": "no_more_than_one",
-        "js": "noMoreThanOne"
-    },
-    {
-        "python": "atleast_one",
-        "js": "atLeastOne"
-    },
-    {
-        "python": "only_one_of",
-        "js": "onlyOneOf"
-    },
-    {
-        "python": "one_or_all",
-        "js": "oneOrAll"
-    },
-    {
-        "python": "unique",
-        "js": "unique"
-    },
-    {
-        "python": "date_order",
-        "js": "dateOrder"
-    },
-    {
-        "python": "time_limit",
-        "js": "timeLimit"
-    },
-    {
-        "python": "strict_sum",
-        "js": "strictSum"
-    },
-    {
-        "python": "regex_matches",
-        "js": "regexMatches"
-    },
-    {
-        "python": "regex_no_matches",
-        "js": "regexNoMatches"
-    },
-    {
-        "python": "startswith",
-        "js": "startsWith"
-    },
-    {
-        "python": "if_then",
-        "js": "ifThen"
-    },
-    {
-        "python": "date_now",
-        "js": "dateNow"
-    },
-    {
-        "python": "between_dates",
-        "js": "betweenDates"
-    },
-    {
-        "python": "sum",
-        "js": "sum"
-    },
-    {
-        "python": "range",
-        "js": "range"
-    },
-    {
-        "python": "loop",
-        "js": "loop"
-    },
-    {
-        "python": "no_spaces",
-        "js": "noSpaces"
-    }
+    ["no_more_than_one", "noMoreThanOne"],
+    ["atleast_one", "atLeastOne"],
+    ["only_one_of", "onlyOneOf"],
+    ["one_or_all", "oneOrAll"],
+    ["unique", "unique"],
+    ["date_order", "dateOrder"],
+    ["time_limit", "timeLimit"],
+    ["strict_sum", "strictSum"],
+    ["regex_matches", "regexMatches"],
+    ["regex_no_matches", "regexNoMatches"],
+    ["startswith", "startsWith"],
+    ["if_then", "ifThen"],
+    ["date_now", "dateNow"],
+    ["between_dates", "betweenDates"],
+    ["sum", "sum"],
+    ["range", "range"],
+    ["loop", "loop"],
+    ["no_spaces", "noSpaces"]
 ]

@@ -3,8 +3,9 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
+const ruleNameObj = require('./ruleNameMap.json');
 
-const ruleNameMap = require('./ruleNameMap.json');
+const ruleNameMap = new Map(ruleNameObj);
 
 const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
 const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
@@ -47,15 +48,9 @@ const getObjVal = (obj, key, def) => {
 };
 
 const getRuleMethodName = (ruleName) => {
-    let name = '';
-    name = ruleNameMap
-        .map((rule) => {
-            if (rule.python === ruleName) return rule.js;
-            if (rule.js === ruleName) return ruleName;
-            return '';
-        })
-        .join('');
-    if (name === '') throw new Error(`No rule name map between python and js for ${ruleName}`);
+    const name = ruleNameMap.get(ruleName);
+    if (name === undefined)
+        throw new Error(`No rule name map between python and js for ${ruleName}`);
     return name;
 };
 
@@ -409,7 +404,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     let result;
     let caseContext;
     let failContext;
-    const ruleName = getRuleMethodName(rule);
+    let ruleName;
     // if there is a condition, but not match, don't evalute the rule
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = 'No Condition Match';
@@ -418,7 +413,12 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
         if (ruleObject.idCondition === false) {
             result = 'No ID Condition Match';
         } else {
-            result = ruleObject[ruleName](oneCase);
+            if (rule in ruleObject) {
+                result = ruleObject[rule](oneCase);
+            } else {
+                ruleName = getRuleMethodName(rule);
+                result = ruleObject[ruleName](oneCase);
+            }
             ({ caseContext, failContext } = ruleObject);
         }
         ruleObject = null;
@@ -431,7 +431,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
             lineNumber: element.lineNumber,
             columnNumber: element.columnNumber,
         },
-        ruleName,
+        ruleName: ruleName || rule,
         ruleCase: oneCase,
         caseContext,
         failContext,
@@ -696,7 +696,7 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
         document
     );
     const results = {};
-    const idTracker = {};
+    const idTracker = new Map();
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString(
             `<${fileDefinition[fileType].root}></${fileDefinition[fileType].root}>`,
@@ -706,8 +706,8 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
         let identifier =
             xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
         const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
-        idTracker[identifier] = (idTracker[identifier] || 0) + 1;
-        if (idTracker[identifier] > 1) {
+        idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
+        if (idTracker.get(identifier) > 1) {
             // duplicate identifier, drop a file level error
             results.file = {
                 identifier: 'file',
@@ -726,8 +726,8 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
                     },
                 ],
             };
-            identifier = `${identifier}(${idTracker[identifier]})`;
-            idTracker[identifier] += 1;
+            identifier = `${identifier}(${idTracker.get(identifier)})`;
+            idTracker.set(identifier, idTracker.get(identifier) + 1);
         }
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
