@@ -187,3 +187,20 @@ Using files:
 ## Deployment
 
 -   Development environment is deployed using GitHub Actions on push
+
+## Release / Version Management
+
+Increment the version on `main` branch using npm:
+
+`npm version major | minor | patch`
+
+Push the new tag and commit to gitHub
+
+```bash
+git push origin main
+git push —-tags origin main
+```
+
+Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
+
+Once deployed successfully PR `main` back into `develop`.
