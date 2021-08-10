@@ -6,6 +6,7 @@ on:
       - '**/README.md' # don't run on README.md file updates anywhere in repo
       - '**/dependabot.yml'
       - '.github/workflows/prod-func-deploy.yml'
+      - '.github/workflows/develop-func-ci.yml'
     branches:
       - develop
 
