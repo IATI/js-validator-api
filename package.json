@@ -23,7 +23,7 @@
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
         "xml2js": "^0.4.23",
         "xmldom": "^0.6.0",
-        "xpath": "github:IATI/xpath#unshift-removal"
+        "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^1.0.2",
