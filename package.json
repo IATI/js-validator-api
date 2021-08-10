@@ -23,17 +23,17 @@
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
         "xml2js": "^0.4.23",
         "xmldom": "^0.6.0",
-        "xpath": "^0.0.32"
+        "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^1.0.2",
         "chai": "*",
-        "eslint": "^7.31.0",
+        "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-import": "^2.24.0",
         "husky": "^7.0.1",
-        "lint-staged": "^11.1.1",
+        "lint-staged": "^11.1.2",
         "mocha": "*",
         "prettier": "^2.3.2"
     },
