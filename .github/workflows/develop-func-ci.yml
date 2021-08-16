@@ -32,7 +32,7 @@ jobs:
 
       - name: 'Install Dependencies with Npm'
         run: |
-          sudo npm i -g npm
+          npm i -g npm
           npm install
 
       - name: 'Run unit tests'
