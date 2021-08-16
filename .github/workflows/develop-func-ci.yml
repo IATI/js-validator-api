@@ -31,7 +31,9 @@ jobs:
           cache: 'npm'
 
       - name: 'Install Dependencies with Npm'
-        run: npm install
+        run: |
+          sudo npm i -g npm
+          npm install
 
       - name: 'Run unit tests'
         run: npm run rules:test
