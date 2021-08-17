@@ -1,0 +1,17 @@
+{
+    "bindings": [
+        {
+            "authLevel": "Function",
+            "type": "HttpTrigger",
+            "direction": "in",
+            "name": "req",
+            "methods": ["get"],
+            "route": "pub/version"
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        }
+    ]
+}
