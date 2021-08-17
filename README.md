@@ -81,6 +81,16 @@ Version <0.0.0>
 Hello, <Name>. This HTTP triggered function executed successfully.
 ```
 
+### `GET /pub/version`
+
+-   Returns
+
+Version
+
+```
+X.X.X
+```
+
 ### `GET /pub?name=Name`
 
 -   Returns
@@ -139,7 +149,7 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 ## Creating a new route
 
-`func new --name <routename> --template "HTTP trigger" --authlevel "anonymous"`
+`func new --name <routename> --template "HTTP trigger" --authlevel "Function"`
 
 ## AppInsights SDK
 
