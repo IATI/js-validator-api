@@ -1,0 +1,142 @@
+{
+    "type": "object",
+    "properties": {
+        "valid": {
+            "type": "boolean",
+            "description": "Files with no critical severity errors are considered valid"
+        },
+        "fileType": {
+            "type": "string",
+            "description": "The type of IATI file",
+            "enum": ["iati-activities", "iati-organisations"]
+        },
+        "iatiVersion": {
+            "type": "string",
+            "description": "Version of the IATI Standard of the file",
+            "examples": ["2.01", "2.02", "2.03"]
+        },
+        "rulesetCommitSha": {
+            "type": "string",
+            "description": "git commit sha of the ruleset used to create the validation report"
+        },
+        "codelistCommitSha": {
+            "type": "string",
+            "description": "git commit sha of the codelist rules used to create the validation report"
+        },
+        "orgIdPrefixFileName": {
+            "type": "string",
+            "description": "file name of org id prefixes from https://org-id.guide/download.json"
+        },
+        "apiVersion": {
+            "type": "string",
+            "description": "version of the validator api"
+        },
+        "summary": {
+            "type": "object",
+            "properties": {
+                "critical": {
+                    "type": "integer",
+                    "description": "Number of critical level validation errors with the file"
+                },
+                "error": {
+                    "type": "integer",
+                    "description": "Number of error level validation errors with the file"
+                },
+                "warning": {
+                    "type": "integer",
+                    "description": "Number of warning level validation errors with the file"
+                }
+            }
+        },
+        "errors": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "errors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "The unique identifier of the error",
+                                                "examples": ["9.26.1", "9.42.1"]
+                                            },
+                                            "severity": {
+                                                "type": "string",
+                                                "enum": ["critical", "danger", "warning"],
+                                                "description": "The severity level of the error"
+                                            },
+                                            "message": {
+                                                "type": "string",
+                                                "description": "The informational message about the validation error"
+                                            },
+                                            "codelist": {
+                                                "type": "string",
+                                                "description": "The codelist that is being validated against (if applicable)",
+                                                "examples": [
+                                                    "OrganisationRole",
+                                                    "DescriptionType",
+                                                    "ActivityDateType"
+                                                ]
+                                            },
+                                            "context": {
+                                                "type": "array",
+                                                "description": "The context of the error",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "text": {
+                                                            "type": "string",
+                                                            "examples": [
+                                                                "\"25\" is not a valid value for attribute @code"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": ["text"]
+                                                }
+                                            }
+                                        },
+                                        "required": ["id", "severity", "message", "context"]
+                                    }
+                                },
+                                "category": {
+                                    "type": "string",
+                                    "enum": [
+                                        "identifiers",
+                                        "organisation",
+                                        "information",
+                                        "participating",
+                                        "geo",
+                                        "classifications",
+                                        "financial",
+                                        "documents",
+                                        "relations",
+                                        "performance"
+                                    ],
+                                    "description": "The category of the validation error"
+                                }
+                            },
+                            "required": ["errors", "category"]
+                        }
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "The activity's iati-identifier for iati-activities files, organisation-identifier for iati-organisations file, or 'file' for file level errors"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The activity's title for iati-activities files, the organisation name for iati-organisations files, or 'File level errors' for file level errors"
+                    }
+                },
+                "required": ["errors", "identifier", "title"]
+            }
+        }
+    }
+}
