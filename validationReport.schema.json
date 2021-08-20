@@ -1,5 +1,16 @@
 {
     "type": "object",
+    "required": [
+        "valid",
+        "fileType",
+        "iatiVersion",
+        "rulesetCommitSha",
+        "codelistCommitSha",
+        "orgIdPrefixFileName",
+        "apiVersion",
+        "summary",
+        "errors"
+    ],
     "properties": {
         "valid": {
             "type": "boolean",
@@ -33,6 +44,7 @@
         },
         "summary": {
             "type": "object",
+            "required": ["critical", "error", "warning"],
             "properties": {
                 "critical": {
                     "type": "integer",
@@ -50,6 +62,7 @@
         },
         "errors": {
             "type": "array",
+            "description": "array of errors, if empty the file has no errors",
             "items": {
                 "type": "object",
                 "properties": {
@@ -88,12 +101,12 @@
                                             },
                                             "context": {
                                                 "type": "array",
-                                                "description": "The context of the error",
                                                 "items": {
                                                     "type": "object",
                                                     "properties": {
                                                         "text": {
                                                             "type": "string",
+                                                            "description": "The context of the error",
                                                             "examples": [
                                                                 "\"25\" is not a valid value for attribute @code"
                                                             ]
