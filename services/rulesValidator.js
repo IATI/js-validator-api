@@ -1,4 +1,4 @@
-const { DOMParser } = require('xmldom');
+const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
