@@ -22,7 +22,7 @@
         "underscore": "^1.13.1",
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
         "xml2js": "^0.4.23",
-        "@xmldom/xmldom": "^0.7.3",
+        "@xmldom/xmldom": "^0.7.4",
         "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
