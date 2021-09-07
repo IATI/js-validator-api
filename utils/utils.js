@@ -14,7 +14,7 @@ const getFileBySha = async (owner, repo, sha, filePath) => {
         method: 'GET',
         headers: {
             Accept: 'text/plain',
-            Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
+            Authorization: `Basic ${config.BASIC_GITHUB_TOKEN}`,
         },
     });
     const body = res.json();
@@ -31,7 +31,7 @@ const getFileCommitSha = async (owner, repo, branch, filePath) => {
         method: 'GET',
         headers: {
             Accept: 'application/vnd.github.v3+json',
-            Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
+            Authorization: `Basic ${config.BASIC_GITHUB_TOKEN}`,
         },
     });
     const branchBody = await branchRes.json();
@@ -47,7 +47,7 @@ const getFileCommitSha = async (owner, repo, branch, filePath) => {
             method: 'GET',
             headers: {
                 Accept: 'application/vnd.github.v3+json',
-                Authorization: `Basic ${config.GITHUB_BASIC_TOKEN}`,
+                Authorization: `Basic ${config.BASIC_GITHUB_TOKEN}`,
             },
         }
     );
