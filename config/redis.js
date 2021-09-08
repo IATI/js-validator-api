@@ -26,6 +26,7 @@ try {
         });
 
     exports.aSetex = promisify(client.setex).bind(client);
+    exports.aSet = promisify(client.set).bind(client);
     exports.aGet = promisify(client.get).bind(client);
     exports.aExists = promisify(client.exists).bind(client);
 } catch (error) {

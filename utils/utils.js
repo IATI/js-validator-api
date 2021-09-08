@@ -2,7 +2,7 @@ const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
 
-const { aSetex, aGet, aExists } = require('../config/redis');
+const { aSetex, aSet, aGet, aExists } = require('../config/redis');
 const config = require('../config/config');
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
@@ -127,6 +127,7 @@ config.VERSIONS.forEach(async (version) => {
                 codelistRules[version].commitSha,
                 'codelist_rules.json'
             );
+            await aSet(`codelistRules${version}`, JSON.stringify(codelistRules[version]));
         } else {
             console.log({
                 name: `Using redis cache codelist rules for version: ${version}`,
@@ -161,6 +162,7 @@ config.VERSIONS.forEach(async (version) => {
                 ruleset[version].commitSha,
                 'rulesets/standard.json'
             );
+            await aSet(`ruleset${version}`, JSON.stringify(ruleset[version]));
         } else {
             console.log({
                 name: `Using redis cache rulesets for version: ${version}`,
