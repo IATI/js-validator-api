@@ -17,7 +17,7 @@
         "date-fns": "^2.23.0",
         "dotenv": "^10.0.0",
         "libxmljs2": "^0.28.0",
-        "node-fetch": "^2.6.1",
+        "node-fetch": "^3.0.0",
         "redis": "^3.1.2",
         "underscore": "^1.13.1",
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
