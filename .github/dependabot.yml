@@ -6,6 +6,10 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    ignore:
+      - dependency-name: 'node-fetch'
+        # For node-fetch, ignore all updates for version 3
+        versions: ['3.x']
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'
