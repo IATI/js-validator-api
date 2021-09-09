@@ -13,7 +13,7 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.1.5",
+        "applicationinsights": "^2.1.6",
         "date-fns": "^2.23.0",
         "dotenv": "^10.0.0",
         "libxmljs2": "^0.27.0",
@@ -22,7 +22,7 @@
         "underscore": "^1.13.1",
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
         "xml2js": "^0.4.23",
-        "@xmldom/xmldom": "^0.7.2",
+        "@xmldom/xmldom": "^0.7.4",
         "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
@@ -31,8 +31,8 @@
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-import": "^2.24.1",
-        "husky": "^7.0.1",
+        "eslint-plugin-import": "^2.24.2",
+        "husky": "^7.0.2",
         "lint-staged": "^11.1.2",
         "mocha": "*",
         "prettier": "^2.3.2"

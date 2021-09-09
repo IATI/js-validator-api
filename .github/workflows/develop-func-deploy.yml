@@ -29,6 +29,7 @@ env:
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
   KV_NAME: ${{ secrets.DEV_KEY_VAULT_NAME }}
+  BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
 
 jobs:
   build-test-deploy:
@@ -118,6 +119,11 @@ jobs:
                 {
                     "name": "AzureWebJobsSecretStorageKeyVaultName",
                     "value": "${{ env.KV_NAME }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "BASIC_GITHUB_TOKEN",
+                    "value": "${{ env.BASIC_GITHUB_TOKEN }}",
                     "slotSetting": false
                 }
             ]
