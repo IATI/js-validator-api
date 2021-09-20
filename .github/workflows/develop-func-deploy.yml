@@ -125,6 +125,11 @@ jobs:
                     "name": "BASIC_GITHUB_TOKEN",
                     "value": "${{ env.BASIC_GITHUB_TOKEN }}",
                     "slotSetting": false
+                },
+                {
+                    "name": "languageWorkers__node__arguments",
+                    "value": "--max-old-space-size=6656",
+                    "slotSetting": false
                 }
             ]
 
