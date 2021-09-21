@@ -259,7 +259,9 @@ class Rules {
     }
 
     strictSum(oneCase) {
-        const computedSum = this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0);
+        const computedSum = Number(
+            this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0).toFixed(4)
+        );
         const limitSum = Number(oneCase.sum);
         if (computedSum !== limitSum) {
             const elements = Array.from(

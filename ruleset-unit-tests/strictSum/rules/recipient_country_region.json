@@ -1,0 +1,15 @@
+{
+    "//iati-activity": {
+        "strictSum": {
+            "cases": [
+                {
+                    "paths": [
+                        "recipient-region[@vocabulary = '1']/@percentage",
+                        "recipient-country/@percentage"
+                    ],
+                    "sum": 100
+                }
+            ]
+        }
+    }
+}
