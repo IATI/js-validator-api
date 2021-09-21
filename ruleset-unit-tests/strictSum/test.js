@@ -26,6 +26,11 @@ const testMap = [
         file: 'recipient_loc_with_region.xml',
         expectedResult: 'No Condition Match',
     },
+    {
+        rule: 'recipient_country_region.json',
+        file: 'good_complex_decimals.xml',
+        expectedResult: true,
+    },
 ];
 
 describe('strictSum rules', () => {
