@@ -45,5 +45,21 @@
     "engines": {
         "node": ">=14 <15",
         "npm": ">=7"
-    }
+    },
+    "directories": {
+        "doc": "docs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/IATI/js-validator-api.git"
+    },
+    "keywords": [
+        "iati",
+        "iativalidator",
+        "xml"
+    ],
+    "bugs": {
+        "url": "https://github.com/IATI/js-validator-api/issues"
+    },
+    "homepage": "https://iativalidator.iatistandard.org"
 }
