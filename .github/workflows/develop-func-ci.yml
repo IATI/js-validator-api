@@ -50,7 +50,7 @@ jobs:
           docker build . -t validator-local:latest
 
   automerge:
-    needs: [build-test, build-docker]
+    needs: [build-test-node, build-docker]
     runs-on: ubuntu-latest
     steps:
       - uses: fastify/github-action-merge-dependabot@v2.5.0
