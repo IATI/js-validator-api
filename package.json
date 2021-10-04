@@ -27,7 +27,7 @@
         "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
-        "@prettier/plugin-xml": "^1.0.2",
+        "@prettier/plugin-xml": "^1.1.0",
         "chai": "*",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
