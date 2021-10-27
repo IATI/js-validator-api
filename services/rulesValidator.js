@@ -290,12 +290,15 @@ class Rules {
         if (dateElements.length < 1) return null;
         const dateText = dateElements[0].value;
         if (dateText !== '') {
-            if (dateReg.test(dateText))
-                return {
-                    parsedDate: new Date(dateText),
-                    lineNumber: dateElements[0].lineNumber,
-                    columnNumber: dateElements[0].columnNumber,
-                };
+            if (dateReg.test(dateText)) {
+                const parsedDate = new Date(dateText);
+                if (dateReg.test(dateText) && parsedDate.toString() !== 'Invalid Date')
+                    return {
+                        parsedDate,
+                        lineNumber: dateElements[0].lineNumber,
+                        columnNumber: dateElements[0].columnNumber,
+                    };
+            }
         }
         return null;
     }
