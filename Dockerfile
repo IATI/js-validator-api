@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-functions/node:3.3.1-node14
+FROM mcr.microsoft.com/azure-functions/node:4.0.1.16815-node14
 
 # install libxml2-utils for xmllint
 RUN \
