@@ -9,9 +9,14 @@ const { allRulesResult } = require('../../services/rulesValidator');
 const testMap = [
     { rule: 'between_dates.json', file: 'good.xml', expectedResult: true },
     { rule: 'between_dates.json', file: 'bad.xml', expectedResult: false },
+    {
+        rule: 'between_dates.json',
+        file: 'bad_date_format.xml',
+        expectedResult: 'No Condition Match',
+    },
 ];
 
-describe('dateNow rules', () => {
+describe('betweenDates rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
             const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));
