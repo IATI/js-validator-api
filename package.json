@@ -2,6 +2,7 @@
     "name": "js-validator-api",
     "version": "2.0.7",
     "description": "JavaScript IATI Validator api",
+    "license": "AGPL-3.0-or-later",
     "scripts": {
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",
@@ -13,11 +14,11 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.1.7",
-        "date-fns": "^2.24.0",
+        "applicationinsights": "^2.1.9",
+        "date-fns": "^2.25.0",
         "dotenv": "^10.0.0",
-        "libxmljs2": "^0.28.0",
-        "node-fetch": "^2.6.1",
+        "libxmljs2": "^0.29.0",
+        "node-fetch": "^2.6.6",
         "redis": "^3.1.2",
         "underscore": "^1.13.1",
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
@@ -26,14 +27,14 @@
         "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
-        "@prettier/plugin-xml": "^1.0.2",
+        "@prettier/plugin-xml": "^1.1.0",
         "chai": "*",
-        "eslint": "^7.32.0",
-        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint": "^8.2.0",
+        "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-import": "^2.24.2",
-        "husky": "^7.0.2",
-        "lint-staged": "^11.1.2",
+        "eslint-plugin-import": "^2.25.3",
+        "husky": "^7.0.4",
+        "lint-staged": "^11.2.6",
         "mocha": "*",
         "prettier": "^2.4.1"
     },
@@ -44,5 +45,21 @@
     "engines": {
         "node": ">=14 <15",
         "npm": ">=7"
-    }
+    },
+    "directories": {
+        "doc": "docs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/IATI/js-validator-api.git"
+    },
+    "keywords": [
+        "iati",
+        "iativalidator",
+        "xml"
+    ],
+    "bugs": {
+        "url": "https://github.com/IATI/js-validator-api/issues"
+    },
+    "homepage": "https://iativalidator.iatistandard.org"
 }
