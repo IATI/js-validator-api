@@ -16,7 +16,7 @@
     "dependencies": {
         "@xmldom/xmldom": "^0.7.5",
         "applicationinsights": "^2.1.9",
-        "date-fns": "^2.25.0",
+        "date-fns": "^2.26.0",
         "dotenv": "^10.0.0",
         "libxmljs2": "^0.29.0",
         "node-fetch": "^2.6.6",
@@ -29,7 +29,7 @@
     "devDependencies": {
         "@prettier/plugin-xml": "^1.1.0",
         "chai": "*",
-        "eslint": "^8.2.0",
+        "eslint": "^8.3.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.25.3",
