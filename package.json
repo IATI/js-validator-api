@@ -14,6 +14,7 @@
     },
     "author": "IATI",
     "dependencies": {
+        "@xmldom/xmldom": "^0.7.5",
         "applicationinsights": "^2.1.9",
         "date-fns": "^2.26.0",
         "dotenv": "^10.0.0",
@@ -21,9 +22,8 @@
         "node-fetch": "^2.6.6",
         "redis": "^3.1.2",
         "underscore": "^1.13.1",
-        "validate-with-xmllint": "github:IATI/validate-with-xmllint#useLocally",
+        "validate-with-xmllint": "github:IATI/validate-with-xmllint#v1.0.4",
         "xml2js": "^0.4.23",
-        "@xmldom/xmldom": "^0.7.5",
         "xpath": "github:IATI/xpath#master"
     },
     "devDependencies": {
