@@ -141,7 +141,7 @@ config.VERSIONS.forEach(async (version) => {
     }
 
     // load rulesets
-    const rulesetBranch = `v${version}/validatorV2`;
+    const rulesetBranch = `version-${version}`;
     try {
         ruleset[version] = {};
         if ((await aExists(`ruleset${version}`)) === 0) {
