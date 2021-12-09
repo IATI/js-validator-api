@@ -10,6 +10,9 @@ updates:
       - dependency-name: 'node-fetch'
         # For node-fetch, ignore all updates for version 3
         versions: ['3.x']
+      - dependency-name: 'redis'
+        # For redis, ignore all updates for version 4
+        versions: ['4.x']
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'
