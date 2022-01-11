@@ -14,10 +14,10 @@
     },
     "author": "IATI",
     "dependencies": {
-        "@xmldom/xmldom": "^0.7.5",
+        "@xmldom/xmldom": "^0.8.0",
         "applicationinsights": "^2.2.0",
         "date-fns": "^2.28.0",
-        "dotenv": "^10.0.0",
+        "dotenv": "^11.0.0",
         "libxmljs2": "^0.29.0",
         "node-fetch": "^2.6.6",
         "redis": "^3.1.2",
