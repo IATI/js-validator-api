@@ -16,12 +16,12 @@
     "dependencies": {
         "@xmldom/xmldom": "^0.7.5",
         "applicationinsights": "^2.2.0",
-        "date-fns": "^2.27.0",
+        "date-fns": "^2.28.0",
         "dotenv": "^10.0.0",
         "libxmljs2": "^0.29.0",
         "node-fetch": "^2.6.6",
         "redis": "^3.1.2",
-        "underscore": "^1.13.1",
+        "underscore": "^1.13.2",
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#v1.0.4",
         "xml2js": "^0.4.23",
         "xpath": "github:IATI/xpath#master"
