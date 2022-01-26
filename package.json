@@ -17,7 +17,7 @@
         "@xmldom/xmldom": "^0.8.0",
         "applicationinsights": "^2.2.0",
         "date-fns": "^2.28.0",
-        "dotenv": "^14.3.0",
+        "dotenv": "^14.3.2",
         "libxmljs2": "^0.29.0",
         "node-fetch": "^2.6.7",
         "redis": "^3.1.2",
