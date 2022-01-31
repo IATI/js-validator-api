@@ -10,6 +10,8 @@ on:
       - 'docs/*'
     branches:
       - develop
+  schedule:
+    - cron: '18 04 * * *' # 0418am daily
 
 env:
   NAME: func-iativalidator
@@ -32,7 +34,12 @@ env:
   BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
 
 jobs:
+  should_run:
+    uses: IATI/.github/.github/workflows/should_run.yaml@main
+
   build-test-deploy:
+    needs: should_run
+    if: ${{ needs.should_run.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
