@@ -22,7 +22,7 @@ env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-  KV_NAME: ${{ secrets.PROD_KEY_VAULT_NAME }}
+  KV_URI: ${{ secrets.PROD_KV_URI }}
   BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
 
 jobs:
@@ -111,8 +111,8 @@ jobs:
                     "slotSetting": false
                 },
                 {
-                    "name": "AzureWebJobsSecretStorageKeyVaultName",
-                    "value": "${{ env.KV_NAME }}",
+                    "name": "AzureWebJobsSecretStorageKeyVaultUri",
+                    "value": "${{ env.KV_URI }}",
                     "slotSetting": false
                 },
                 {
