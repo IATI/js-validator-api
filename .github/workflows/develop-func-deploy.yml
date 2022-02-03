@@ -10,6 +10,8 @@ on:
       - 'docs/*'
     branches:
       - develop
+  schedule:
+    - cron: '18 04 * * *' # 0418am daily
 
 env:
   NAME: func-iativalidator
@@ -28,18 +30,23 @@ env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-  KV_NAME: ${{ secrets.DEV_KEY_VAULT_NAME }}
+  KV_URI: ${{ secrets.DEV_KV_URI }}
   BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
 
 jobs:
+  should_run:
+    uses: IATI/.github/.github/workflows/should_run.yaml@main
+
   build-test-deploy:
+    needs: should_run
+    if: ${{ needs.should_run.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2.4.0
 
       - name: 'Login via Azure CLI'
-        uses: azure/login@v1.4.2
+        uses: azure/login@v1.4.3
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
@@ -117,8 +124,8 @@ jobs:
                     "slotSetting": false
                 },
                 {
-                    "name": "AzureWebJobsSecretStorageKeyVaultName",
-                    "value": "${{ env.KV_NAME }}",
+                    "name": "AzureWebJobsSecretStorageKeyVaultUri",
+                    "value": "${{ env.KV_URI }}",
                     "slotSetting": false
                 },
                 {
@@ -143,6 +150,9 @@ jobs:
     needs: build-test-deploy
     runs-on: ubuntu-latest
     steps:
+      - name: 'Wait for 3 minutes'
+        run: sleep 180
+
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2.4.0
 
