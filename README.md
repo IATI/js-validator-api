@@ -117,7 +117,7 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   Returns
 
-#### HTTP Response Codes
+#### HTTP Response Codes (pub-validate-post)
 
 `200 OK`:
 
@@ -146,6 +146,42 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 `500 Internal Server Error`:
 
 -   Unhandled server error, contact the IATI Tech Team
+
+### `POST /pvt/validate-schema`
+
+-   Request Body
+
+    -   application/xml
+    -   Single IATI XML activity wrapped in `<iati-activities>` element
+    -   Only critically invalid files that have an error id of `0.3.1` in the validation report should be sent to this endpoint. Error ids `0.1.1`, `0.2.1.`, `0.6.1` apply to the whole file so those files can be wholly excluded up front. [Validator rule tracker](https://github.com/IATI/validator-rule-tracker/blob/main/application.csv)
+
+-   Returns
+
+#### `200 OK`
+
+    -   Valid:
+
+```json
+{
+    "valid": true
+}
+```
+
+    - Invalid:
+
+```json
+{
+    "valid": false
+}
+```
+
+#### `400 Bad Request`
+
+[Validator rule tracker](https://github.com/IATI/validator-rule-tracker/blob/main/application.csv)
+
+-   Not XML - 0.1.1
+-   Not IATI XML - 0.2.1
+-   Unsupported IATI Version - 0.6.1
 
 ## Creating a new route
 
