@@ -182,6 +182,7 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 -   Not XML - 0.1.1
 -   Not IATI XML - 0.2.1
 -   Unsupported IATI Version - 0.6.1
+-   Not iati-activities file
 
 ## Creating a new route
 

@@ -3736,6 +3736,59 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "iati-org-no-errors",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-org-no-errors.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pvt/validate-schema",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"validate-schema"
+									],
+									"query": [
+										{
+											"key": "group",
+											"value": "false",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"event": [

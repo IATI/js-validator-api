@@ -89,6 +89,18 @@ exports.schemaValidate = async (context, req) => {
             return;
         }
 
+        // FileType Check
+        if (fileType !== 'iati-activities') {
+            context.res = {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    error: 'Not an iati-activities file, this file should not be sent to the schema-validator',
+                },
+            };
+            return;
+        }
+
         if (!xmlDoc.validate(getSchema(fileType, version))) {
             context.res = {
                 headers: { 'Content-Type': 'application/json' },
