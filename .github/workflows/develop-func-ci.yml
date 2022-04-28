@@ -23,10 +23,10 @@ jobs:
           sudo apt-get install libxml2-utils
 
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: 'Setup Node ${{ env.NODE_VERSION }} Environment'
-        uses: actions/setup-node@v2.5.1
+        uses: actions/setup-node@v3.1.1
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: 'Build Docker Image'
         run: |
@@ -56,6 +56,6 @@ jobs:
       pull-requests: write
       contents: write
     steps:
-      - uses: fastify/github-action-merge-dependabot@v3.0.2
+      - uses: fastify/github-action-merge-dependabot@v3.1.4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
