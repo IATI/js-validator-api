@@ -1,7 +1,7 @@
 name: Deploy_To_Dev_Function_On_Push
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Allow Manual Run from GitHub
   push:
     paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
       - '**/README.md' # don't run on README.md file updates anywhere in repo
