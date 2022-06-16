@@ -6,7 +6,7 @@ on:
     types: [published]
 
 env:
-  NAME: func-iativalidator
+  NAME: iativalidator
   STAGE: prod # suffix to indicate environment stage
   TAG: ${{ github.sha }}
   NODE_VERSION: '14.x'
@@ -46,13 +46,13 @@ jobs:
 
       - name: 'Compose Customized Docker Image'
         run: |
-          docker build . -t ${{ env.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
-          docker push ${{ env.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
+          docker build . -t ${{ env.ACR_LOGIN_SERVER }}/func-$NAME-$STAGE:$TAG
+          docker push ${{ env.ACR_LOGIN_SERVER }}/func-$NAME-$STAGE:$TAG
 
       - name: Set Env variables on app service
         uses: Azure/appservice-settings@v1.1.1
         with:
-          app-name: ${{env.NAME}}-${{env.STAGE}}
+          app-name: func-${{env.NAME}}-${{env.STAGE}}
           app-settings-json: |
             [
                 {
@@ -130,8 +130,19 @@ jobs:
       - name: 'Run Azure Functions Container Action'
         uses: Azure/functions-container-action@v1
         with:
-          app-name: ${{ env.NAME }}-${{ env.STAGE }}
-          image: ${{ env.ACR_LOGIN_SERVER }}/${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
+          app-name: func-${{ env.NAME }}-${{ env.STAGE }}
+          image: ${{ env.ACR_LOGIN_SERVER }}/func-${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
+
+      - name: 'Tag resource for Tech Climate Impact'
+        uses: 'azure/CLI@1.0.4'
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az resource tag \
+              --tags env=$STAGE avgCPU=true ACU=true ACUvalue=420 \
+              --resource-group "rg-${{ env.NAME }}-${{ env.STAGE }}" \
+              --name "func-${{ env.NAME }}-${{ env.STAGE }}" \
+              --resource-type "Microsoft.Web/sites"
 
   integration-test:
     needs: build-test-deploy
