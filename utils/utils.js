@@ -90,13 +90,13 @@ exports.getFileInformation = (body) => {
             supportedVersion = version && config.VERSIONS.includes(version);
         }
     }
+    xmlDoc = null;
     return {
         fileType,
         version,
         generatedDateTime,
         supportedVersion,
         isIati,
-        xmlDoc,
     };
 };
 

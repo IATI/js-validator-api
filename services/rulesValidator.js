@@ -3,6 +3,8 @@ const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
+const libxml = require('libxmljs2');
+
 const ruleNameObj = require('./ruleNameMap.json');
 
 const ruleNameMap = new Map(ruleNameObj);
@@ -691,7 +693,7 @@ const fileDefinition = {
     },
 };
 
-exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
+exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false) => {
     const document = new DOMParser().parseFromString(xml, 'text/xml');
     const isActivity = xpath('/iati-activities', document).length > 0;
     const fileType = isActivity ? 'activity' : 'organisation';
@@ -709,6 +711,7 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
     const rootText = new XMLSerializer().serializeToString(document.documentElement);
 
     const results = {};
+    let schemaErrorsActLevel = [];
     const idTracker = new Map();
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
@@ -739,6 +742,43 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
             identifier = `${identifier}(${idTracker.get(identifier)})`;
             idTracker.set(identifier, idTracker.get(identifier) + 1);
         }
+        let xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(singleElementDoc));
+
+        if (!xmlDoc.validate(schema)) {
+            const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
+                let errContext;
+                const { line } = error;
+                if (line) {
+                    errContext = `At line: ${error.line}`;
+                }
+                if (!_.has(acc, error.code)) {
+                    acc[error.code] = {
+                        id: '0.3.1',
+                        category: 'schema',
+                        severity: 'critical',
+                        message: error.message,
+                        context: [{ text: errContext }],
+                        ...(showDetails && { details: [{ error }] }),
+                        identifier,
+                        title,
+                    };
+                } else {
+                    acc[error.code] = {
+                        ...acc[error.code],
+                        context: [...acc[error.code].context, { text: errContext }],
+                        ...(showDetails && { details: [...acc[error.code].details, { error }] }),
+                    };
+                }
+                return acc;
+            }, {});
+            schemaErrorsActLevel = [
+                ...schemaErrorsActLevel,
+                ...Object.keys(curSchemaErrors).map((errGroup) => curSchemaErrors[errGroup]),
+            ];
+        }
+
+        xmlDoc = null;
+
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
                 acc.push(standardiseResultFormat(result, showDetails));
@@ -750,5 +790,5 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
             results[identifier] = { identifier, title, errors };
         }
     });
-    return results;
+    return { results, schemaErrorsActLevel };
 };
