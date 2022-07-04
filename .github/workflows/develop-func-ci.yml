@@ -6,6 +6,7 @@ on:
       - '**/README.md'
       - '**/dependabot.yml'
       - 'docs/*'
+      - '.vscode/*'
     branches:
       - develop
       - main
