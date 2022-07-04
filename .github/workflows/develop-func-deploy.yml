@@ -9,6 +9,7 @@ on:
       - '.github/workflows/prod-func-deploy.yml'
       - '.github/workflows/develop-func-ci.yml'
       - 'docs/*'
+      - '.vscode/*'
     branches:
       - develop
   schedule:
