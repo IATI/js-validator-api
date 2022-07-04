@@ -1,4 +1,4 @@
-const { DOMParser } = require('@xmldom/xmldom');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
@@ -696,17 +696,22 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
     const isActivity = xpath('/iati-activities', document).length > 0;
     const fileType = isActivity ? 'activity' : 'organisation';
 
+    // get child elements to loop over
     const elements = xpath(
         `/${fileDefinition[fileType].root}/${fileDefinition[fileType].subRoot}`,
         document
     );
+
+    // get root element
+    document.documentElement.removeChild(
+        document.documentElement.getElementsByTagName(fileDefinition[fileType].subRoot)
+    );
+    const rootText = new XMLSerializer().serializeToString(document.documentElement);
+
     const results = {};
     const idTracker = new Map();
     elements.forEach((element) => {
-        const singleElementDoc = new DOMParser().parseFromString(
-            `<${fileDefinition[fileType].root}></${fileDefinition[fileType].root}>`,
-            'text/xml'
-        );
+        const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
         singleElementDoc.firstChild.appendChild(element);
         let identifier =
             xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
