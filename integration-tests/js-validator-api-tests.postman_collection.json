@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c2e4fc5b-1f70-46cd-b6fb-dec3e0379979",
-		"name": "js-validator-api-tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "f8276da3-7473-469e-ad31-2dbd6b7d46d9",
+		"name": "js-validator-api-tests bugfix-branch",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13097277"
 	},
 	"item": [
 		{
@@ -223,7 +224,7 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -2407,7 +2408,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "<iati-activities generated-datetime=\"2014-09-10T07:15:37Z\" version=\"2.03\">\n    <iati-activity last-updated-datetime=\"2014-09-10T07:20:37Z\">\n        <iati-identifier>ACT-1</iati-identifier>\n        <reporting-org ref=\"AA-AAA-123456789\" type=\"40\" secondary-reporter=\"0\">\n            <narrative>Organisation name</narrative>\n            <narrative xml:lang=\"fr\">Nom de l'organisme</narrative>\n        </reporting-org>\n\n        <title>\n            <narrative>Activity title</narrative>\n            <narrative xml:lang=\"fr\">Titre de l'activité</narrative>\n            <narrative xml:lang=\"es\">Título de la actividad</narrative>\n        </title>\n        <activity-date iso-date=\"2012-15-04\" type=\"1\"/>\n        <budget type=\"1\" status=\"1\">\n            <period-start iso-date=\"2014-15-01\" />\n            <period-end iso-date=\"2014-12-31\" />\n            <value currency=\"EUR\" value-date=\"2014-01-01\">3000</value>\n        </budget>\n\n        <fss extraction-date=\"2014-05-06\" priority=\"1\" phaseout-year=\"2016\">\n            <forecast year=\"2014\" value-date=\"2013-07-03\" currency=\"GBP\">10000</forecast>\n        </fss>\n    </iati-activity>\n</iati-activities>"
+							"raw": "<iati-activities generated-datetime=\"2014-19-10T07:15:37Z\" version=\"2.03\">\n    <iati-activity last-updated-datetime=\"2014-19-10T07:20:37Z\">\n        <iati-identifier>ACT-1</iati-identifier>\n        <reporting-org ref=\"AA-AAA-123456789\" type=\"40\" secondary-reporter=\"0\">\n            <narrative>Organisation name</narrative>\n            <narrative xml:lang=\"fr\">Nom de l'organisme</narrative>\n        </reporting-org>\n\n        <title>\n            <narrative>Activity title</narrative>\n            <narrative xml:lang=\"fr\">Titre de l'activité</narrative>\n            <narrative xml:lang=\"es\">Título de la actividad</narrative>\n        </title>\n        <description>\n        <narrative>Activity title</narrative>\n        </description>\n        <participating-org role=\"\">\n        </participating-org>\n        <activity-status code=\"\">\n        </activity-status>\n        <activity-date iso-date=\"2012-15-04\" type=\"1\"/>\n        <budget type=\"1\" status=\"1\">\n            <period-start iso-date=\"2014-15-01\" />\n            <period-end iso-date=\"2014-12-31\" />\n            <value currency=\"EUR\" value-date=\"2014-01-01\">3000</value>\n        </budget>\n\n        <fss extraction-date=\"2014-05-06\" priority=\"1\" phaseout-year=\"2016\">\n            <forecast year=\"2014\" value-date=\"2013-07-03\" currency=\"GBP\">10000</forecast>\n        </fss>\n    </iati-activity>\n</iati-activities>"
 						},
 						"url": {
 							"raw": "{{baseURL}}/pub/validate?group=false",
@@ -3469,7 +3470,7 @@
 									"query": [
 										{
 											"key": "",
-											"value": null,
+											"value": "",
 											"disabled": true
 										}
 									]
