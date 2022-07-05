@@ -678,6 +678,43 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
+const validateSchema = (document, schema, identifier, title, showDetails) => {
+    const xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(document));
+
+    if (!xmlDoc.validate(schema)) {
+        const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
+            let errContext;
+            const { line } = error;
+            if (line) {
+                errContext = `At line: ${error.line}`;
+            }
+            if (!_.has(acc, error.code)) {
+                acc[error.code] = {
+                    id: '0.3.1',
+                    category: 'schema',
+                    severity: 'critical',
+                    message: error.message,
+                    context: [{ text: errContext }],
+                    ...(showDetails && { details: [{ error }] }),
+                    identifier,
+                    title,
+                };
+            } else {
+                acc[error.code] = {
+                    ...acc[error.code],
+                    context: [...acc[error.code].context, { text: errContext }],
+                    ...(showDetails && {
+                        details: [...acc[error.code].details, { error }],
+                    }),
+                };
+            }
+            return acc;
+        }, {});
+        return Object.keys(curSchemaErrors).map((errGroup) => curSchemaErrors[errGroup]);
+    }
+    return [];
+};
+
 const fileDefinition = {
     activity: {
         root: 'iati-activities',
@@ -694,9 +731,12 @@ const fileDefinition = {
 };
 
 exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false) => {
+    let schemaErrors = [];
+    const ruleErrors = {};
+    const idTracker = new Map();
+
     const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const isActivity = xpath('/iati-activities', document).length > 0;
-    const fileType = isActivity ? 'activity' : 'organisation';
+    const fileType = xpath('/iati-activities', document).length > 0 ? 'activity' : 'organisation';
 
     // get child elements to loop over
     const elements = xpath(
@@ -704,15 +744,19 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
         document
     );
 
+    if (elements.length === 0) {
+        schemaErrors = [
+            ...schemaErrors,
+            ...validateSchema(document, schema, 'file', 'File level errors', showDetails),
+        ];
+    }
+
     // get root element
     document.documentElement.removeChild(
         document.documentElement.getElementsByTagName(fileDefinition[fileType].subRoot)
     );
     const rootText = new XMLSerializer().serializeToString(document.documentElement);
 
-    const results = {};
-    let schemaErrorsActLevel = [];
-    const idTracker = new Map();
     elements.forEach((element) => {
         const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
         singleElementDoc.firstChild.appendChild(element);
@@ -722,7 +766,7 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
         idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
         if (idTracker.get(identifier) > 1) {
             // duplicate identifier, drop a file level error
-            results.file = {
+            ruleErrors.file = {
                 identifier: 'file',
                 title: 'File level errors',
                 errors: [
@@ -742,42 +786,13 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
             identifier = `${identifier}(${idTracker.get(identifier)})`;
             idTracker.set(identifier, idTracker.get(identifier) + 1);
         }
-        let xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(singleElementDoc));
 
-        if (!xmlDoc.validate(schema)) {
-            const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
-                let errContext;
-                const { line } = error;
-                if (line) {
-                    errContext = `At line: ${error.line}`;
-                }
-                if (!_.has(acc, error.code)) {
-                    acc[error.code] = {
-                        id: '0.3.1',
-                        category: 'schema',
-                        severity: 'critical',
-                        message: error.message,
-                        context: [{ text: errContext }],
-                        ...(showDetails && { details: [{ error }] }),
-                        identifier,
-                        title,
-                    };
-                } else {
-                    acc[error.code] = {
-                        ...acc[error.code],
-                        context: [...acc[error.code].context, { text: errContext }],
-                        ...(showDetails && { details: [...acc[error.code].details, { error }] }),
-                    };
-                }
-                return acc;
-            }, {});
-            schemaErrorsActLevel = [
-                ...schemaErrorsActLevel,
-                ...Object.keys(curSchemaErrors).map((errGroup) => curSchemaErrors[errGroup]),
+        if (schema) {
+            schemaErrors = [
+                ...schemaErrors,
+                ...validateSchema(singleElementDoc, schema, identifier, title, showDetails),
             ];
         }
-
-        xmlDoc = null;
 
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
@@ -787,8 +802,8 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
         }, []);
 
         if (errors.length > 0) {
-            results[identifier] = { identifier, title, errors };
+            ruleErrors[identifier] = { identifier, title, errors };
         }
     });
-    return { results, schemaErrorsActLevel };
+    return { ruleErrors, schemaErrors };
 };

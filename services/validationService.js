@@ -300,11 +300,10 @@ exports.validate = async (context, req) => {
 
         // Ruleset Validation
         const ruleStart = getStartTime();
-        const ruleset = getRuleset(state.iatiVersion);
 
         const idSets = await getIdSets();
-        const { results: rulesResult, schemaErrorsActLevel } = await validateIATI(
-            ruleset,
+        const { ruleErrors, schemaErrors } = await validateIATI(
+            getRuleset(state.iatiVersion),
             body,
             idSets,
             getSchema(state.fileType, state.iatiVersion),
@@ -316,9 +315,9 @@ exports.validate = async (context, req) => {
 
         // combine all types of errors
         const combinedErrors = [
-            ...schemaErrorsActLevel,
+            ...schemaErrors,
             ...flattenErrors(codelistResult),
-            ...flattenErrors(rulesResult),
+            ...flattenErrors(ruleErrors),
         ];
 
         state.exitCategory = 'fullValidation';
@@ -328,7 +327,7 @@ exports.validate = async (context, req) => {
         const validationReport = await createValidationReport(combinedErrors, state, groupResults);
 
         context.res = {
-            status: schemaErrorsActLevel.length > 0 ? 422 : 200,
+            status: schemaErrors.length > 0 ? 422 : 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(validationReport),
         };
