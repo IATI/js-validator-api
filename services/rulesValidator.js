@@ -688,8 +688,8 @@ const validateSchema = (document, schema, identifier, title, showDetails) => {
             if (line) {
                 errContext = `At line: ${error.line}`;
             }
-            if (!_.has(acc, error.code)) {
-                acc[error.code] = {
+            if (!_.has(acc, error.message)) {
+                acc[error.message] = {
                     id: '0.3.1',
                     category: 'schema',
                     severity: 'critical',
@@ -700,11 +700,11 @@ const validateSchema = (document, schema, identifier, title, showDetails) => {
                     title,
                 };
             } else {
-                acc[error.code] = {
-                    ...acc[error.code],
-                    context: [...acc[error.code].context, { text: errContext }],
+                acc[error.message] = {
+                    ...acc[error.message],
+                    context: [...acc[error.message].context, { text: errContext }],
                     ...(showDetails && {
-                        details: [...acc[error.code].details, { error }],
+                        details: [...acc[error.message].details, { error }],
                     }),
                 };
             }
