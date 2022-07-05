@@ -304,11 +304,8 @@ class Rules {
     }
 
     dateNow() {
-        if (this.date !== null) {
-            const now = new Date();
-            return compareAsc(this.date.parsedDate, now) <= 0;
-        }
-        return '';
+        if (this.date === null) return '';
+        return compareAsc(this.date.parsedDate, new Date()) <= 0;
     }
 
     betweenDates(oneCase) {
