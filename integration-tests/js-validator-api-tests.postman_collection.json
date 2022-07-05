@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c2e4fc5b-1f70-46cd-b6fb-dec3e0379979",
+		"_postman_id": "5b37e237-0ab0-4410-ade9-54d4bcd835c9",
 		"name": "js-validator-api-tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13097277"
 	},
 	"item": [
 		{
@@ -223,7 +224,7 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -884,6 +885,81 @@
 								{
 									"key": "group",
 									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "iati-multi-act-schema-errors - expect 0.3.1 in specific activity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"The file is not valid\", function () {",
+									"    pm.expect(jsonData.valid).to.eql(false);",
+									"});",
+									"pm.test(\"fileType value is iati-activities\", function () {",
+									"    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+									"});",
+									"pm.test(\"version is 2.03\", function () {",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"Schema Error returned for activity with Schema Error\", function () {",
+									"    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-2\")[0].errors.map(obj => obj.category)).to.include('schema');",
+									"});",
+									"pm.test(\"Schema Error NOT returned for activity without Schema Error\", function () {",
+									"    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-1\")[0].errors.map(obj => obj.category)).to.not.include('schema');",
+									"});",
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "iati-multi-act-schema-errors.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "false",
+									"disabled": true
 								}
 							]
 						}
@@ -3469,7 +3545,7 @@
 									"query": [
 										{
 											"key": "",
-											"value": null,
+											"value": "",
 											"disabled": true
 										}
 									]
