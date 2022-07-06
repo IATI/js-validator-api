@@ -5,10 +5,21 @@
     "tasks": [
         {
             "type": "func",
-            "command": "host start --language-worker -- --inspect=5858",
-            "label": "func: host start",
-            "problemMatcher": "$func-watch",
-            "isBackground": true
+            "command": "host start",
+            "problemMatcher": "$func-node-watch",
+            "isBackground": true,
+            "dependsOn": "npm install (functions)"
+        },
+        {
+            "type": "shell",
+            "label": "npm install (functions)",
+            "command": "npm install"
+        },
+        {
+            "type": "shell",
+            "label": "npm prune (functions)",
+            "command": "npm prune --production",
+            "problemMatcher": []
         }
     ]
 }
