@@ -9,9 +9,6 @@ const ruleNameObj = require('./ruleNameMap.json');
 
 const ruleNameMap = new Map(ruleNameObj);
 
-const dateReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})/;
-const dateTimeReg = /(-?[0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/;
-
 const transactionTypes = {
     1: 'incoming funds',
     2: '(outgoing) commitment',
@@ -292,15 +289,13 @@ class Rules {
         if (dateElements.length < 1) return null;
         const dateText = dateElements[0].value;
         if (dateText !== '') {
-            if (dateReg.test(dateText)) {
-                const parsedDate = new Date(dateText);
-                if (dateReg.test(dateText) && parsedDate.toString() !== 'Invalid Date')
-                    return {
-                        parsedDate,
-                        lineNumber: dateElements[0].lineNumber,
-                        columnNumber: dateElements[0].columnNumber,
-                    };
-            }
+            const parsedDate = new Date(dateText);
+            if (parsedDate.toString() !== 'Invalid Date')
+                return {
+                    parsedDate,
+                    lineNumber: dateElements[0].lineNumber,
+                    columnNumber: dateElements[0].columnNumber,
+                };
         }
         return null;
     }
@@ -310,14 +305,9 @@ class Rules {
         return compareAsc(this.less.parsedDate, this.more.parsedDate) <= 0;
     }
 
-    dateNow(oneCase) {
-        const datetimeElement = xpath(oneCase.date, this.element);
-        if (datetimeElement.length > 0 && dateTimeReg.test(datetimeElement[0].nodeValue)) {
-            const selectedDatetime = new Date(datetimeElement[0].nodeValue);
-            const now = new Date();
-            return compareAsc(selectedDatetime, now) <= 0;
-        }
-        return '';
+    dateNow() {
+        if (this.date === null) return '';
+        return compareAsc(this.date.parsedDate, new Date()) <= 0;
     }
 
     betweenDates(oneCase) {

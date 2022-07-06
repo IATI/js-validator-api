@@ -9,7 +9,7 @@ const { allRulesResult } = require('../../services/rulesValidator');
 const testMap = [
     { rule: 'date_now.json', file: 'good.xml', expectedResult: true },
     { rule: 'date_now.json', file: 'bad.xml', expectedResult: false },
-    { rule: 'date_now.json', file: 'bad_date_format.xml', expectedResult: false },
+    { rule: 'date_now.json', file: 'bad_date_format.xml', expectedResult: 'No Condition Match' },
 ];
 
 describe('dateNow rules', () => {
