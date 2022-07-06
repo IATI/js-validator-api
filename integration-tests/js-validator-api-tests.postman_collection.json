@@ -895,6 +895,76 @@
                     "response": []
                 },
                 {
+                    "name": "iati-multi-act-multi-schema-errors - expect 0.3.1 in both activities",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"The file is not valid\", function () {",
+                                    "    pm.expect(jsonData.valid).to.eql(false);",
+                                    "});",
+                                    "pm.test(\"fileType value is iati-activities\", function () {",
+                                    "    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+                                    "});",
+                                    "pm.test(\"version is 2.03\", function () {",
+                                    "    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+                                    "});",
+                                    "pm.test(\"Schema Error returned for activity ID-1 with Schema Error\", function () {",
+                                    "    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-1\")[0].errors.map(obj => obj.category)).to.include('schema');",
+                                    "});",
+                                    "pm.test(\"Schema Error returned for activity ID-2 with Schema Error\", function () {",
+                                    "    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-2\")[0].errors.map(obj => obj.category)).to.include('schema');",
+                                    "});",
+                                    "pm.test(\"Summary object should have 2 critical errors\", function () {",
+                                    "    pm.expect(jsonData.summary.critical).to.eq(2);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "followRedirects": false,
+                        "followOriginalHttpMethod": false,
+                        "followAuthorizationHeader": false
+                    },
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/xml"
+                            }
+                        ],
+                        "body": {
+                            "mode": "file",
+                            "file": {
+                                "src": "iati-multi-act-mult-schema-errors.xml"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validate",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validate"],
+                            "query": [
+                                {
+                                    "key": "group",
+                                    "value": "false",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "iati-act-schema-errors - expect 0.3.1 - showDetails",
                     "event": [
                         {

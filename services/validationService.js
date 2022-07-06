@@ -40,8 +40,6 @@ const countSeverities = (flatErrors) => {
     flatErrors.forEach((error) => {
         summary[error.severity] = (summary[error.severity] || 0) + 1;
     });
-    // to match V1 critical is never > 1
-    summary.critical = summary.critical >= 1 ? 1 : 0;
     return summary;
 };
 
