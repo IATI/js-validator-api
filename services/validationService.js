@@ -62,7 +62,7 @@ const groupErrors = (errors, groupKey, additionalKeys) => {
     });
 };
 
-const createValidationReport = async (errors, state, groupResults) => {
+const createValidationReport = async (errors, state, groupResults, elementsMeta) => {
     let finalErrors;
     // make summary count
     const summary = countSeverities(errors);
@@ -86,6 +86,7 @@ const createValidationReport = async (errors, state, groupResults) => {
         orgIdPrefixFileName: state.fileType ? await getOrgIdPrefixFileName() : '',
         apiVersion: config.VERSION,
         summary,
+        ...elementsMeta,
         errors: finalErrors,
     };
 };
@@ -300,7 +301,7 @@ exports.validate = async (context, req) => {
         const ruleStart = getStartTime();
 
         const idSets = await getIdSets();
-        const { ruleErrors, schemaErrors } = await validateIATI(
+        const { ruleErrors, schemaErrors, elementsMeta } = await validateIATI(
             getRuleset(state.iatiVersion),
             body,
             idSets,
@@ -322,7 +323,12 @@ exports.validate = async (context, req) => {
 
         logValidationSummary(context, state);
 
-        const validationReport = await createValidationReport(combinedErrors, state, groupResults);
+        const validationReport = await createValidationReport(
+            combinedErrors,
+            state,
+            groupResults,
+            elementsMeta
+        );
 
         context.res = {
             status: schemaErrors.length > 0 ? 422 : 200,

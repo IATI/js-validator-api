@@ -707,13 +707,13 @@ const validateSchema = (document, schema, identifier, title, showDetails, lineOf
 };
 
 const fileDefinition = {
-    activity: {
+    activities: {
         root: 'iati-activities',
         subRoot: 'iati-activity',
         identifier: 'iati-identifier',
         titleLocation: 'title/narrative',
     },
-    organisation: {
+    organisations: {
         root: 'iati-organisations',
         subRoot: 'iati-organisation',
         identifier: 'organisation-identifier',
@@ -727,7 +727,9 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
     const idTracker = new Map();
 
     const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const fileType = xpath('/iati-activities', document).length > 0 ? 'activity' : 'organisation';
+    const fileType =
+        xpath('/iati-activities', document).length > 0 ? 'activities' : 'organisations';
+    const elementsMeta = { [fileType]: [] };
 
     // get child elements to loop over
     const elements = xpath(
@@ -748,7 +750,8 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
     );
     const rootText = new XMLSerializer().serializeToString(document.documentElement);
 
-    elements.forEach((element) => {
+    elements.forEach((element, index) => {
+        let newSchemaErrors = [];
         const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
         singleElementDoc.firstChild.appendChild(element);
         let identifier =
@@ -779,18 +782,22 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
         }
 
         if (schema) {
-            schemaErrors = [
-                ...schemaErrors,
-                ...validateSchema(
-                    singleElementDoc,
-                    schema,
-                    identifier,
-                    title,
-                    showDetails,
-                    element.lineNumber
-                ),
-            ];
+            newSchemaErrors = validateSchema(
+                singleElementDoc,
+                schema,
+                identifier,
+                title,
+                showDetails,
+                element.lineNumber
+            );
+            schemaErrors = [...schemaErrors, ...newSchemaErrors];
         }
+        elementsMeta[fileType].push({
+            identifier,
+            title,
+            valid: newSchemaErrors.length === 0,
+            index,
+        });
 
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
@@ -803,5 +810,5 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
             ruleErrors[identifier] = { identifier, title, errors };
         }
     });
-    return { ruleErrors, schemaErrors };
+    return { ruleErrors, schemaErrors, elementsMeta };
 };
