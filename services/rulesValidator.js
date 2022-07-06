@@ -668,15 +668,16 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
-const validateSchema = (document, schema, identifier, title, showDetails) => {
+const validateSchema = (document, schema, identifier, title, showDetails, lineOffset) => {
     const xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(document));
 
     if (!xmlDoc.validate(schema)) {
         const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
             let errContext;
-            const { line } = error;
-            if (line) {
-                errContext = `At line: ${error.line}`;
+            const errorDetail = error;
+            if ('line' in errorDetail) {
+                errorDetail.line = errorDetail.line + lineOffset - 1;
+                errContext = `At line: ${errorDetail.line}`;
             }
             if (!_.has(acc, error.message)) {
                 acc[error.message] = {
@@ -685,7 +686,7 @@ const validateSchema = (document, schema, identifier, title, showDetails) => {
                     severity: 'critical',
                     message: error.message,
                     context: [{ text: errContext }],
-                    ...(showDetails && { details: [{ error }] }),
+                    ...(showDetails && { details: [{ error: errorDetail }] }),
                     identifier,
                     title,
                 };
@@ -694,7 +695,7 @@ const validateSchema = (document, schema, identifier, title, showDetails) => {
                     ...acc[error.message],
                     context: [...acc[error.message].context, { text: errContext }],
                     ...(showDetails && {
-                        details: [...acc[error.message].details, { error }],
+                        details: [...acc[error.message].details, { error: errorDetail }],
                     }),
                 };
             }
@@ -780,7 +781,14 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
         if (schema) {
             schemaErrors = [
                 ...schemaErrors,
-                ...validateSchema(singleElementDoc, schema, identifier, title, showDetails),
+                ...validateSchema(
+                    singleElementDoc,
+                    schema,
+                    identifier,
+                    title,
+                    showDetails,
+                    element.lineNumber
+                ),
             ];
         }
 

@@ -850,6 +850,12 @@
                                     "});",
                                     "pm.test(\"Summary object should have 1 critical error\", function () {",
                                     "    pm.expect(jsonData.summary.critical).to.eq(1);",
+                                    "});",
+                                    "pm.test(\"Line number is correct for schema error in activity that is not first\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(\"At line: 36\");",
+                                    "});",
+                                    "pm.test(\"Line number is correct in schema error details for activity that is not first\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(`\"line\":36`);",
                                     "});"
                                 ],
                                 "type": "text/javascript"
@@ -880,14 +886,13 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pub/validate",
+                            "raw": "{{baseURL}}/pub/validate?details=true",
                             "host": ["{{baseURL}}"],
                             "path": ["pub", "validate"],
                             "query": [
                                 {
-                                    "key": "group",
-                                    "value": "false",
-                                    "disabled": true
+                                    "key": "details",
+                                    "value": "true"
                                 }
                             ]
                         }
