@@ -668,7 +668,7 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
-const validateSchema = (document, schema, identifier, title, showDetails, lineOffset) => {
+const validateSchema = (document, schema, identifier, title, showDetails, lineOffset = 1) => {
     const xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(document));
 
     if (!xmlDoc.validate(schema)) {
