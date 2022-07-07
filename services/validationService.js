@@ -133,9 +133,8 @@ exports.validate = async (context, req) => {
             supportedVersion: '',
             isIati: '',
             fileInfoTime: '',
-            schemaTime: '',
             codelistTime: '',
-            ruleTime: '',
+            ruleAndSchemaTime: '',
             exitCategory: '',
         };
 
@@ -309,8 +308,8 @@ exports.validate = async (context, req) => {
             showDetails
         );
 
-        state.ruleTime = getElapsedTime(ruleStart);
-        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });
+        state.ruleAndSchemaTime = getElapsedTime(ruleStart);
+        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleAndSchemaTime });
 
         // combine all types of errors
         const combinedErrors = [
