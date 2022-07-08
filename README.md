@@ -184,6 +184,38 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 -   Unsupported IATI Version - 0.6.1
 -   Not iati-activities file
 
+### `POST /pvt/schema-validate-file`
+
+-   Request Body
+
+    -   application/xml
+    -   IATI XML
+
+-   Returns
+
+#### `200 OK`
+
+    -   Valid:
+
+```json
+{
+    "valid": true
+}
+```
+
+    - Invalid:
+
+```json
+{
+    "valid": false
+}
+```
+
+#### `400 Bad Request`
+
+-   No Body
+-   Not a application/xml string body
+
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "Function"`
