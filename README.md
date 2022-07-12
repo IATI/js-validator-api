@@ -184,6 +184,38 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 -   Unsupported IATI Version - 0.6.1
 -   Not iati-activities file
 
+### `POST /pvt/schema-validate-file`
+
+-   Request Body
+
+    -   application/xml
+    -   IATI XML
+
+-   Returns
+
+#### `200 OK`
+
+    -   Valid:
+
+```json
+{
+    "valid": true
+}
+```
+
+    - Invalid:
+
+```json
+{
+    "valid": false
+}
+```
+
+#### `400 Bad Request`
+
+-   No Body
+-   Not a application/xml string body
+
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "Function"`
@@ -191,10 +223,6 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 ## AppInsights SDK
 
 -   An example of using the `config/appInsights.js` utility is available in the `pvt-get/index.js` where execution time of the function is measured and then logged in 2 ways to the AppInsights Telemetry.
-
-## Filesystem
-
--   Provided in `config/fileSystem.js` which can be imported to get the promisified versions of common `fs` functions since we're stuck with Node v12 for now (these are standard in Node v14)
 
 ## Unit Tests
 

@@ -3278,10 +3278,10 @@
             ]
         },
         {
-            "name": "Schema Validation",
+            "name": "Activity Schema Validation",
             "item": [
                 {
-                    "name": "Basic Body Validation Copy",
+                    "name": "Basic Body Validation",
                     "item": [
                         {
                             "name": "No Body Empty",
@@ -3809,6 +3809,783 @@
                                 }
                             },
                             "response": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "File Schema Validation",
+            "item": [
+                {
+                    "name": "Basic Body Validation",
+                    "item": [
+                        {
+                            "name": "No Body Empty",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                                            "pm.test(\"Reponse body contains 'error': 'No body'}\", function () {pm.response.to.have.body({",
+                                            "  \"error\": \"No body\"",
+                                            "})})"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followAuthorizationHeader": false,
+                                "followOriginalHttpMethod": false,
+                                "followRedirects": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "No Body {}",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                                            "pm.test(\"Reponse body contains {'error': 'No body'}\", function () {pm.response.to.have.body({",
+                                            "  \"error\": \"No body\"",
+                                            "})})"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "text"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"],
+                                    "query": [
+                                        {
+                                            "key": "",
+                                            "value": "",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Array Body []",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                                            "pm.test(\"Reponse body contains {'error': 'Body must be an application/xml string'}\", function () {pm.response.to.have.body({",
+                                            "  \"error\": \"Body must be an application/xml string\"",
+                                            "})})"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followAuthorizationHeader": false,
+                                "followOriginalHttpMethod": false,
+                                "followRedirects": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "[]",
+                                    "options": {
+                                        "raw": {
+                                            "language": "text"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Invalid",
+                    "item": [
+                        {
+                            "name": "not-xml",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "not-xml.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "broken-xml",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "broken-xml.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-act-root-only",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-act-root-only.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-org-root-only",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-org-root-only.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-act-xml-errors",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-act-xml-errors.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-org-xml-errors",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-org-xml-errors.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-act-no-errors-old-version",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followAuthorizationHeader": false,
+                                "followOriginalHttpMethod": false,
+                                "followRedirects": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-act-no-errors-old-version.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-org-no-errors-old-version",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followAuthorizationHeader": false,
+                                "followOriginalHttpMethod": false,
+                                "followRedirects": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-org-no-errors-old-version.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "xml-but-not-iati",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "xml-but-not-iati.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-act-schema-errors",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-act-schema-errors.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-org-schema-errors",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "followRedirects": false,
+                                "followOriginalHttpMethod": false,
+                                "followAuthorizationHeader": false
+                            },
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-org-schema-errors.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        }
+                    ],
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [""]
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"The file is not valid\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.valid).to.eql(false);",
+                                    "});",
+                                    ""
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Valid",
+                    "item": [
+                        {
+                            "name": "iati-act-no-errors",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "pm.test(\"The activity is valid\", function () {",
+                                            "    var jsonData = pm.response.json();",
+                                            "    pm.expect(jsonData.valid).to.eql(true);",
+                                            "});",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-act-no-errors.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "iati-org-no-errors",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [""],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/xml",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "file",
+                                    "file": {
+                                        "src": "iati-org-no-errors.xml"
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseURL}}/pvt/schema-validate-file",
+                                    "host": ["{{baseURL}}"],
+                                    "path": ["pvt", "schema-validate-file"],
+                                    "query": [
+                                        {
+                                            "key": "group",
+                                            "value": "false",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ],
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [""]
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"The file is valid\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.valid).to.eql(true);",
+                                    "});",
+                                    ""
+                                ]
+                            }
                         }
                     ]
                 }
