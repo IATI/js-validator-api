@@ -94,13 +94,16 @@ const createValidationReport = async (errors, state, groupResults, elementsMeta)
 exports.validate = async (context, req) => {
     try {
         let { body } = req;
-        const { details, group } = req.query;
+        const { details, group, meta } = req.query;
 
         // details - default - false
         const showDetails = details === 'true' || details === 'True';
 
         // group - default - true
         const groupResults = group !== 'false' && group !== 'False';
+
+        // meta - default - false
+        const subElementMeta = meta === 'true' || meta === 'True';
 
         // No body
         if (!body || JSON.stringify(body) === '{}') {
@@ -305,7 +308,8 @@ exports.validate = async (context, req) => {
             body,
             idSets,
             getSchema(state.fileType, state.iatiVersion),
-            showDetails
+            showDetails,
+            subElementMeta
         );
 
         state.ruleAndSchemaTime = getElapsedTime(ruleStart);

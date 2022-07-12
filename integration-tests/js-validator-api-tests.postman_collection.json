@@ -1,6 +1,6 @@
 {
     "info": {
-        "_postman_id": "5b37e237-0ab0-4410-ade9-54d4bcd835c9",
+        "_postman_id": "4a0049ac-ff32-4d7a-ac58-7149a7b2f704",
         "name": "js-validator-api-tests",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "13097277"
@@ -892,12 +892,16 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pub/validate?details=true",
+                            "raw": "{{baseURL}}/pub/validate?details=true&meta=true",
                             "host": ["{{baseURL}}"],
                             "path": ["pub", "validate"],
                             "query": [
                                 {
                                     "key": "details",
+                                    "value": "true"
+                                },
+                                {
+                                    "key": "meta",
                                     "value": "true"
                                 }
                             ]
@@ -1480,7 +1484,6 @@
                                     "pm.test(\"Response containes expected organisations object\", function () {",
                                     "    pm.expect(jsonData.activities[0]).to.eql({",
                                     "            \"identifier\": \"AA-AAA-123456789-ABC123\",",
-                                    "            \"title\": \"Activity title\",",
                                     "            \"valid\": true,",
                                     "            \"index\": 0",
                                     "        });",
@@ -1511,13 +1514,17 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pub/validate?group=false",
+                            "raw": "{{baseURL}}/pub/validate?group=false&meta=true",
                             "host": ["{{baseURL}}"],
                             "path": ["pub", "validate"],
                             "query": [
                                 {
                                     "key": "group",
                                     "value": "false"
+                                },
+                                {
+                                    "key": "meta",
+                                    "value": "true"
                                 }
                             ]
                         }
@@ -1557,7 +1564,6 @@
                                     "pm.test(\"Response containes expected organisations object\", function () {",
                                     "    pm.expect(jsonData.organisations[0]).to.eql({",
                                     "            \"identifier\": \"NP-SWC-1234\",",
-                                    "            \"title\": \"Test Org Nepal\",",
                                     "            \"valid\": true,",
                                     "            \"index\": 0",
                                     "        });",
@@ -1589,14 +1595,13 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pub/validate",
+                            "raw": "{{baseURL}}/pub/validate?meta=true",
                             "host": ["{{baseURL}}"],
                             "path": ["pub", "validate"],
                             "query": [
                                 {
-                                    "key": "group",
-                                    "value": "false",
-                                    "disabled": true
+                                    "key": "meta",
+                                    "value": "true"
                                 }
                             ]
                         }

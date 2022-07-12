@@ -109,6 +109,28 @@ Hello, <Name>. This HTTP triggered function executed successfully.
         -   shows all context information for advanced use and debugging
     -   `group=false`
         -   returns errors ungrouped in a "flat" structure, default is to group by Activity/Organisation identifier and Category
+    -   `meta=true`
+        -   returns an additional `"activities"` key for activities files and `"organisations"` key for organisation files which contains an Array of metadata about the activities or organisations present in the file. In the following structure:
+
+```json
+"activities": [
+       {
+           "identifier": "AA-AAA-123456789-ABC123",
+           "valid": false,
+           "index": 0
+       }
+   ],
+```
+
+```json
+"organisations": [
+       {
+            "identifier": "NP-SWC-1234",
+            "valid": true,
+            "index": 0
+       }
+   ],
+```
 
 -   Request Body
 

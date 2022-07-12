@@ -721,7 +721,14 @@ const fileDefinition = {
     },
 };
 
-exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false) => {
+exports.validateIATI = async (
+    ruleset,
+    xml,
+    idSets,
+    schema,
+    showDetails = false,
+    showElementMeta = false
+) => {
     let schemaErrors = [];
     const ruleErrors = {};
     const idTracker = new Map();
@@ -729,7 +736,7 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
     const document = new DOMParser().parseFromString(xml, 'text/xml');
     const fileType =
         xpath('/iati-activities', document).length > 0 ? 'activities' : 'organisations';
-    const elementsMeta = { [fileType]: [] };
+    const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
 
     // get child elements to loop over
     const elements = xpath(
@@ -792,12 +799,13 @@ exports.validateIATI = async (ruleset, xml, idSets, schema, showDetails = false)
             );
             schemaErrors = [...schemaErrors, ...newSchemaErrors];
         }
-        elementsMeta[fileType].push({
-            identifier,
-            title,
-            valid: newSchemaErrors.length === 0,
-            index,
-        });
+        if (showElementMeta) {
+            elementsMeta[fileType].push({
+                identifier,
+                valid: newSchemaErrors.length === 0,
+                index,
+            });
+        }
 
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
