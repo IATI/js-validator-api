@@ -9,7 +9,6 @@ env:
   NAME: iativalidator
   STAGE: prod # suffix to indicate environment stage
   TAG: ${{ github.sha }}
-  NODE_VERSION: '14.x'
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
   REDIS_HOSTNAME: ${{ secrets.PROD_REDIS_HOSTNAME }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
