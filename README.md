@@ -224,10 +224,6 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   An example of using the `config/appInsights.js` utility is available in the `pvt-get/index.js` where execution time of the function is measured and then logged in 2 ways to the AppInsights Telemetry.
 
-## Filesystem
-
--   Provided in `config/fileSystem.js` which can be imported to get the promisified versions of common `fs` functions since we're stuck with Node v12 for now (these are standard in Node v14)
-
 ## Unit Tests
 
 -   `npm run rules:test`
