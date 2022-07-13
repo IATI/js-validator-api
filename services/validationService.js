@@ -103,7 +103,7 @@ exports.validate = async (context, req) => {
         const groupResults = group !== 'false' && group !== 'False';
 
         // meta - default - false
-        const subElementMeta = meta === 'true' || meta === 'True';
+        const showElementMeta = meta === 'true' || meta === 'True';
 
         // No body
         if (!body || JSON.stringify(body) === '{}') {
@@ -309,7 +309,7 @@ exports.validate = async (context, req) => {
             idSets,
             getSchema(state.fileType, state.iatiVersion),
             showDetails,
-            subElementMeta
+            showElementMeta
         );
 
         state.ruleAndSchemaTime = getElapsedTime(ruleStart);
