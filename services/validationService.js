@@ -40,8 +40,6 @@ const countSeverities = (flatErrors) => {
     flatErrors.forEach((error) => {
         summary[error.severity] = (summary[error.severity] || 0) + 1;
     });
-    // to match V1 critical is never > 1
-    summary.critical = summary.critical >= 1 ? 1 : 0;
     return summary;
 };
 
@@ -64,7 +62,7 @@ const groupErrors = (errors, groupKey, additionalKeys) => {
     });
 };
 
-const createValidationReport = async (errors, state, groupResults) => {
+const createValidationReport = async (errors, state, groupResults, elementsMeta) => {
     let finalErrors;
     // make summary count
     const summary = countSeverities(errors);
@@ -88,6 +86,7 @@ const createValidationReport = async (errors, state, groupResults) => {
         orgIdPrefixFileName: state.fileType ? await getOrgIdPrefixFileName() : '',
         apiVersion: config.VERSION,
         summary,
+        ...elementsMeta,
         errors: finalErrors,
     };
 };
@@ -95,13 +94,16 @@ const createValidationReport = async (errors, state, groupResults) => {
 exports.validate = async (context, req) => {
     try {
         let { body } = req;
-        const { details, group } = req.query;
+        const { details, group, meta } = req.query;
 
         // details - default - false
         const showDetails = details === 'true' || details === 'True';
 
         // group - default - true
         const groupResults = group !== 'false' && group !== 'False';
+
+        // meta - default - false
+        const showElementMeta = meta === 'true' || meta === 'True';
 
         // No body
         if (!body || JSON.stringify(body) === '{}') {
@@ -134,9 +136,8 @@ exports.validate = async (context, req) => {
             supportedVersion: '',
             isIati: '',
             fileInfoTime: '',
-            schemaTime: '',
             codelistTime: '',
-            ruleTime: '',
+            ruleAndSchemaTime: '',
             exitCategory: '',
         };
 
@@ -179,7 +180,6 @@ exports.validate = async (context, req) => {
             };
         }
 
-        let xmlDoc;
         try {
             ({
                 fileType: state.fileType,
@@ -187,7 +187,6 @@ exports.validate = async (context, req) => {
                 generatedDateTime: state.generatedDateTime,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
-                xmlDoc,
             } = getFileInformation(body));
         } catch (error) {
             let errContext;
@@ -288,44 +287,6 @@ exports.validate = async (context, req) => {
             return;
         }
 
-        // Schema Validation
-        const schemaStart = getStartTime();
-        let schemaErrors = [];
-        if (!xmlDoc.validate(getSchema(state.fileType, state.iatiVersion))) {
-            schemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
-                let errContext;
-                const { line } = error;
-                if (line) {
-                    errContext = `At line: ${error.line}`;
-                }
-                if (!_.has(acc, error.code)) {
-                    acc[error.code] = {
-                        id: '0.3.1',
-                        category: 'schema',
-                        severity: 'critical',
-                        message: error.message,
-                        context: [{ text: errContext }],
-                        ...(showDetails && { details: [{ error }] }),
-                        identifier: 'file',
-                        title: 'File level errors',
-                    };
-                } else {
-                    acc[error.code] = {
-                        ...acc[error.code],
-                        context: [...acc[error.code].context, { text: errContext }],
-                        ...(showDetails && { details: [...acc[error.code].details, { error }] }),
-                    };
-                }
-                return acc;
-            }, {});
-            schemaErrors = Object.keys(schemaErrors).map((errGroup) => schemaErrors[errGroup]);
-        }
-
-        xmlDoc = null;
-
-        state.schemaTime = getElapsedTime(schemaStart);
-        context.log({ name: 'Schema Validation Time (s)', value: state.schemaTime });
-
         // Codelist Validation
         const codelistStart = getStartTime();
 
@@ -340,26 +301,37 @@ exports.validate = async (context, req) => {
 
         // Ruleset Validation
         const ruleStart = getStartTime();
-        const ruleset = getRuleset(state.iatiVersion);
 
         const idSets = await getIdSets();
-        const rulesResult = await validateIATI(ruleset, body, idSets, showDetails);
+        const { ruleErrors, schemaErrors, elementsMeta } = await validateIATI(
+            getRuleset(state.iatiVersion),
+            body,
+            idSets,
+            getSchema(state.fileType, state.iatiVersion),
+            showDetails,
+            showElementMeta
+        );
 
-        state.ruleTime = getElapsedTime(ruleStart);
-        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleTime });
+        state.ruleAndSchemaTime = getElapsedTime(ruleStart);
+        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleAndSchemaTime });
 
         // combine all types of errors
         const combinedErrors = [
             ...schemaErrors,
             ...flattenErrors(codelistResult),
-            ...flattenErrors(rulesResult),
+            ...flattenErrors(ruleErrors),
         ];
 
         state.exitCategory = 'fullValidation';
 
         logValidationSummary(context, state);
 
-        const validationReport = await createValidationReport(combinedErrors, state, groupResults);
+        const validationReport = await createValidationReport(
+            combinedErrors,
+            state,
+            groupResults,
+            elementsMeta
+        );
 
         context.res = {
             status: schemaErrors.length > 0 ? 422 : 200,

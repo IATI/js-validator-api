@@ -1,6 +1,6 @@
 {
     "info": {
-        "_postman_id": "c095cb0e-883d-406d-8a1a-0025abaaebe2",
+        "_postman_id": "4a0049ac-ff32-4d7a-ac58-7149a7b2f704",
         "name": "js-validator-api-tests",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "13097277"
@@ -825,6 +825,161 @@
                     "response": []
                 },
                 {
+                    "name": "iati-multi-act-schema-errors - expect 0.3.1 in specific activity",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"The file is not valid\", function () {",
+                                    "    pm.expect(jsonData.valid).to.eql(false);",
+                                    "});",
+                                    "pm.test(\"fileType value is iati-activities\", function () {",
+                                    "    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+                                    "});",
+                                    "pm.test(\"version is 2.03\", function () {",
+                                    "    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+                                    "});",
+                                    "pm.test(\"Schema Error returned for activity with Schema Error\", function () {",
+                                    "    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-2\")[0].errors.map(obj => obj.category)).to.include('schema');",
+                                    "});",
+                                    "pm.test(\"Schema Error NOT returned for activity without Schema Error\", function () {",
+                                    "    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-1\")[0].errors.map(obj => obj.category)).to.not.include('schema');",
+                                    "});",
+                                    "pm.test(\"Summary object should have 1 critical error\", function () {",
+                                    "    pm.expect(jsonData.summary.critical).to.eq(1);",
+                                    "});",
+                                    "pm.test(\"Line number is correct for schema error in activity that is not first\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(\"At line: 36\");",
+                                    "});",
+                                    "pm.test(\"Line number is correct in schema error details for activity that is not first\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(`\"line\":36`);",
+                                    "});",
+                                    "pm.test(\"activities array shows valid = true for activity without Schema Error\", function () {",
+                                    "    pm.expect(jsonData.activities.filter(obj => obj.identifier === \"ID-1\")[0].valid).to.be.true;",
+                                    "});",
+                                    "pm.test(\"activities array shows valid = false for activity WITH Schema Error\", function () {",
+                                    "    pm.expect(jsonData.activities.filter(obj => obj.identifier === \"ID-2\")[0].valid).to.be.false;",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "followRedirects": false,
+                        "followOriginalHttpMethod": false,
+                        "followAuthorizationHeader": false
+                    },
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/xml"
+                            }
+                        ],
+                        "body": {
+                            "mode": "file",
+                            "file": {
+                                "src": "iati-multi-act-schema-errors.xml"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validate?details=true&meta=true",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validate"],
+                            "query": [
+                                {
+                                    "key": "details",
+                                    "value": "true"
+                                },
+                                {
+                                    "key": "meta",
+                                    "value": "true"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "iati-multi-act-multi-schema-errors - expect 0.3.1 in both activities",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"The file is not valid\", function () {",
+                                    "    pm.expect(jsonData.valid).to.eql(false);",
+                                    "});",
+                                    "pm.test(\"fileType value is iati-activities\", function () {",
+                                    "    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+                                    "});",
+                                    "pm.test(\"version is 2.03\", function () {",
+                                    "    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+                                    "});",
+                                    "pm.test(\"Schema Error returned for activity ID-1 with Schema Error\", function () {",
+                                    "    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-1\")[0].errors.map(obj => obj.category)).to.include('schema');",
+                                    "});",
+                                    "pm.test(\"Schema Error returned for activity ID-2 with Schema Error\", function () {",
+                                    "    pm.expect(jsonData.errors.filter(obj => obj.identifier === \"ID-2\")[0].errors.map(obj => obj.category)).to.include('schema');",
+                                    "});",
+                                    "pm.test(\"Summary object should have 2 critical errors\", function () {",
+                                    "    pm.expect(jsonData.summary.critical).to.eq(2);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "followRedirects": false,
+                        "followOriginalHttpMethod": false,
+                        "followAuthorizationHeader": false
+                    },
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/xml"
+                            }
+                        ],
+                        "body": {
+                            "mode": "file",
+                            "file": {
+                                "src": "iati-multi-act-mult-schema-errors.xml"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validate",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validate"],
+                            "query": [
+                                {
+                                    "key": "group",
+                                    "value": "false",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "iati-act-schema-errors - expect 0.3.1 - showDetails",
                     "event": [
                         {
@@ -1301,39 +1456,38 @@
                             "script": {
                                 "exec": [
                                     "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
                                     "pm.test(\"The file is valid\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.valid).to.eql(true);",
                                     "});",
                                     "pm.test(\"fileType value is iati-activities\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.fileType).to.eql('iati-activities');",
                                     "});",
                                     "pm.test(\"version is 2.03\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
                                     "});",
                                     "pm.test(\"rulesetCommitSha is present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.rulesetCommitSha).to.be.a('string').with.length.greaterThan(0);",
                                     "});",
                                     "pm.test(\"codelistCommitSha is present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.codelistCommitSha).to.be.a('string').with.length.greaterThan(0);",
                                     "});",
                                     "pm.test(\"orgIdPrefixFileName is present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.orgIdPrefixFileName).to.be.a('string').with.length.greaterThan(0);",
                                     "});",
                                     "pm.test(\"No file level errors are present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
                                     "});",
                                     "pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains identifier error 1.14.8\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('1.14.8');",
                                     "});",
-                                    ""
+                                    "pm.test(\"Response containes expected organisations object\", function () {",
+                                    "    pm.expect(jsonData.activities[0]).to.eql({",
+                                    "            \"identifier\": \"AA-AAA-123456789-ABC123\",",
+                                    "            \"valid\": true,",
+                                    "            \"index\": 0",
+                                    "        });",
+                                    "});"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -1360,13 +1514,17 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pub/validate?group=false",
+                            "raw": "{{baseURL}}/pub/validate?group=false&meta=true",
                             "host": ["{{baseURL}}"],
                             "path": ["pub", "validate"],
                             "query": [
                                 {
                                     "key": "group",
                                     "value": "false"
+                                },
+                                {
+                                    "key": "meta",
+                                    "value": "true"
                                 }
                             ]
                         }
@@ -1381,35 +1539,35 @@
                             "script": {
                                 "exec": [
                                     "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
                                     "pm.test(\"The file is valid\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.valid).to.eql(true);",
                                     "});",
                                     "pm.test(\"fileType value is iati-organisations\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.fileType).to.eql('iati-organisations');",
                                     "});",
                                     "pm.test(\"version is 2.02\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.iatiVersion).to.eql('2.02');",
                                     "});",
                                     "pm.test(\"rulesetCommitSha is present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.rulesetCommitSha).to.be.a('string').with.length.greaterThan(0);",
                                     "});",
                                     "pm.test(\"codelistCommitSha is present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.codelistCommitSha).to.be.a('string').with.length.greaterThan(0);",
                                     "});",
                                     "pm.test(\"orgIdPrefixFileName is present\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.orgIdPrefixFileName).to.be.a('string').with.length.greaterThan(0);",
                                     "});",
                                     "pm.test(\"Response contains no errors\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData.errors).to.eql([]);",
                                     "});",
-                                    "",
+                                    "pm.test(\"Response containes expected organisations object\", function () {",
+                                    "    pm.expect(jsonData.organisations[0]).to.eql({",
+                                    "            \"identifier\": \"NP-SWC-1234\",",
+                                    "            \"valid\": true,",
+                                    "            \"index\": 0",
+                                    "        });",
+                                    "});",
                                     ""
                                 ],
                                 "type": "text/javascript"
@@ -1437,14 +1595,13 @@
                             }
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pub/validate",
+                            "raw": "{{baseURL}}/pub/validate?meta=true",
                             "host": ["{{baseURL}}"],
                             "path": ["pub", "validate"],
                             "query": [
                                 {
-                                    "key": "group",
-                                    "value": "false",
-                                    "disabled": true
+                                    "key": "meta",
+                                    "value": "true"
                                 }
                             ]
                         }

@@ -1,8 +1,10 @@
-const { DOMParser } = require('@xmldom/xmldom');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
+const libxml = require('libxmljs2');
+
 const ruleNameObj = require('./ruleNameMap.json');
 
 const ruleNameMap = new Map(ruleNameObj);
@@ -666,14 +668,52 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
+const validateSchema = (document, schema, identifier, title, showDetails, lineOffset = 1) => {
+    const xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(document));
+
+    if (!xmlDoc.validate(schema)) {
+        const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
+            let errContext;
+            const errorDetail = error;
+            if ('line' in errorDetail) {
+                errorDetail.line = errorDetail.line + lineOffset - 1;
+                errContext = `At line: ${errorDetail.line}`;
+            }
+            if (!_.has(acc, error.message)) {
+                acc[error.message] = {
+                    id: '0.3.1',
+                    category: 'schema',
+                    severity: 'critical',
+                    message: error.message,
+                    context: [{ text: errContext }],
+                    ...(showDetails && { details: [{ error: errorDetail }] }),
+                    identifier,
+                    title,
+                };
+            } else {
+                acc[error.message] = {
+                    ...acc[error.message],
+                    context: [...acc[error.message].context, { text: errContext }],
+                    ...(showDetails && {
+                        details: [...acc[error.message].details, { error: errorDetail }],
+                    }),
+                };
+            }
+            return acc;
+        }, {});
+        return Object.keys(curSchemaErrors).map((errGroup) => curSchemaErrors[errGroup]);
+    }
+    return [];
+};
+
 const fileDefinition = {
-    activity: {
+    activities: {
         root: 'iati-activities',
         subRoot: 'iati-activity',
         identifier: 'iati-identifier',
         titleLocation: 'title/narrative',
     },
-    organisation: {
+    organisations: {
         root: 'iati-organisations',
         subRoot: 'iati-organisation',
         identifier: 'organisation-identifier',
@@ -681,30 +721,60 @@ const fileDefinition = {
     },
 };
 
-exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
-    const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const isActivity = xpath('/iati-activities', document).length > 0;
-    const fileType = isActivity ? 'activity' : 'organisation';
+exports.validateIATI = async (
+    ruleset,
+    xml,
+    idSets,
+    schema,
+    showDetails = false,
+    showElementMeta = false
+) => {
+    let schemaErrors = [];
+    const ruleErrors = {};
+    const idTracker = new Map();
 
+    const document = new DOMParser().parseFromString(xml, 'text/xml');
+    const fileType =
+        xpath('/iati-activities', document).length > 0 ? 'activities' : 'organisations';
+    const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
+
+    // get child elements to loop over
     const elements = xpath(
         `/${fileDefinition[fileType].root}/${fileDefinition[fileType].subRoot}`,
         document
     );
-    const results = {};
-    const idTracker = new Map();
-    elements.forEach((element) => {
-        const singleElementDoc = new DOMParser().parseFromString(
-            `<${fileDefinition[fileType].root}></${fileDefinition[fileType].root}>`,
-            'text/xml'
-        );
+
+    // if no iati child elements found, evaluate schema errors at file level
+    if (elements.length === 0) {
+        schemaErrors = [
+            ...schemaErrors,
+            ...validateSchema(document, schema, 'file', 'File level errors', showDetails),
+        ];
+    }
+
+    // get root element alone
+    document.documentElement.removeChild(
+        document.documentElement.getElementsByTagName(fileDefinition[fileType].subRoot)
+    );
+    const rootText = new XMLSerializer().serializeToString(document.documentElement);
+
+    elements.forEach((element, index) => {
+        let newSchemaErrors = [];
+
+        // build single activity or org document
+        const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
         singleElementDoc.firstChild.appendChild(element);
+
+        // parse identifier and title
         let identifier =
             xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
         const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
+
+        // track and duplicate check identifier
         idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
         if (idTracker.get(identifier) > 1) {
             // duplicate identifier, drop a file level error
-            results.file = {
+            ruleErrors.file = {
                 identifier: 'file',
                 title: 'File level errors',
                 errors: [
@@ -724,6 +794,30 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
             identifier = `${identifier}(${idTracker.get(identifier)})`;
             idTracker.set(identifier, idTracker.get(identifier) + 1);
         }
+
+        // validate against iati schema
+        if (schema) {
+            newSchemaErrors = validateSchema(
+                singleElementDoc,
+                schema,
+                identifier,
+                title,
+                showDetails,
+                element.lineNumber
+            );
+            schemaErrors = [...schemaErrors, ...newSchemaErrors];
+        }
+
+        // add element metadata
+        if (showElementMeta) {
+            elementsMeta[fileType].push({
+                identifier,
+                valid: newSchemaErrors.length === 0,
+                index,
+            });
+        }
+
+        // validate against ruleset
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
                 acc.push(standardiseResultFormat(result, showDetails));
@@ -732,8 +826,8 @@ exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
         }, []);
 
         if (errors.length > 0) {
-            results[identifier] = { identifier, title, errors };
+            ruleErrors[identifier] = { identifier, title, errors };
         }
     });
-    return results;
+    return { ruleErrors, schemaErrors, elementsMeta };
 };
