@@ -744,6 +744,7 @@ exports.validateIATI = async (
         document
     );
 
+    // if no iati child elements found, evaluate schema errors at file level
     if (elements.length === 0) {
         schemaErrors = [
             ...schemaErrors,
@@ -751,7 +752,7 @@ exports.validateIATI = async (
         ];
     }
 
-    // get root element
+    // get root element alone
     document.documentElement.removeChild(
         document.documentElement.getElementsByTagName(fileDefinition[fileType].subRoot)
     );
@@ -759,11 +760,17 @@ exports.validateIATI = async (
 
     elements.forEach((element, index) => {
         let newSchemaErrors = [];
+
+        // build single activity or org document
         const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
         singleElementDoc.firstChild.appendChild(element);
+
+        // parse identifier and title
         let identifier =
             xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
         const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
+
+        // track and duplicate check identifier
         idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
         if (idTracker.get(identifier) > 1) {
             // duplicate identifier, drop a file level error
@@ -788,6 +795,7 @@ exports.validateIATI = async (
             idTracker.set(identifier, idTracker.get(identifier) + 1);
         }
 
+        // validate against iati schema
         if (schema) {
             newSchemaErrors = validateSchema(
                 singleElementDoc,
@@ -799,6 +807,8 @@ exports.validateIATI = async (
             );
             schemaErrors = [...schemaErrors, ...newSchemaErrors];
         }
+
+        // add element metadata
         if (showElementMeta) {
             elementsMeta[fileType].push({
                 identifier,
@@ -807,6 +817,7 @@ exports.validateIATI = async (
             });
         }
 
+        // validate against ruleset
         const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
             if (result.result === false) {
                 acc.push(standardiseResultFormat(result, showDetails));
