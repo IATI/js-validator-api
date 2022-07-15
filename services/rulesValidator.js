@@ -676,8 +676,9 @@ const validateSchema = (document, schema, identifier, title, showDetails, lineOf
             let errContext;
             const errorDetail = error;
             if ('line' in errorDetail) {
+                const lineMax = errorDetail.line >= 65535;
                 errorDetail.line = errorDetail.line + lineOffset - 1;
-                errContext = `At line: ${errorDetail.line}`;
+                errContext = `At line ${lineMax ? 'greater than' : ''}: ${errorDetail.line}`;
             }
             if (!_.has(acc, error.message)) {
                 acc[error.message] = {
