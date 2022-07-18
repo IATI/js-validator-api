@@ -706,6 +706,17 @@ const validateSchema = (document, schema, identifier, title, showDetails, lineOf
     return [];
 };
 
+const getRootString = (document) => {
+    const { nodeName, attributes } = document.documentElement;
+    const numAttr = attributes.length;
+    const attrs = [];
+    for (let index = 0; index < numAttr; index += 1) {
+        const attr = document.documentElement.attributes[index];
+        attrs.push(`${attr.nodeName}="${attr.nodeValue}"`);
+    }
+    return `<${nodeName} ${attrs.join(' ')}/>`;
+};
+
 const fileDefinition = {
     activities: {
         root: 'iati-activities',
@@ -735,17 +746,17 @@ exports.validateIATI = async (
 
     const document = new DOMParser().parseFromString(xml, 'text/xml');
     const fileType =
-        xpath('/iati-activities', document).length > 0 ? 'activities' : 'organisations';
+        document.documentElement.nodeName === 'iati-activities' ? 'activities' : 'organisations';
     const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
 
     // get child elements to loop over
-    const elements = xpath(
-        `/${fileDefinition[fileType].root}/${fileDefinition[fileType].subRoot}`,
-        document
+    const elements = document.documentElement.getElementsByTagName(
+        fileDefinition[fileType].subRoot
     );
+    const numElements = elements.length;
 
     // if no iati child elements found, evaluate schema errors at file level
-    if (elements.length === 0) {
+    if (numElements === 0) {
         schemaErrors = [
             ...schemaErrors,
             ...validateSchema(document, schema, 'file', 'File level errors', showDetails),
@@ -753,12 +764,10 @@ exports.validateIATI = async (
     }
 
     // get root element alone
-    document.documentElement.removeChild(
-        document.documentElement.getElementsByTagName(fileDefinition[fileType].subRoot)
-    );
-    const rootText = new XMLSerializer().serializeToString(document.documentElement);
+    const rootText = getRootString(document);
 
-    elements.forEach((element, index) => {
+    for (let index = 0; index < numElements; index += 1) {
+        const element = elements[index];
         let newSchemaErrors = [];
 
         // build single activity or org document
@@ -828,6 +837,6 @@ exports.validateIATI = async (
         if (errors.length > 0) {
             ruleErrors[identifier] = { identifier, title, errors };
         }
-    });
+    }
     return { ruleErrors, schemaErrors, elementsMeta };
 };
