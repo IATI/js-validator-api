@@ -24,7 +24,7 @@
         "underscore": "^1.13.4",
         "validate-with-xmllint": "github:IATI/validate-with-xmllint#v1.0.4",
         "xml2js": "^0.4.23",
-        "xpath": "github:IATI/xpath#master"
+        "xpath": "github:IATI/xpath#develop"
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^2.2.0",
