@@ -301,3 +301,19 @@ git push —-tags origin main
 Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
 
 Once deployed successfully PR `main` back into `develop`.
+
+## Customised Dependencies
+
+### validate-with-xmllint
+
+-   Fork [IATI/validate-with-xmllint](https://github.com/IATI/validate-with-xmllint)
+    -   Used to run the XML through `xmllint`. Added ability to use `--recover` parameter on `xmllint`. This returns "clean" XML which the validator uses if the XML passed the basic XML checks.
+    -   There is also an option to save the `--output` to file, this is not used by the current implementation and could be removed.
+    -   Best option would be to just write this into our own source code/utilities since it's quite simple and not being actively maintained.
+
+### xpath
+
+-   Fork [IATI/xpath](https://github.com/iati/xpath)
+    -   Sent a performance improvement PR that hasn't been merged into the original project: https://github.com/goto100/xpath/pull/107
+    -   If that is ever merged, then we could get rid of this custom dependency.
+    -   Also merged this performance PR to our fork: https://github.com/goto100/xpath/pull/108
