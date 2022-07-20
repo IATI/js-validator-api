@@ -304,13 +304,6 @@ Once deployed successfully PR `main` back into `develop`.
 
 ## Customised Dependencies
 
-### validate-with-xmllint
-
--   Fork [IATI/validate-with-xmllint](https://github.com/IATI/validate-with-xmllint)
-    -   Used to run the XML through `xmllint`. Added ability to use `--recover` parameter on `xmllint`. This returns "clean" XML which the validator uses if the XML passed the basic XML checks.
-    -   There is also an option to save the `--output` to file, this is not used by the current implementation and could be removed.
-    -   Best option would be to just write this into our own source code/utilities since it's quite simple and not being actively maintained.
-
 ### xpath
 
 -   Fork [IATI/xpath](https://github.com/iati/xpath)

@@ -1,5 +1,5 @@
 const _ = require('underscore');
-const { validateXMLrecover } = require('validate-with-xmllint');
+const { validateXMLrecover } = require('../utils/utils');
 const {
     getFileInformation,
     getRuleset,

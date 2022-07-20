@@ -10,7 +10,8 @@
         "int:test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "docker:start": "docker compose up --build",
         "docker:int:test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-docker-function.postman_environment.json --working-dir integration-tests/test-files",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "postinstall": "node ./utils/validate-xmllint-installation.js"
     },
     "author": "IATI",
     "dependencies": {
@@ -22,7 +23,6 @@
         "node-fetch": "^2.6.7",
         "redis": "^3.1.2",
         "underscore": "^1.13.4",
-        "validate-with-xmllint": "github:IATI/validate-with-xmllint#v1.0.4",
         "xml2js": "^0.4.23",
         "xpath": "github:IATI/xpath#develop"
     },

@@ -1,4 +1,4 @@
-const { validateXMLrecover } = require('validate-with-xmllint');
+const { validateXMLrecover } = require('../utils/utils');
 const { getFileInformation, getSchema } = require('../utils/utils');
 
 // pvt-validate-schema-post

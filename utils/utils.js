@@ -1,6 +1,7 @@
 const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
+const childProcess = require('child_process');
 
 const { aSetex, aSet, aGet, aExists } = require('../config/redis');
 const config = require('../config/config');
@@ -339,3 +340,45 @@ exports.getIdSets = async () => ({
 });
 
 exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fileName;
+
+/**
+ * xmllint should not write anything to stdout nor stderr when validating.
+ *
+ * Thus any output is considered an error and will reject the promise.
+ *
+ * The exit code of xmllint informs us whether the xml was valid or not
+ */
+const execXmllint = (input, command) =>
+    new Promise((resolve, reject) => {
+        const xmllint = childProcess.spawn(command, { shell: true });
+        // stdout and stderr are both captured to be made available if the promise rejects
+        let output = '';
+        let error = '';
+        // eslint-disable-next-line no-return-assign
+        xmllint.stdout.on('data', (chunk) => (output += chunk.toString()));
+        // eslint-disable-next-line no-return-assign
+        xmllint.stderr.on('data', (chunk) => (error += chunk.toString()));
+        // Any errors cause a rejection
+        xmllint.on('error', reject);
+        xmllint.on('close', (code) => {
+            if (code === 0) {
+                return resolve({ output, error });
+            }
+            return reject(
+                new Error(
+                    `xmllint exited with code ${code} when executed with ${command}:\n${error}`
+                )
+            );
+        });
+        // pipe input to process
+        xmllint.stdin.write(input);
+        xmllint.stdin.end();
+        xmllint.stdin.on('error', reject);
+    });
+
+/**
+ * Validate XML without any DTD or schema. Return Recovered XML.
+ *
+ * @param input XML
+ */
+exports.validateXMLrecover = (input) => execXmllint(input, `xmllint --nonet --recover -`);
