@@ -1,7 +1,7 @@
 const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
-const childProcess = require('child_process');
+const { spawn } = require('child_process');
 
 const { aSetex, aSet, aGet, aExists } = require('../config/redis');
 const config = require('../config/config');
@@ -350,14 +350,16 @@ exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fil
  */
 const execXmllint = (input, command) =>
     new Promise((resolve, reject) => {
-        const xmllint = childProcess.spawn(command, { shell: true });
+        const xmllint = spawn(command, { shell: true });
         // stdout and stderr are both captured to be made available if the promise rejects
         let output = '';
         let error = '';
-        // eslint-disable-next-line no-return-assign
-        xmllint.stdout.on('data', (chunk) => (output += chunk.toString()));
-        // eslint-disable-next-line no-return-assign
-        xmllint.stderr.on('data', (chunk) => (error += chunk.toString()));
+        xmllint.stdout.on('data', (chunk) => {
+            output += chunk.toString();
+        });
+        xmllint.stderr.on('data', (chunk) => {
+            error += chunk.toString();
+        });
         // Any errors cause a rejection
         xmllint.on('error', reject);
         xmllint.on('close', (code) => {
