@@ -342,11 +342,9 @@ exports.getIdSets = async () => ({
 exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fileName;
 
 /**
- * xmllint should not write anything to stdout nor stderr when validating.
- *
- * Thus any output is considered an error and will reject the promise.
- *
- * The exit code of xmllint informs us whether the xml was valid or not
+ * stdout is written to output
+ * sterr is written to error
+ * returns an object { output, error } if exitcode = 0 on close
  */
 const execXmllint = (input, command) =>
     new Promise((resolve, reject) => {
