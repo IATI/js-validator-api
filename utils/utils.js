@@ -1,6 +1,7 @@
 const libxml = require('libxmljs2');
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
+const { spawn } = require('child_process');
 
 const { aSetex, aSet, aGet, aExists } = require('../config/redis');
 const config = require('../config/config');
@@ -339,3 +340,45 @@ exports.getIdSets = async () => ({
 });
 
 exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fileName;
+
+/**
+ * stdout is written to output
+ * sterr is written to error
+ * returns an object { output, error } if exitcode = 0 on close
+ */
+const execXmllint = (input, command) =>
+    new Promise((resolve, reject) => {
+        const xmllint = spawn(command, { shell: true });
+        // stdout and stderr are both captured to be made available if the promise rejects
+        let output = '';
+        let error = '';
+        xmllint.stdout.on('data', (chunk) => {
+            output += chunk.toString();
+        });
+        xmllint.stderr.on('data', (chunk) => {
+            error += chunk.toString();
+        });
+        // Any errors cause a rejection
+        xmllint.on('error', reject);
+        xmllint.on('close', (code) => {
+            if (code === 0) {
+                return resolve({ output, error });
+            }
+            return reject(
+                new Error(
+                    `xmllint exited with code ${code} when executed with ${command}:\n${error}`
+                )
+            );
+        });
+        // pipe input to process
+        xmllint.stdin.write(input);
+        xmllint.stdin.end();
+        xmllint.stdin.on('error', reject);
+    });
+
+/**
+ * Validate XML without any DTD or schema. Return Recovered XML.
+ *
+ * @param input XML
+ */
+exports.validateXMLrecover = (input) => execXmllint(input, `xmllint --nonet --recover -`);
