@@ -4,6 +4,8 @@ const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
 const libxml = require('libxmljs2');
+const { Readable, Transform } = require('stream');
+const { pipeline } = require('stream/promises');
 
 const ruleNameObj = require('./ruleNameMap.json');
 
@@ -477,7 +479,7 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
         oneCase,
     }
 */
-exports.testRuleset = (ruleset, xml, idSets) => {
+const testRuleset = (ruleset, xml, idSets) => {
     let document;
     if (typeof xml === 'string') {
         document = new DOMParser().parseFromString(xml);
@@ -505,8 +507,8 @@ exports.testRuleset = (ruleset, xml, idSets) => {
 };
 
 // Return true if all results are true, return false if any are false
-exports.allRulesResult = (ruleset, xml) => {
-    const results = this.testRuleset(ruleset, xml);
+const allRulesResult = (ruleset, xml) => {
+    const results = testRuleset(ruleset, xml);
     if (results.length === 0) {
         return 'No Rule Match';
     }
@@ -706,35 +708,68 @@ const validateSchema = (document, schema, identifier, title, showDetails, lineOf
     return [];
 };
 
-const getRootString = (document) => {
-    const { nodeName, attributes } = document.documentElement;
-    const numAttr = attributes.length;
-    const attrs = [];
-    for (let index = 0; index < numAttr; index += 1) {
-        const attr = document.documentElement.attributes[index];
-        attrs.push(`${attr.nodeName}="${attr.nodeValue}"`);
-    }
-    return `<${nodeName} ${attrs.join(' ')}/>`;
-};
-
 const fileDefinition = {
-    activities: {
-        root: 'iati-activities',
+    'iati-activities': {
         subRoot: 'iati-activity',
         identifier: 'iati-identifier',
         titleLocation: 'title/narrative',
     },
-    organisations: {
-        root: 'iati-organisations',
+    'iati-organisations': {
         subRoot: 'iati-organisation',
         identifier: 'organisation-identifier',
         titleLocation: 'name/narrative',
     },
 };
 
-exports.validateIATI = async (
+const splitXMLTransform = (root, elementName) => {
+    let rootOpen = '';
+    const rootClose = `</${root}>`;
+    const open = `<${elementName}`;
+    const close = `</${elementName}>`;
+    let doc = '';
+    return new Transform({
+        transform(chunk, enc, next) {
+            doc += chunk.toString();
+            if (rootOpen === '') {
+                const rootOpenIndex = doc.indexOf(`<${root}`);
+                const rootCloseIndex = doc.indexOf(`>`, rootOpenIndex);
+                if (rootOpenIndex === -1 || rootCloseIndex === -1) {
+                    next();
+                    return;
+                }
+                rootOpen = doc.slice(rootOpenIndex, rootCloseIndex + 1);
+                doc = doc.slice(rootCloseIndex + 1);
+            }
+
+            let openIndex = doc.indexOf(open);
+            let closeIndex = doc.indexOf(close);
+            while (openIndex !== -1 && closeIndex !== -1) {
+                // trim before <elementName
+                doc = doc.slice(openIndex);
+
+                // adjust indexes
+                closeIndex -= openIndex;
+                openIndex = 0;
+
+                // push single activity, wrapped in root
+                this.push(`${rootOpen}${doc.slice(0, closeIndex + close.length)}${rootClose}`);
+
+                // remove activity that's been pushed
+                doc = doc.slice(closeIndex + close.length);
+
+                // adjust indexes
+                openIndex = doc.indexOf(open);
+                closeIndex = doc.indexOf(close);
+            }
+            next();
+        },
+    });
+};
+
+const validateIATI = async (
     ruleset,
     xml,
+    fileType,
     idSets,
     schema,
     showDetails = false,
@@ -742,101 +777,116 @@ exports.validateIATI = async (
 ) => {
     let schemaErrors = [];
     const ruleErrors = {};
+    let index = 0;
     const idTracker = new Map();
 
-    const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const fileType =
-        document.documentElement.nodeName === 'iati-activities' ? 'activities' : 'organisations';
     const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
 
-    // get child elements to loop over
-    const elements = document.documentElement.getElementsByTagName(
-        fileDefinition[fileType].subRoot
+    const processActivity = () =>
+        new Transform({
+            transform(chunk, enc, next) {
+                let newSchemaErrors = [];
+
+                // build single activity or org document
+                const singleElementDoc = new DOMParser().parseFromString(
+                    chunk.toString(),
+                    'text/xml'
+                );
+
+                // parse identifier and title
+                let identifier =
+                    xpath(
+                        `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].identifier})`,
+                        singleElementDoc
+                    ) || 'noIdentifier';
+                const title =
+                    xpath(
+                        `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].titleLocation})`,
+                        singleElementDoc
+                    ) || '';
+
+                // track and duplicate check identifier
+                idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
+                if (idTracker.get(identifier) > 1) {
+                    // duplicate identifier, drop a file level error
+                    ruleErrors.file = {
+                        identifier: 'file',
+                        title: 'File level errors',
+                        errors: [
+                            {
+                                id: '1.1.2',
+                                severity: 'error',
+                                category: 'identifiers',
+                                message: `The activity identifier must be unique for each activity.`,
+                                context: [
+                                    {
+                                        text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
+                                    },
+                                ],
+                            },
+                        ],
+                    };
+                    identifier = `${identifier}(${idTracker.get(identifier)})`;
+                    idTracker.set(identifier, idTracker.get(identifier) + 1);
+                }
+
+                // validate against iati schema
+                if (schema) {
+                    newSchemaErrors = validateSchema(
+                        singleElementDoc,
+                        schema,
+                        identifier,
+                        title,
+                        showDetails,
+                        singleElementDoc.lineNumber
+                    );
+                    schemaErrors = [...schemaErrors, ...newSchemaErrors];
+                }
+
+                // add element metadata
+                if (showElementMeta) {
+                    elementsMeta[fileType].push({
+                        identifier,
+                        valid: newSchemaErrors.length === 0,
+                        index,
+                    });
+                }
+
+                // validate against ruleset
+                const errors = testRuleset(ruleset, singleElementDoc, idSets).reduce(
+                    (acc, result) => {
+                        if (result.result === false) {
+                            acc.push(standardiseResultFormat(result, showDetails));
+                        }
+                        return acc;
+                    },
+                    []
+                );
+
+                if (errors.length > 0) {
+                    ruleErrors[identifier] = { identifier, title, errors };
+                }
+                index += 1;
+                next();
+            },
+        });
+
+    await pipeline(
+        Readable.from(xml),
+        splitXMLTransform(fileType, fileDefinition[fileType].subRoot),
+        processActivity()
     );
-    const numElements = elements.length;
 
     // if no iati child elements found, evaluate schema errors at file level
-    if (numElements === 0) {
+    if (schema && index === 0) {
+        const document = new DOMParser().parseFromString(xml, 'text/xml');
         schemaErrors = [
             ...schemaErrors,
             ...validateSchema(document, schema, 'file', 'File level errors', showDetails),
         ];
     }
 
-    // get root element alone
-    const rootText = getRootString(document);
-
-    for (let index = 0; index < numElements; index += 1) {
-        const element = elements[index];
-        let newSchemaErrors = [];
-
-        // build single activity or org document
-        const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
-        singleElementDoc.firstChild.appendChild(element);
-
-        // parse identifier and title
-        let identifier =
-            xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
-        const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
-
-        // track and duplicate check identifier
-        idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
-        if (idTracker.get(identifier) > 1) {
-            // duplicate identifier, drop a file level error
-            ruleErrors.file = {
-                identifier: 'file',
-                title: 'File level errors',
-                errors: [
-                    {
-                        id: '1.1.2',
-                        severity: 'error',
-                        category: 'identifiers',
-                        message: `The activity identifier must be unique for each activity.`,
-                        context: [
-                            {
-                                text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
-                            },
-                        ],
-                    },
-                ],
-            };
-            identifier = `${identifier}(${idTracker.get(identifier)})`;
-            idTracker.set(identifier, idTracker.get(identifier) + 1);
-        }
-
-        // validate against iati schema
-        if (schema) {
-            newSchemaErrors = validateSchema(
-                singleElementDoc,
-                schema,
-                identifier,
-                title,
-                showDetails,
-                element.lineNumber
-            );
-            schemaErrors = [...schemaErrors, ...newSchemaErrors];
-        }
-
-        // add element metadata
-        if (showElementMeta) {
-            elementsMeta[fileType].push({
-                identifier,
-                valid: newSchemaErrors.length === 0,
-                index,
-            });
-        }
-
-        // validate against ruleset
-        const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
-            if (result.result === false) {
-                acc.push(standardiseResultFormat(result, showDetails));
-            }
-            return acc;
-        }, []);
-
-        if (errors.length > 0) {
-            ruleErrors[identifier] = { identifier, title, errors };
-        }
-    }
     return { ruleErrors, schemaErrors, elementsMeta };
 };
+
+module.exports = { validateIATI, testRuleset, allRulesResult };

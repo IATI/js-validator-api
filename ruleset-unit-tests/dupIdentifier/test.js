@@ -14,7 +14,9 @@ describe('dupIdentifier rules', () => {
         const xml = (await fs.readFile(`${__dirname}/test-files/3act_good.xml`)).toString();
 
         // file level errors
-        expect(Object.keys((await validateIATI(ruleSet, xml)).ruleErrors).length).to.eql(0);
+        expect(
+            Object.keys((await validateIATI(ruleSet, xml, 'iati-activities')).ruleErrors).length
+        ).to.eql(0);
     });
 
     it(`Rule ${rule} for file 3act_bad.xml should return a file level error`, async () => {
@@ -22,6 +24,8 @@ describe('dupIdentifier rules', () => {
         const xml = (await fs.readFile(`${__dirname}/test-files/3act_bad.xml`)).toString();
 
         // file level errors
-        expect((await validateIATI(ruleSet, xml)).ruleErrors).to.have.property('file');
+        expect((await validateIATI(ruleSet, xml, 'iati-activities')).ruleErrors).to.have.property(
+            'file'
+        );
     });
 });
