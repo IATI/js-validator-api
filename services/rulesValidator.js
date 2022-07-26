@@ -1,4 +1,4 @@
-const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
+const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
@@ -670,8 +670,8 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
-const validateSchema = (document, schema, identifier, title, showDetails, lineOffset = 1) => {
-    const xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(document));
+const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 1) => {
+    const xmlDoc = libxml.parseXml(xmlString);
 
     if (!xmlDoc.validate(schema)) {
         const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
@@ -786,12 +786,10 @@ const validateIATI = async (
         new Transform({
             transform(chunk, enc, next) {
                 let newSchemaErrors = [];
+                const docString = chunk.toString();
 
                 // build single activity or org document
-                const singleElementDoc = new DOMParser().parseFromString(
-                    chunk.toString(),
-                    'text/xml'
-                );
+                const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
 
                 // parse identifier and title
                 let identifier =
@@ -833,7 +831,7 @@ const validateIATI = async (
                 // validate against iati schema
                 if (schema) {
                     newSchemaErrors = validateSchema(
-                        singleElementDoc,
+                        docString,
                         schema,
                         identifier,
                         title,
@@ -879,10 +877,9 @@ const validateIATI = async (
 
     // if no iati child elements found, evaluate schema errors at file level
     if (schema && index === 0) {
-        const document = new DOMParser().parseFromString(xml, 'text/xml');
         schemaErrors = [
             ...schemaErrors,
-            ...validateSchema(document, schema, 'file', 'File level errors', showDetails),
+            ...validateSchema(xml, schema, 'file', 'File level errors', showDetails),
         ];
     }
 
