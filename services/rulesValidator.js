@@ -670,7 +670,7 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
-const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 1) => {
+const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 0) => {
     const xmlDoc = libxml.parseXml(xmlString);
 
     if (!xmlDoc.validate(schema)) {
@@ -678,7 +678,7 @@ const validateSchema = (xmlString, schema, identifier, title, showDetails, lineO
             let errContext;
             const errorDetail = error;
             if ('line' in errorDetail) {
-                errorDetail.line = errorDetail.line + lineOffset - 1;
+                errorDetail.line += lineOffset;
                 errContext = `At line: ${errorDetail.line}`;
             }
             if (!_.has(acc, error.message)) {
@@ -766,6 +766,18 @@ const splitXMLTransform = (root, elementName) => {
     });
 };
 
+// get line number of starting <iati-activity or <iati-organisation element
+const getLineStart = (xml, subElement) => {
+    const chunk = Buffer.from(xml.slice(0, xml.indexOf(`<${subElement}`)));
+    let idx = -1;
+    let lineCount = -1; // Because the loop will run once for idx=-1
+    do {
+        idx = chunk.indexOf(10, idx + 1);
+        lineCount += 1;
+    } while (idx !== -1);
+    return lineCount;
+};
+
 const validateIATI = async (
     ruleset,
     xml,
@@ -778,6 +790,8 @@ const validateIATI = async (
     let schemaErrors = [];
     const ruleErrors = {};
     let index = 0;
+    let lineCount = getLineStart(xml, fileDefinition[fileType].subRoot);
+    console.log(`Start lineCount: ${lineCount}`);
     const idTracker = new Map();
 
     const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
@@ -785,11 +799,16 @@ const validateIATI = async (
     const processActivity = () =>
         new Transform({
             transform(chunk, enc, next) {
+                const offsetBuff = Buffer.concat([Buffer.alloc(lineCount, 10), chunk]);
                 let newSchemaErrors = [];
                 const docString = chunk.toString();
+                const docStringOffset = offsetBuff.toString();
 
                 // build single activity or org document
-                const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
+                const singleElementDoc = new DOMParser().parseFromString(
+                    docStringOffset,
+                    'text/xml'
+                );
 
                 // parse identifier and title
                 let identifier =
@@ -836,7 +855,7 @@ const validateIATI = async (
                         identifier,
                         title,
                         showDetails,
-                        singleElementDoc.lineNumber
+                        lineCount
                     );
                     schemaErrors = [...schemaErrors, ...newSchemaErrors];
                 }
@@ -851,6 +870,7 @@ const validateIATI = async (
                 }
 
                 // validate against ruleset
+                // TODO: needs to take offset for lineNumber, to get lineNumber correct in errors...
                 const errors = testRuleset(ruleset, singleElementDoc, idSets).reduce(
                     (acc, result) => {
                         if (result.result === false) {
@@ -864,7 +884,14 @@ const validateIATI = async (
                 if (errors.length > 0) {
                     ruleErrors[identifier] = { identifier, title, errors };
                 }
+                // increment index and line count
                 index += 1;
+                let idx = -1;
+                do {
+                    idx = chunk.indexOf(10, idx + 1);
+                    lineCount += 1;
+                } while (idx !== -1);
+
                 next();
             },
         });
