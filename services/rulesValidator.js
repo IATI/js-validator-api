@@ -56,11 +56,12 @@ const getRuleMethodName = (ruleName) => {
 };
 
 class Rules {
-    constructor(element, oneCase, idSets) {
+    constructor(element, oneCase, idSets, lineNumberOffset = 0) {
         this.element = element;
         this.idSets = idSets;
         this.failContext = [];
         this.caseContext = {};
+        this.lineNumberOffset = lineNumberOffset;
         if ('paths' in oneCase) {
             this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
@@ -96,7 +97,7 @@ class Rules {
                             attributes,
                             name: path.nodeName,
                             value: getText(path),
-                            lineNumber: path.lineNumber,
+                            lineNumber: path.lineNumber + lineNumberOffset,
                             columnNumber: path.columnNumber,
                             text,
                         };
@@ -113,7 +114,7 @@ class Rules {
                             attributes: getAttributes(node),
                             name: node.nodeName,
                             value: getText(node),
-                            lineNumber: node.lineNumber,
+                            lineNumber: node.lineNumber + lineNumberOffset,
                             columnNumber: node.columnNumber,
                         }));
                     }
@@ -148,7 +149,9 @@ class Rules {
         let text;
         const parentNode = getParentNode(node);
         const parentNodeName = parentNode.nodeName;
-        const { nodeName: element, lineNumber, columnNumber } = node;
+        const { nodeName: element, columnNumber } = node;
+        let { lineNumber } = node;
+        lineNumber += this.lineNumberOffset;
         const value = getText(node);
         if (['budget', 'planned-disbursement'].includes(parentNodeName)) {
             const startDate = xpath('string(period-start/@iso-date)', parentNode);
@@ -295,7 +298,7 @@ class Rules {
             if (parsedDate.toString() !== 'Invalid Date')
                 return {
                     parsedDate,
-                    lineNumber: dateElements[0].lineNumber,
+                    lineNumber: dateElements[0].lineNumber + this.lineNumberOffset,
                     columnNumber: dateElements[0].columnNumber,
                 };
         }
@@ -399,7 +402,7 @@ class Rules {
 }
 
 // Tests a specific rule type for a specific case.
-const testRule = (contextXpath, element, rule, oneCase, idSets) => {
+const testRule = (contextXpath, element, rule, oneCase, idSets, lineNumberOffset = 0) => {
     let result;
     let caseContext;
     let failContext;
@@ -408,7 +411,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = 'No Condition Match';
     } else {
-        let ruleObject = new Rules(element, oneCase, idSets);
+        let ruleObject = new Rules(element, oneCase, idSets, lineNumberOffset);
         if (ruleObject.idCondition === false) {
             result = 'No ID Condition Match';
         } else {
@@ -427,7 +430,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
         result,
         xpathContext: {
             xpath: contextXpath,
-            lineNumber: element.lineNumber,
+            lineNumber: element.lineNumber + lineNumberOffset,
             columnNumber: element.columnNumber,
         },
         ruleName: ruleName || rule,
@@ -479,7 +482,7 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
         oneCase,
     }
 */
-const testRuleset = (ruleset, xml, idSets) => {
+const testRuleset = (ruleset, xml, idSets, lineCount = 0) => {
     let document;
     if (typeof xml === 'string') {
         document = new DOMParser().parseFromString(xml);
@@ -497,7 +500,9 @@ const testRuleset = (ruleset, xml, idSets) => {
                             testRuleLoop(contextXpath, element, oneCase, idSets)
                         );
                     } else {
-                        result.push(testRule(contextXpath, element, rule, oneCase, idSets));
+                        result.push(
+                            testRule(contextXpath, element, rule, oneCase, idSets, lineCount)
+                        );
                     }
                 });
             });
@@ -791,7 +796,6 @@ const validateIATI = async (
     const ruleErrors = {};
     let index = 0;
     let lineCount = getLineStart(xml, fileDefinition[fileType].subRoot);
-    console.log(`Start lineCount: ${lineCount}`);
     const idTracker = new Map();
 
     const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
@@ -799,16 +803,11 @@ const validateIATI = async (
     const processActivity = () =>
         new Transform({
             transform(chunk, enc, next) {
-                const offsetBuff = Buffer.concat([Buffer.alloc(lineCount, 10), chunk]);
                 let newSchemaErrors = [];
                 const docString = chunk.toString();
-                const docStringOffset = offsetBuff.toString();
 
                 // build single activity or org document
-                const singleElementDoc = new DOMParser().parseFromString(
-                    docStringOffset,
-                    'text/xml'
-                );
+                const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
 
                 // parse identifier and title
                 let identifier =
@@ -870,8 +869,8 @@ const validateIATI = async (
                 }
 
                 // validate against ruleset
-                // TODO: needs to take offset for lineNumber, to get lineNumber correct in errors...
-                const errors = testRuleset(ruleset, singleElementDoc, idSets).reduce(
+                // TODO: needs to take offset for lineNumber, to get lineNumber correct in errors.
+                const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
                     (acc, result) => {
                         if (result.result === false) {
                             acc.push(standardiseResultFormat(result, showDetails));
