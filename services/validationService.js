@@ -136,9 +136,12 @@ exports.validate = async (context, req) => {
             supportedVersion: '',
             isIati: '',
             fileInfoTime: '',
+            fileSchemaTime: '',
             codelistTime: '',
+            ruleTime: '',
             ruleAndSchemaTime: '',
             exitCategory: '',
+            schemaErrorsPresent: '',
         };
 
         // Metric: File Size (MiB)
@@ -180,6 +183,7 @@ exports.validate = async (context, req) => {
             };
         }
 
+        let xmlDoc;
         try {
             ({
                 fileType: state.fileType,
@@ -187,6 +191,7 @@ exports.validate = async (context, req) => {
                 generatedDateTime: state.generatedDateTime,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
+                xmlDoc,
             } = getFileInformation(body));
         } catch (error) {
             let errContext;
@@ -287,6 +292,12 @@ exports.validate = async (context, req) => {
             return;
         }
 
+        // File level Schema Check
+        const fileSchemaStart = getStartTime();
+        state.schemaErrorsPresent = !xmlDoc.validate(getSchema(state.fileType, state.iatiVersion));
+        xmlDoc = null;
+        state.fileSchemaTime = getElapsedTime(fileSchemaStart);
+
         // Codelist Validation
         const codelistStart = getStartTime();
 
@@ -308,13 +319,20 @@ exports.validate = async (context, req) => {
             body,
             state.fileType,
             idSets,
-            getSchema(state.fileType, state.iatiVersion),
+            state.schemaErrorsPresent ? getSchema(state.fileType, state.iatiVersion) : '',
             showDetails,
             showElementMeta
         );
 
-        state.ruleAndSchemaTime = getElapsedTime(ruleStart);
-        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleAndSchemaTime });
+        if (state.schemaErrorsPresent) {
+            state.ruleAndSchemaTime = getElapsedTime(ruleStart);
+        } else {
+            state.ruleTime = getElapsedTime(ruleStart);
+        }
+        context.log({
+            name: `Ruleset ${state.schemaErrorsPresent ? 'and Schema ' : ''}Validate Time (s)`,
+            value: state.ruleAndSchemaTime,
+        });
 
         // combine all types of errors
         const combinedErrors = [
