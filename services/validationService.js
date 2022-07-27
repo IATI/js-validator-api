@@ -139,6 +139,7 @@ exports.validate = async (context, req) => {
             codelistTime: '',
             ruleAndSchemaTime: '',
             exitCategory: '',
+            schemaErrorsPresent: '',
         };
 
         // Metric: File Size (MiB)
@@ -180,6 +181,7 @@ exports.validate = async (context, req) => {
             };
         }
 
+        let xmlDoc;
         try {
             ({
                 fileType: state.fileType,
@@ -187,6 +189,7 @@ exports.validate = async (context, req) => {
                 generatedDateTime: state.generatedDateTime,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
+                xmlDoc,
             } = getFileInformation(body));
         } catch (error) {
             let errContext;
@@ -287,6 +290,10 @@ exports.validate = async (context, req) => {
             return;
         }
 
+        // File level Schema Check
+        state.schemaErrorsPresent = !xmlDoc.validate(getSchema(state.fileType, state.iatiVersion));
+        xmlDoc = null;
+
         // Codelist Validation
         const codelistStart = getStartTime();
 
@@ -308,7 +315,7 @@ exports.validate = async (context, req) => {
             body,
             state.fileType,
             idSets,
-            getSchema(state.fileType, state.iatiVersion),
+            state.schemaErrorsPresent ? getSchema(state.fileType, state.iatiVersion) : '',
             showDetails,
             showElementMeta
         );
