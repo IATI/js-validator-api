@@ -1,9 +1,11 @@
-const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
+const { DOMParser } = require('@xmldom/xmldom');
 const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 const _ = require('underscore');
 const compareAsc = require('date-fns/compareAsc');
 const differenceInDays = require('date-fns/differenceInDays');
 const libxml = require('libxmljs2');
+const { Readable, Transform } = require('stream');
+const { pipeline } = require('stream/promises');
 
 const ruleNameObj = require('./ruleNameMap.json');
 
@@ -54,11 +56,12 @@ const getRuleMethodName = (ruleName) => {
 };
 
 class Rules {
-    constructor(element, oneCase, idSets) {
+    constructor(element, oneCase, idSets, lineNumberOffset = 0) {
         this.element = element;
         this.idSets = idSets;
         this.failContext = [];
         this.caseContext = {};
+        this.lineNumberOffset = lineNumberOffset;
         if ('paths' in oneCase) {
             this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
@@ -94,7 +97,7 @@ class Rules {
                             attributes,
                             name: path.nodeName,
                             value: getText(path),
-                            lineNumber: path.lineNumber,
+                            lineNumber: path.lineNumber + lineNumberOffset,
                             columnNumber: path.columnNumber,
                             text,
                         };
@@ -111,7 +114,7 @@ class Rules {
                             attributes: getAttributes(node),
                             name: node.nodeName,
                             value: getText(node),
-                            lineNumber: node.lineNumber,
+                            lineNumber: node.lineNumber + lineNumberOffset,
                             columnNumber: node.columnNumber,
                         }));
                     }
@@ -146,7 +149,9 @@ class Rules {
         let text;
         const parentNode = getParentNode(node);
         const parentNodeName = parentNode.nodeName;
-        const { nodeName: element, lineNumber, columnNumber } = node;
+        const { nodeName: element, columnNumber } = node;
+        let { lineNumber } = node;
+        lineNumber += this.lineNumberOffset;
         const value = getText(node);
         if (['budget', 'planned-disbursement'].includes(parentNodeName)) {
             const startDate = xpath('string(period-start/@iso-date)', parentNode);
@@ -293,7 +298,7 @@ class Rules {
             if (parsedDate.toString() !== 'Invalid Date')
                 return {
                     parsedDate,
-                    lineNumber: dateElements[0].lineNumber,
+                    lineNumber: dateElements[0].lineNumber + this.lineNumberOffset,
                     columnNumber: dateElements[0].columnNumber,
                 };
         }
@@ -397,7 +402,7 @@ class Rules {
 }
 
 // Tests a specific rule type for a specific case.
-const testRule = (contextXpath, element, rule, oneCase, idSets) => {
+const testRule = (contextXpath, element, rule, oneCase, idSets, lineNumberOffset = 0) => {
     let result;
     let caseContext;
     let failContext;
@@ -406,7 +411,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
         result = 'No Condition Match';
     } else {
-        let ruleObject = new Rules(element, oneCase, idSets);
+        let ruleObject = new Rules(element, oneCase, idSets, lineNumberOffset);
         if (ruleObject.idCondition === false) {
             result = 'No ID Condition Match';
         } else {
@@ -425,7 +430,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
         result,
         xpathContext: {
             xpath: contextXpath,
-            lineNumber: element.lineNumber,
+            lineNumber: element.lineNumber + lineNumberOffset,
             columnNumber: element.columnNumber,
         },
         ruleName: ruleName || rule,
@@ -477,7 +482,7 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
         oneCase,
     }
 */
-exports.testRuleset = (ruleset, xml, idSets) => {
+const testRuleset = (ruleset, xml, idSets, lineCount = 0) => {
     let document;
     if (typeof xml === 'string') {
         document = new DOMParser().parseFromString(xml);
@@ -495,7 +500,9 @@ exports.testRuleset = (ruleset, xml, idSets) => {
                             testRuleLoop(contextXpath, element, oneCase, idSets)
                         );
                     } else {
-                        result.push(testRule(contextXpath, element, rule, oneCase, idSets));
+                        result.push(
+                            testRule(contextXpath, element, rule, oneCase, idSets, lineCount)
+                        );
                     }
                 });
             });
@@ -505,8 +512,8 @@ exports.testRuleset = (ruleset, xml, idSets) => {
 };
 
 // Return true if all results are true, return false if any are false
-exports.allRulesResult = (ruleset, xml) => {
-    const results = this.testRuleset(ruleset, xml);
+const allRulesResult = (ruleset, xml) => {
+    const results = testRuleset(ruleset, xml);
     if (results.length === 0) {
         return 'No Rule Match';
     }
@@ -668,15 +675,15 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
-const validateSchema = (document, schema, identifier, title, showDetails, lineOffset = 1) => {
-    const xmlDoc = libxml.parseXml(new XMLSerializer().serializeToString(document));
+const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 0) => {
+    const xmlDoc = libxml.parseXml(xmlString);
 
     if (!xmlDoc.validate(schema)) {
         const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
             let errContext;
             const errorDetail = error;
             if ('line' in errorDetail) {
-                errorDetail.line = errorDetail.line + lineOffset - 1;
+                errorDetail.line += lineOffset;
                 errContext = `At line: ${errorDetail.line}`;
             }
             if (!_.has(acc, error.message)) {
@@ -706,35 +713,80 @@ const validateSchema = (document, schema, identifier, title, showDetails, lineOf
     return [];
 };
 
-const getRootString = (document) => {
-    const { nodeName, attributes } = document.documentElement;
-    const numAttr = attributes.length;
-    const attrs = [];
-    for (let index = 0; index < numAttr; index += 1) {
-        const attr = document.documentElement.attributes[index];
-        attrs.push(`${attr.nodeName}="${attr.nodeValue}"`);
-    }
-    return `<${nodeName} ${attrs.join(' ')}/>`;
-};
-
 const fileDefinition = {
-    activities: {
-        root: 'iati-activities',
+    'iati-activities': {
         subRoot: 'iati-activity',
         identifier: 'iati-identifier',
         titleLocation: 'title/narrative',
     },
-    organisations: {
-        root: 'iati-organisations',
+    'iati-organisations': {
         subRoot: 'iati-organisation',
         identifier: 'organisation-identifier',
         titleLocation: 'name/narrative',
     },
 };
 
-exports.validateIATI = async (
+const splitXMLTransform = (root, elementName) => {
+    let rootOpen = '';
+    const rootClose = `</${root}>`;
+    const open = `<${elementName}`;
+    const close = `</${elementName}>`;
+    let doc = '';
+    return new Transform({
+        transform(chunk, enc, next) {
+            doc += chunk.toString();
+            if (rootOpen === '') {
+                const rootOpenIndex = doc.indexOf(`<${root}`);
+                const rootCloseIndex = doc.indexOf(`>`, rootOpenIndex);
+                if (rootOpenIndex === -1 || rootCloseIndex === -1) {
+                    next();
+                    return;
+                }
+                rootOpen = doc.slice(rootOpenIndex, rootCloseIndex + 1);
+                doc = doc.slice(rootCloseIndex + 1);
+            }
+
+            let openIndex = doc.indexOf(open);
+            let closeIndex = doc.indexOf(close);
+            while (openIndex !== -1 && closeIndex !== -1) {
+                // trim before <elementName
+                doc = doc.slice(openIndex);
+
+                // adjust indexes
+                closeIndex -= openIndex;
+                openIndex = 0;
+
+                // push single activity, wrapped in root
+                this.push(`${rootOpen}${doc.slice(0, closeIndex + close.length)}${rootClose}`);
+
+                // remove activity that's been pushed
+                doc = doc.slice(closeIndex + close.length);
+
+                // adjust indexes
+                openIndex = doc.indexOf(open);
+                closeIndex = doc.indexOf(close);
+            }
+            next();
+        },
+    });
+};
+
+// get line number of starting <iati-activity or <iati-organisation element
+const getLineStart = (xml, subElement) => {
+    const chunk = Buffer.from(xml.slice(0, xml.indexOf(`<${subElement}`)));
+    let idx = -1;
+    let lineCount = -1; // Because the loop will run once for idx=-1
+    do {
+        idx = chunk.indexOf(10, idx + 1);
+        lineCount += 1;
+    } while (idx !== -1);
+    return lineCount;
+};
+
+const validateIATI = async (
     ruleset,
     xml,
+    fileType,
     idSets,
     schema,
     showDetails = false,
@@ -742,101 +794,122 @@ exports.validateIATI = async (
 ) => {
     let schemaErrors = [];
     const ruleErrors = {};
+    let index = 0;
+    let lineCount = getLineStart(xml, fileDefinition[fileType].subRoot);
     const idTracker = new Map();
 
-    const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const fileType =
-        document.documentElement.nodeName === 'iati-activities' ? 'activities' : 'organisations';
     const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
 
-    // get child elements to loop over
-    const elements = document.documentElement.getElementsByTagName(
-        fileDefinition[fileType].subRoot
+    const processActivity = () =>
+        new Transform({
+            transform(chunk, enc, next) {
+                let newSchemaErrors = [];
+                const docString = chunk.toString();
+
+                // build single activity or org document
+                const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
+
+                // parse identifier and title
+                let identifier =
+                    xpath(
+                        `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].identifier})`,
+                        singleElementDoc
+                    ) || 'noIdentifier';
+                const title =
+                    xpath(
+                        `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].titleLocation})`,
+                        singleElementDoc
+                    ) || '';
+
+                // track and duplicate check identifier
+                idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
+                if (idTracker.get(identifier) > 1) {
+                    // duplicate identifier, drop a file level error
+                    ruleErrors.file = {
+                        identifier: 'file',
+                        title: 'File level errors',
+                        errors: [
+                            {
+                                id: '1.1.2',
+                                severity: 'error',
+                                category: 'identifiers',
+                                message: `The activity identifier must be unique for each activity.`,
+                                context: [
+                                    {
+                                        text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
+                                    },
+                                ],
+                            },
+                        ],
+                    };
+                    identifier = `${identifier}(${idTracker.get(identifier)})`;
+                    idTracker.set(identifier, idTracker.get(identifier) + 1);
+                }
+
+                // validate against iati schema
+                if (schema) {
+                    newSchemaErrors = validateSchema(
+                        docString,
+                        schema,
+                        identifier,
+                        title,
+                        showDetails,
+                        lineCount
+                    );
+                    schemaErrors = [...schemaErrors, ...newSchemaErrors];
+                }
+
+                // add element metadata
+                if (showElementMeta) {
+                    elementsMeta[fileType].push({
+                        identifier,
+                        valid: newSchemaErrors.length === 0,
+                        index,
+                    });
+                }
+
+                // validate against ruleset
+                // TODO: needs to take offset for lineNumber, to get lineNumber correct in errors.
+                const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
+                    (acc, result) => {
+                        if (result.result === false) {
+                            acc.push(standardiseResultFormat(result, showDetails));
+                        }
+                        return acc;
+                    },
+                    []
+                );
+
+                if (errors.length > 0) {
+                    ruleErrors[identifier] = { identifier, title, errors };
+                }
+                // increment index and line count
+                index += 1;
+                let idx = -1;
+                do {
+                    idx = chunk.indexOf(10, idx + 1);
+                    lineCount += 1;
+                } while (idx !== -1);
+
+                next();
+            },
+        });
+
+    await pipeline(
+        Readable.from(xml),
+        splitXMLTransform(fileType, fileDefinition[fileType].subRoot),
+        processActivity()
     );
-    const numElements = elements.length;
 
     // if no iati child elements found, evaluate schema errors at file level
-    if (numElements === 0) {
+    if (schema && index === 0) {
         schemaErrors = [
             ...schemaErrors,
-            ...validateSchema(document, schema, 'file', 'File level errors', showDetails),
+            ...validateSchema(xml, schema, 'file', 'File level errors', showDetails),
         ];
     }
 
-    // get root element alone
-    const rootText = getRootString(document);
-
-    for (let index = 0; index < numElements; index += 1) {
-        const element = elements[index];
-        let newSchemaErrors = [];
-
-        // build single activity or org document
-        const singleElementDoc = new DOMParser().parseFromString(rootText, 'text/xml');
-        singleElementDoc.firstChild.appendChild(element);
-
-        // parse identifier and title
-        let identifier =
-            xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
-        const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
-
-        // track and duplicate check identifier
-        idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
-        if (idTracker.get(identifier) > 1) {
-            // duplicate identifier, drop a file level error
-            ruleErrors.file = {
-                identifier: 'file',
-                title: 'File level errors',
-                errors: [
-                    {
-                        id: '1.1.2',
-                        severity: 'error',
-                        category: 'identifiers',
-                        message: `The activity identifier must be unique for each activity.`,
-                        context: [
-                            {
-                                text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
-                            },
-                        ],
-                    },
-                ],
-            };
-            identifier = `${identifier}(${idTracker.get(identifier)})`;
-            idTracker.set(identifier, idTracker.get(identifier) + 1);
-        }
-
-        // validate against iati schema
-        if (schema) {
-            newSchemaErrors = validateSchema(
-                singleElementDoc,
-                schema,
-                identifier,
-                title,
-                showDetails,
-                element.lineNumber
-            );
-            schemaErrors = [...schemaErrors, ...newSchemaErrors];
-        }
-
-        // add element metadata
-        if (showElementMeta) {
-            elementsMeta[fileType].push({
-                identifier,
-                valid: newSchemaErrors.length === 0,
-                index,
-            });
-        }
-
-        // validate against ruleset
-        const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
-            if (result.result === false) {
-                acc.push(standardiseResultFormat(result, showDetails));
-            }
-            return acc;
-        }, []);
-
-        if (errors.length > 0) {
-            ruleErrors[identifier] = { identifier, title, errors };
-        }
-    }
     return { ruleErrors, schemaErrors, elementsMeta };
 };
+
+module.exports = { validateIATI, testRuleset, allRulesResult };

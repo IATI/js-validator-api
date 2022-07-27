@@ -857,11 +857,17 @@
                                     "pm.test(\"Line number is correct in schema error details for activity that is not first\", function () {",
                                     "    pm.expect(pm.response.text()).to.include(`\"line\":36`);",
                                     "});",
+                                    "pm.test(\"Line number is correct in rule error details for activity that is not first\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(`For <narrative> 'Activity WITH Schema Error' at line: 27, column: 7`);",
+                                    "});",
+                                    "pm.test(\"Line number is correct in rule error details for activity that is  first\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(`For <narrative> 'Activity No Schema Error' at line: 9, column: 7`);",
+                                    "});",
                                     "pm.test(\"activities array shows valid = true for activity without Schema Error\", function () {",
-                                    "    pm.expect(jsonData.activities.filter(obj => obj.identifier === \"ID-1\")[0].valid).to.be.true;",
+                                    "    pm.expect(jsonData['iati-activities'].filter(obj => obj.identifier === \"ID-1\")[0].valid).to.be.true;",
                                     "});",
                                     "pm.test(\"activities array shows valid = false for activity WITH Schema Error\", function () {",
-                                    "    pm.expect(jsonData.activities.filter(obj => obj.identifier === \"ID-2\")[0].valid).to.be.false;",
+                                    "    pm.expect(jsonData['iati-activities'].filter(obj => obj.identifier === \"ID-2\")[0].valid).to.be.false;",
                                     "});"
                                 ],
                                 "type": "text/javascript"
@@ -903,6 +909,11 @@
                                 {
                                     "key": "meta",
                                     "value": "true"
+                                },
+                                {
+                                    "key": "group",
+                                    "value": "false",
+                                    "disabled": true
                                 }
                             ]
                         }
@@ -1481,8 +1492,8 @@
                                     "pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains identifier error 1.14.8\", function () {",
                                     "    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('1.14.8');",
                                     "});",
-                                    "pm.test(\"Response containes expected organisations object\", function () {",
-                                    "    pm.expect(jsonData.activities[0]).to.eql({",
+                                    "pm.test(\"Response containes expected activities object\", function () {",
+                                    "    pm.expect(jsonData['iati-activities'][0]).to.eql({",
                                     "            \"identifier\": \"AA-AAA-123456789-ABC123\",",
                                     "            \"valid\": true,",
                                     "            \"index\": 0",
@@ -1562,7 +1573,7 @@
                                     "    pm.expect(jsonData.errors).to.eql([]);",
                                     "});",
                                     "pm.test(\"Response containes expected organisations object\", function () {",
-                                    "    pm.expect(jsonData.organisations[0]).to.eql({",
+                                    "    pm.expect(jsonData['iati-organisations'][0]).to.eql({",
                                     "            \"identifier\": \"NP-SWC-1234\",",
                                     "            \"valid\": true,",
                                     "            \"index\": 0",

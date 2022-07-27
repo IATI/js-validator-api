@@ -306,6 +306,7 @@ exports.validate = async (context, req) => {
         const { ruleErrors, schemaErrors, elementsMeta } = await validateIATI(
             getRuleset(state.iatiVersion),
             body,
+            state.fileType,
             idSets,
             getSchema(state.fileType, state.iatiVersion),
             showDetails,

@@ -224,7 +224,7 @@ exports.getSchema = (fileType, version) => {
     ) {
         return schemas[`${fileType}-${version}`];
     }
-    throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
+    throw new Error(`Unable to retrieve ${fileType} schema for version ${version}`);
 };
 
 let orgIdPrefixInfo = '';
