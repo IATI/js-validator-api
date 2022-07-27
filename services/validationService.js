@@ -136,7 +136,9 @@ exports.validate = async (context, req) => {
             supportedVersion: '',
             isIati: '',
             fileInfoTime: '',
+            fileSchemaTime: '',
             codelistTime: '',
+            ruleTime: '',
             ruleAndSchemaTime: '',
             exitCategory: '',
             schemaErrorsPresent: '',
@@ -291,8 +293,10 @@ exports.validate = async (context, req) => {
         }
 
         // File level Schema Check
+        const fileSchemaStart = getStartTime();
         state.schemaErrorsPresent = !xmlDoc.validate(getSchema(state.fileType, state.iatiVersion));
         xmlDoc = null;
+        state.fileSchemaTime = getElapsedTime(fileSchemaStart);
 
         // Codelist Validation
         const codelistStart = getStartTime();
@@ -320,8 +324,15 @@ exports.validate = async (context, req) => {
             showElementMeta
         );
 
-        state.ruleAndSchemaTime = getElapsedTime(ruleStart);
-        context.log({ name: 'Ruleset Validate Time (s)', value: state.ruleAndSchemaTime });
+        if (state.schemaErrorsPresent) {
+            state.ruleAndSchemaTime = getElapsedTime(ruleStart);
+        } else {
+            state.ruleTime = getElapsedTime(ruleStart);
+        }
+        context.log({
+            name: `Ruleset ${state.schemaErrorsPresent ? 'and Schema ' : ''}Validate Time (s)`,
+            value: state.ruleAndSchemaTime,
+        });
 
         // combine all types of errors
         const combinedErrors = [
