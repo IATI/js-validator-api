@@ -2460,6 +2460,779 @@
                     "name": "Activities",
                     "item": [
                         {
+                            "name": "line number tests",
+                            "item": [
+                                {
+                                    "name": "iati-multi-act-atLeastOne-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "pm.test(\"Errors Array contains error id 6.11.1\", function () {",
+                                                    "    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('6.11.1');",
+                                                    "});",
+                                                    "",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '6.11.1'))",
+                                                    "pm.test(\"First activity error line number is correct in details\", function () {",
+                                                    "    pm.expect(error1.details.xpathContext.lineNumber).to.eq(3);",
+                                                    "});",
+                                                    "pm.test(\"First activity error line number is correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`For <iati-activity> at line: 3`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '6.11.1'))",
+                                                    "pm.test(\"Second activity error line number is correct in details\", function () {",
+                                                    "    pm.expect(error2.details.xpathContext.lineNumber).to.eq(463);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error line number is correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`For <iati-activity> at line: 463`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-atLeastOne-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-oneOrAll-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "pm.test(\"Errors Array contains error id 4.1.1\", function () {",
+                                                    "    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('4.1.1');",
+                                                    "});",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '4.1.1'))",
+                                                    "pm.test(\"First activity error line number is correct in details\", function () {",
+                                                    "    pm.expect(error1.details.xpathContext.lineNumber).to.eq(5);",
+                                                    "});",
+                                                    "pm.test(\"First activity error line number is correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`For <narrative> 'Organisation name' at line: 13`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '4.1.1'))",
+                                                    "pm.test(\"Second activity error line number is correct in details\", function () {",
+                                                    "    pm.expect(error2.details.xpathContext.lineNumber).to.eq(484);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error line number is correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`For <narrative> 'Organisation name' at line: 492`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-oneOrAll-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?group=false&details=true",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                },
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-dateNow-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '11.1.1'))",
+                                                    "pm.test(\"First activity error line number is correct in xpathContext\", function () {",
+                                                    "    pm.expect(error1.details.xpathContext.lineNumber).to.eq(5);",
+                                                    "});",
+                                                    "pm.test(\"First activity error line number is correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.xpathContext.lineNumber).to.eq(5);",
+                                                    "});",
+                                                    "pm.test(\"First activity error line number is correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`For date 2114-09-10T07:15:37.000Z at line: 5`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '11.1.1'))",
+                                                    "pm.test(\"Second activity error line number is correct in xpathContext\", function () {",
+                                                    "    pm.expect(error2.details.xpathContext.lineNumber).to.eq(466);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error line number is correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.xpathContext.lineNumber).to.eq(466);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error line number is correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`For date 2114-09-10T07:15:37.000Z at line: 466`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-dateNow-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?group=false&details=true",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                },
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-dateOrder-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "pm.test(\"Error Array contains error id 11.1.4, 11.1.2, 11.2.1\", function () {",
+                                                    "    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('11.1.4','11.1.2','11.2.1');",
+                                                    "});",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '11.1.2'))",
+                                                    "pm.test(\"First activity error 11.1.2 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.less.lineNumber).to.eq(66);",
+                                                    "    pm.expect(error1.details.caseContext.more.lineNumber).to.eq(71);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 11.1.2 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`activity-date[@type='1']/@iso-date = '2016-04-15T00:00:00.000Z' at line: 66`);",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`activity-date[@type='3']/@iso-date = '2015-12-31T00:00:00.000Z' at line: 71`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '11.2.1'))",
+                                                    "pm.test(\"Second activity error 11.2.1 line number is correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.less.lineNumber).to.eq(726);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error 11.2.1 line number is correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`transaction/transaction-date/@iso-date = '2112-01-01T00:00:00.000Z' at line: 726`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-dateOrder-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?group=false&details=true",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                },
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-regexMatches-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DA&C-41127-1\" && obj.id === '1.3.13'))",
+                                                    "pm.test(\"First activity error 1.3.13 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.paths[0].lineNumber).to.eq(6);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 1.3.13 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`'XM-DA&C-41127-1' at line: 6`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DA&C-41127-2\" && obj.id === '1.3.13'))",
+                                                    "pm.test(\"First activity error 1.3.13 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.paths[0].lineNumber).to.eq(467);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 1.3.13 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`'XM-DA&C-41127-2' at line: 467`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-regexMatches-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?group=false&details=true",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                },
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-noSpaces-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "pm.test(\"Errors Array contains error id 1.11.1\", function () {",
+                                                    "    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('1.11.1');",
+                                                    "});",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '1.11.1'))",
+                                                    "pm.test(\"First activity error 1.11.1 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.paths[0].lineNumber).to.eq(56);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 1.11.1 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`'XM-DAC-41127 ' at line: 56`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '1.11.1'))",
+                                                    "pm.test(\"Second activity error 1.11.1 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.paths[0].lineNumber).to.eq(517);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error 1.11.1 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`'XM-DAC-41127 ' at line: 517`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-noSpaces-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-strictSum-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '3.4.2'))",
+                                                    "pm.test(\"First activity error 3.4.2 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.paths.map((path) => path.lineNumber)).to.eql([108, 103, 104]);",
+                                                    "});",
+                                                    "",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '3.4.2'))",
+                                                    "pm.test(\"Second activity error 3.4.2 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.paths.map((path) => path.lineNumber)).to.eql([569, 564, 565]);",
+                                                    "});",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-strictSum-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-unique-startsWith-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '1.1.3'))",
+                                                    "pm.test(\"First activity error 1.1.3 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.paths.map((path) => path.lineNumber)).to.eql([12, 8]);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '1.1.21'))",
+                                                    "pm.test(\"First activity error 1.1.21 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.paths[0].lineNumber).to.eq(8);",
+                                                    "    pm.expect(error2.details.caseContext.prefix[0].lineNumber).to.eq(12);",
+                                                    "});",
+                                                    "",
+                                                    "const error3 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '1.1.3'))",
+                                                    "pm.test(\"Second activity error 1.1.3 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error3.details.caseContext.paths.map((path) => path.lineNumber)).to.eql([473, 469]);",
+                                                    "});",
+                                                    "const error4 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '1.1.21'))",
+                                                    "pm.test(\"Second activity error 1.1.21 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error4.details.caseContext.paths[0].lineNumber).to.eq(469);",
+                                                    "    pm.expect(error4.details.caseContext.prefix[0].lineNumber).to.eq(473);",
+                                                    "});",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-unique-startsWith-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-range-ifThen-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '7.9.4'))",
+                                                    "pm.test(\"First activity error 7.9.4 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.paths[0].lineNumber).to.eql(175);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 7.9.4 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain(`For /iati-activities/iati-activity/country-budget-items[@vocabulary = '4']/budget-item/@percentage = '101' at line: 175`);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '12.2.1'))",
+                                                    "pm.test(\"First activity error 12.2.1 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.paths[0].lineNumber).to.eql(175);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 12.2.1 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain(`For /iati-activities/iati-activity/country-budget-items/budget-item/@percentage = '101' at line: 175`);",
+                                                    "});",
+                                                    "",
+                                                    "const error3 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '7.9.4'))",
+                                                    "pm.test(\"Second activity error 7.9.4 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error3.details.caseContext.paths[0].lineNumber).to.eql(629);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error 7.9.4 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error3.context[0].text).to.contain(`For /iati-activities/iati-activity/country-budget-items[@vocabulary = '4']/budget-item/@percentage = '101' at line: 629`);",
+                                                    "});",
+                                                    "const error4 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '12.2.1'))",
+                                                    "pm.test(\"Second activity error 12.2.1 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error4.details.caseContext.paths[0].lineNumber).to.eql(629);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error 12.2.1 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error4.context[0].text).to.contain(`For /iati-activities/iati-activity/country-budget-items/budget-item/@percentage = '101' at line: 629`);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-range-ifThen-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-timeLimit-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '7.5.3'))",
+                                                    "pm.test(\"First activity error 7.5.3 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.start.lineNumber).to.eq(231);",
+                                                    "    pm.expect(error1.details.caseContext.end.lineNumber).to.eq(232);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 7.5.3 line numbers are correct in xpathContext\", function () {",
+                                                    "    pm.expect(error1.details.xpathContext.lineNumber).to.eq(230);",
+                                                    "});",
+                                                    "",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '7.5.3'))",
+                                                    "pm.test(\"First activity error 7.5.3 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.start.lineNumber).to.eq(692);",
+                                                    "    pm.expect(error2.details.caseContext.end.lineNumber).to.eq(693);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 7.5.3 line numbers are correct in xpathContext\", function () {",
+                                                    "    pm.expect(error2.details.xpathContext.lineNumber).to.eq(691);",
+                                                    "});",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-timeLimit-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                },
+                                {
+                                    "name": "iati-multi-act-noMoreThanOne-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-1\" && obj.id === '107.1.2'))",
+                                                    "pm.test(\"First activity error 107.1.2 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.paths.map((path) => path.lineNumber)).to.eql([221,222]);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 107.1.2 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error1.context[0].text).to.contain('line: 221');",
+                                                    "    pm.expect(error1.context[0].text).to.contain('line: 222');",
+                                                    "});",
+                                                    "",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"XM-DAC-41127-2\" && obj.id === '107.1.2'))",
+                                                    "pm.test(\"Second activity error 107.1.2 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.paths.map((path) => path.lineNumber)).to.eql([682,683]);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error 107.1.2 line numbers are correct in context\", function () {",
+                                                    "    pm.expect(error2.context[0].text).to.contain('line: 682');",
+                                                    "    pm.expect(error2.context[0].text).to.contain('line: 683');",
+                                                    "});",
+                                                    ""
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-act-noMoreThanOne-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
+                        {
                             "name": "iati-act-atLeastOne-error",
                             "event": [
                                 {
@@ -3170,6 +3943,80 @@
                 {
                     "name": "Organisations",
                     "item": [
+                        {
+                            "name": "line number tests",
+                            "item": [
+                                {
+                                    "name": "iati-multi-org-betweenDates-error linetest",
+                                    "event": [
+                                        {
+                                            "listen": "test",
+                                            "script": {
+                                                "exec": [
+                                                    "const jsonData = pm.response.json();",
+                                                    "const error1 = jsonData.errors.find(obj => (obj.identifier === \"NP-SWC-1\" && obj.id === '11.3.1'))",
+                                                    "pm.test(\"First activity error 11.3.1 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error1.details.caseContext.start.lineNumber).to.eq(13);",
+                                                    "    pm.expect(error1.details.caseContext.date.lineNumber).to.eq(17);",
+                                                    "    pm.expect(error1.details.caseContext.end.lineNumber).to.eq(14);",
+                                                    "});",
+                                                    "pm.test(\"First activity error 11.3.1 line numbers are correct in failContext\", function () {",
+                                                    "    pm.expect(error1.details.failContext[0].lineNumber).to.eq(17);",
+                                                    "});",
+                                                    "const error2 = jsonData.errors.find(obj => (obj.identifier === \"NP-SWC-2\" && obj.id === '11.3.1'))",
+                                                    "pm.test(\"Second activity error 11.3.1 line numbers are correct in caseContext\", function () {",
+                                                    "    pm.expect(error2.details.caseContext.start.lineNumber).to.eq(32);",
+                                                    "    pm.expect(error2.details.caseContext.date.lineNumber).to.eq(36);",
+                                                    "    pm.expect(error2.details.caseContext.end.lineNumber).to.eq(33);",
+                                                    "});",
+                                                    "pm.test(\"Second activity error 11.3.1 line numbers are correct in failContext\", function () {",
+                                                    "    pm.expect(error2.details.failContext[0].lineNumber).to.eq(36);",
+                                                    "});"
+                                                ],
+                                                "type": "text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "request": {
+                                        "method": "POST",
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/xml",
+                                                "type": "text"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json",
+                                                "type": "text"
+                                            }
+                                        ],
+                                        "body": {
+                                            "mode": "file",
+                                            "file": {
+                                                "src": "iati-multi-org-betweenDates-error.xml"
+                                            }
+                                        },
+                                        "url": {
+                                            "raw": "{{baseURL}}/pub/validate?details=true&group=false",
+                                            "host": ["{{baseURL}}"],
+                                            "path": ["pub", "validate"],
+                                            "query": [
+                                                {
+                                                    "key": "details",
+                                                    "value": "true"
+                                                },
+                                                {
+                                                    "key": "group",
+                                                    "value": "false"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": []
+                                }
+                            ]
+                        },
                         {
                             "name": "iati-org-betweenDates-error",
                             "event": [

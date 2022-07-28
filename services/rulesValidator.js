@@ -440,7 +440,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets, lineNumberOffset
     };
 };
 
-const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
+const testRuleLoop = (contextXpath, element, oneCase, idSets, lineCount = 0) => {
     const results = [];
     _.forEach(oneCase.do, (subCases, subRule) => {
         _.forEach(subCases.cases, (subCase) => {
@@ -460,7 +460,9 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
                         subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val));
                     }
                 });
-                results.push(testRule(contextXpath, element, subRule, subCaseTest, idSets));
+                results.push(
+                    testRule(contextXpath, element, subRule, subCaseTest, idSets, lineCount)
+                );
             });
         });
     });
@@ -497,7 +499,7 @@ const testRuleset = (ruleset, xml, idSets, lineCount = 0) => {
                 theCases.forEach((oneCase) => {
                     if (rule === 'loop') {
                         result = result.concat(
-                            testRuleLoop(contextXpath, element, oneCase, idSets)
+                            testRuleLoop(contextXpath, element, oneCase, idSets, lineCount)
                         );
                     } else {
                         result.push(
@@ -749,6 +751,9 @@ const splitXMLTransform = (root, elementName) => {
             let openIndex = doc.indexOf(open);
             let closeIndex = doc.indexOf(close);
             while (openIndex !== -1 && closeIndex !== -1) {
+                // get space between root or last element
+                const spacer = doc.slice(0, openIndex);
+
                 // trim before <elementName
                 doc = doc.slice(openIndex);
 
@@ -756,10 +761,12 @@ const splitXMLTransform = (root, elementName) => {
                 closeIndex -= openIndex;
                 openIndex = 0;
 
-                // push single activity, wrapped in root
-                this.push(`${rootOpen}${doc.slice(0, closeIndex + close.length)}${rootClose}`);
+                // push single subelement, wrapped in root
+                this.push(
+                    `${rootOpen}${spacer}${doc.slice(0, closeIndex + close.length)}${rootClose}`
+                );
 
-                // remove activity that's been pushed
+                // remove subelement that's been pushed
                 doc = doc.slice(closeIndex + close.length);
 
                 // adjust indexes
@@ -773,7 +780,8 @@ const splitXMLTransform = (root, elementName) => {
 
 // get line number of starting <iati-activity or <iati-organisation element
 const getLineStart = (xml, subElement) => {
-    const chunk = Buffer.from(xml.slice(0, xml.indexOf(`<${subElement}`)));
+    const re = new RegExp(`<${subElement}(\\s|>)`);
+    const chunk = Buffer.from(xml.split(re)[0]);
     let idx = -1;
     let lineCount = -1; // Because the loop will run once for idx=-1
     do {
@@ -805,6 +813,9 @@ const validateIATI = async (
             transform(chunk, enc, next) {
                 let newSchemaErrors = [];
                 const docString = chunk.toString();
+
+                // adjust lineCount to account for added wrapper of root element around each activity
+                lineCount -= getLineStart(docString, fileDefinition[fileType].subRoot);
 
                 // build single activity or org document
                 const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
@@ -869,7 +880,6 @@ const validateIATI = async (
                 }
 
                 // validate against ruleset
-                // TODO: needs to take offset for lineNumber, to get lineNumber correct in errors.
                 const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
                     (acc, result) => {
                         if (result.result === false) {
