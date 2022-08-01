@@ -28,19 +28,38 @@
 
 ### Description
 
-APPINSIGHTS_INSTRUMENTATIONKEY=
+APPLICATIONINSIGHTS_CONNECTION_STRING
 
 -   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
 
+BASIC_GITHUB_TOKEN
+
+-   GitHub PAT token to authenticate to the GitHub API to pull in some external resources from GitHub
+
+REDIS_CACHE_SEC=60
+REDIS_PORT=6379
+REDIS_KEY=
+REDIS_HOSTNAME=
+
+-   Redis connection, leaving the default will connect to a locally installed instance if you have one.
+
+VALIDATOR_SERVICES_URL=https://dev-func-validator-services.azurewebsites.net/api
+VALIDATOR_SERVICES_KEY_NAME=x-functions-key
+VALIDATOR_SERVICES_KEY_VALUE=
+
+-   URL and API Key for Validator Services, used to get list of Publisher Identifiers
+
 ### config defaults
 
--   `APP_NAME`: IATI Validator API
--   `VERSION`: process.env.npm_package_version
--   `NODE_ENV`: process.env.NODE_ENV
--   `APPINSIGHTS_INSTRUMENTATIONKEY`: process.env.APPINSIGHTS_INSTRUMENTATIONKEY
--   `NS_PER_SEC`: 1e9
--   `VERSIONS`: process.env.VERSIONS || ['2.01', '2.02', '2.03']
--   `MAX_FILESIZE`: process.env.MAX_FILESIZE || 60
+```
+   `APP_NAME`: IATI Validator API
+   `VERSION`: process.env.npm_package_version
+   `NODE_ENV`: process.env.NODE_ENV
+   `APPLICATIONINSIGHTS_CONNECTION_STRING`: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
+   `NS_PER_SEC`: 1e9
+   `VERSIONS`: process.env.VERSIONS || ['2.01', '2.02', '2.03']
+   `MAX_FILESIZE`: process.env.MAX_FILESIZE || 60
+```
 
 ### Adding New
 
@@ -281,26 +300,9 @@ Using files:
 -   When ready to export tests to the repo don't forget to copy file to `integration-tests/test-files`
 -   `--working-dir` cli parameter tells `newman` where to look
 
-## Deployment
+## Deployment / Release / Version Management
 
--   Development environment is deployed using GitHub Actions on push
-
-## Release / Version Management
-
-Increment the version on `main` branch using npm:
-
-`npm version major | minor | patch`
-
-Push the new tag and commit to gitHub
-
-```bash
-git push origin main
-git push —-tags origin main
-```
-
-Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
-
-Once deployed successfully PR `main` back into `develop`.
+https://github.com/IATI/IATI-Internal-Wiki#development-process
 
 ## Customised Dependencies
 

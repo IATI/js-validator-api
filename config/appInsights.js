@@ -1,7 +1,7 @@
 const appInsights = require('applicationinsights');
 const config = require('./config');
 
-appInsights.setup().start();
+appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING).start();
 exports.appInsights = appInsights;
 exports.client = appInsights.defaultClient;
 
