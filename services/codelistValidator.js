@@ -144,12 +144,12 @@ exports.validateCodelists = async (body, version, showDetails) => {
                         const valid = allowedCodes.includes(curValue);
                         if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
 
-                        // edge case for country-budget-items/budget-item
-                        // Remove in v3.x of standard
+                        // edge case for country-budget-items/budget-item v2.01, v2.02
                         if (
                             xpath === '/iati-activities/iati-activity/country-budget-items' &&
                             attribute === 'vocabulary' &&
-                            curValue === '1'
+                            curValue === '1' &&
+                            (version === '2.01' || version === '2.02')
                         ) {
                             const codelistSubDefinition =
                                 codelistRules[
