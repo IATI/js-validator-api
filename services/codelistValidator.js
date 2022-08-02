@@ -143,6 +143,34 @@ exports.validateCodelists = async (body, version, showDetails) => {
                         const curValue = newValue.$[attribute].toString();
                         const valid = allowedCodes.includes(curValue);
                         if (!valid) cacheError(codelistDefinition, xpath, curValue, attribute);
+
+                        // edge case for country-budget-items/budget-item
+                        // Remove in v3.x of standard
+                        if (
+                            xpath === '/iati-activities/iati-activity/country-budget-items' &&
+                            attribute === 'vocabulary' &&
+                            curValue === '1'
+                        ) {
+                            const codelistSubDefinition =
+                                codelistRules[
+                                    '/iati-activities/iati-activity/country-budget-items/budget-item'
+                                ];
+                            const allowedBudgetCodes =
+                                codelistSubDefinition.code.conditions.mapping['1'].allowedCodes;
+                            newValue['budget-item'].forEach((item) => {
+                                const value = item.$.code;
+                                const validBudget = allowedBudgetCodes.includes(value.toString());
+                                if (!validBudget)
+                                    cacheError(
+                                        codelistSubDefinition,
+                                        '/iati-activities/iati-activity/country-budget-items/budget-item',
+                                        value,
+                                        'code',
+                                        'vocabulary',
+                                        '1'
+                                    );
+                            });
+                        }
                     }
                 });
             }
