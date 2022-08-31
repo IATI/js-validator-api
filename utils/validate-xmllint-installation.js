@@ -1,4 +1,4 @@
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'child_process';
 /**
  * This script should be run whenever the package is installed.
  *

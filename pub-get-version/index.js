@@ -1,7 +1,7 @@
-const config = require('../config/config');
+import config from '../config/config.js';
 
-module.exports = async (context) => {
+export default async function pubGetVersion(context) {
     context.res = {
         body: config.VERSION,
     };
-};
+}

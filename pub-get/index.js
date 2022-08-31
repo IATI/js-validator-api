@@ -1,6 +1,6 @@
-const config = require('../config/config');
+import config from '../config/config.js';
 
-module.exports = async (context, req) => {
+export default async function pubGet(context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
     const name = req.query.name || (req.body && req.body.name);
@@ -15,4 +15,4 @@ module.exports = async (context, req) => {
         headers: { 'Content-Type': 'application/json' },
         body: responseMessage,
     };
-};
+}

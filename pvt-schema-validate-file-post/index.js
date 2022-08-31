@@ -1,5 +1,5 @@
-const { schemaValidateFile } = require('../services/schemaValidator');
+import { schemaValidateFile } from '../services/schemaValidator.js';
 
-module.exports = async (context, req) => {
+export default async function pvtSchemaValidateFilePost(context, req) {
     await schemaValidateFile(context, req);
-};
+}

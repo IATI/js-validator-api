@@ -1,6 +1,5 @@
-const _ = require('underscore');
-const { validateXMLrecover } = require('../utils/utils');
-const {
+import _ from 'underscore';
+import {
     getFileInformation,
     getRuleset,
     getSchema,
@@ -8,11 +7,12 @@ const {
     getRulesetCommitSha,
     getVersionCodelistCommitSha,
     getOrgIdPrefixFileName,
-} = require('../utils/utils');
-const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
-const { validateCodelists } = require('./codelistValidator');
-const { validateIATI } = require('./rulesValidator');
-const config = require('../config/config');
+    validateXMLrecover,
+} from '../utils/utils.js';
+import { client, getStartTime, getElapsedTime } from '../config/appInsights.js';
+import validateCodelists from './codelistValidator.js';
+import { validateIATI } from './rulesValidator.js';
+import config from '../config/config.js';
 
 const logValidationSummary = (context, state) => {
     const validationSummary = {
@@ -91,7 +91,7 @@ const createValidationReport = async (errors, state, groupResults, elementsMeta)
     };
 };
 
-exports.validate = async (context, req) => {
+export default async function validate(context, req) {
     try {
         let { body } = req;
         const { details, group, meta } = req.query;
@@ -371,4 +371,4 @@ exports.validate = async (context, req) => {
             },
         };
     }
-};
+}

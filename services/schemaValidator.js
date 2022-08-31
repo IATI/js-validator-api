@@ -1,10 +1,9 @@
-const { validateXMLrecover } = require('../utils/utils');
-const { getFileInformation, getSchema } = require('../utils/utils');
+import { validateXMLrecover, getFileInformation, getSchema } from '../utils/utils.js';
 
 // pvt-validate-schema-post
 // Expecting a single activity wrapped in <iati-activities> element
 // Remove after ALV Phase II go-live
-exports.schemaValidate = async (context, req) => {
+const schemaValidate = async (context, req) => {
     try {
         let { body } = req;
         // No body
@@ -131,7 +130,7 @@ exports.schemaValidate = async (context, req) => {
 
 // pvt-schema-validate-file-post
 // Schema Check on full file, happens before full validation to enable the safety valve functionality in unified platform
-exports.schemaValidateFile = async (context, req) => {
+const schemaValidateFile = async (context, req) => {
     try {
         let { body } = req;
         // No body
@@ -244,3 +243,5 @@ exports.schemaValidateFile = async (context, req) => {
         };
     }
 };
+
+export { schemaValidate, schemaValidateFile };

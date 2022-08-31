@@ -1,10 +1,10 @@
-const libxml = require('libxmljs2');
-const fs = require('fs/promises');
-const fetch = require('node-fetch');
-const { spawn } = require('child_process');
+import libxml from 'libxmljs2';
+import fs from 'fs/promises';
+import fetch from 'node-fetch';
+import { spawn } from 'child_process';
 
-const { aSetex, aSet, aGet, aExists } = require('../config/redis');
-const config = require('../config/config');
+import redisclient from '../config/redis.js';
+import config from '../config/config.js';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
 const GITHUB_API = 'https://api.github.com';
@@ -66,7 +66,7 @@ const getFileCommitSha = async (owner, repo, branch, filePath) => {
 };
 
 // parse xml body to JSON to check the root element, don't attempt to parse if output from xmllint --recover was just blank XML doc
-exports.getFileInformation = (body) => {
+const getFileInformation = (body) => {
     let fileType = '';
     let version = '';
     let generatedDateTime = '';
@@ -110,7 +110,7 @@ config.VERSIONS.forEach(async (version) => {
     const codelistBranch = `v${version}/validatorCodelist`;
     try {
         codelistRules[version] = {};
-        if ((await aExists(`codelistRules${version}`)) === 0) {
+        if ((await redisclient.EXISTS(`codelistRules${version}`)) === 0) {
             console.log({
                 name: `Fetching codelist rules for version: ${version}, repo: IATI-Codelists, branch: ${codelistBranch} `,
                 value: true,
@@ -128,13 +128,16 @@ config.VERSIONS.forEach(async (version) => {
                 codelistRules[version].commitSha,
                 'codelist_rules.json'
             );
-            await aSet(`codelistRules${version}`, JSON.stringify(codelistRules[version]));
+            await redisclient.SET(
+                `codelistRules${version}`,
+                JSON.stringify(codelistRules[version])
+            );
         } else {
             console.log({
                 name: `Using redis cache codelist rules for version: ${version}`,
                 value: true,
             });
-            const cachedCodelist = JSON.parse(await aGet(`codelistRules${version}`));
+            const cachedCodelist = JSON.parse(await redisclient.GET(`codelistRules${version}`));
             codelistRules[version] = cachedCodelist;
         }
     } catch (error) {
@@ -145,7 +148,7 @@ config.VERSIONS.forEach(async (version) => {
     const rulesetBranch = `version-${version}`;
     try {
         ruleset[version] = {};
-        if ((await aExists(`ruleset${version}`)) === 0) {
+        if ((await redisclient.EXISTS(`ruleset${version}`)) === 0) {
             console.log({
                 name: `Fetching ruleset for version: ${version}, repo: IATI-Rulesets, branch: ${rulesetBranch} `,
                 value: true,
@@ -163,13 +166,13 @@ config.VERSIONS.forEach(async (version) => {
                 ruleset[version].commitSha,
                 'rulesets/standard.json'
             );
-            await aSet(`ruleset${version}`, JSON.stringify(ruleset[version]));
+            await redisclient.SET(`ruleset${version}`, JSON.stringify(ruleset[version]));
         } else {
             console.log({
                 name: `Using redis cache rulesets for version: ${version}`,
                 value: true,
             });
-            const cachedRuleset = JSON.parse(await aGet(`ruleset${version}`));
+            const cachedRuleset = JSON.parse(await redisclient.GET(`ruleset${version}`));
             ruleset[version] = cachedRuleset;
         }
     } catch (error) {
@@ -185,14 +188,14 @@ config.VERSIONS.forEach(async (version) => {
     });
 });
 
-exports.getVersionCodelistRules = (version) => {
+const getVersionCodelistRules = (version) => {
     if (config.VERSIONS.includes(version)) {
         return codelistRules[version].content;
     }
     throw new Error(`Unable to retrieve codelist_rules.json for version ${version}`);
 };
 
-exports.getVersionCodelistCommitSha = (version) => {
+const getVersionCodelistCommitSha = (version) => {
     if (config.VERSIONS.includes(version)) {
         if ('commitSha' in codelistRules[version]) {
             return codelistRules[version].commitSha;
@@ -201,14 +204,14 @@ exports.getVersionCodelistCommitSha = (version) => {
     return '';
 };
 
-exports.getRuleset = (version) => {
+const getRuleset = (version) => {
     if (config.VERSIONS.includes(version)) {
         return ruleset[version].content;
     }
     throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
 };
 
-exports.getRulesetCommitSha = (version) => {
+const getRulesetCommitSha = (version) => {
     if (config.VERSIONS.includes(version)) {
         if ('commitSha' in ruleset[version]) {
             return ruleset[version].commitSha;
@@ -217,7 +220,7 @@ exports.getRulesetCommitSha = (version) => {
     return '';
 };
 
-exports.getSchema = (fileType, version) => {
+const getSchema = (fileType, version) => {
     if (
         config.VERSIONS.includes(version) &&
         (fileType === 'iati-activities' || fileType === 'iati-organisations')
@@ -229,13 +232,13 @@ exports.getSchema = (fileType, version) => {
 
 let orgIdPrefixInfo = '';
 
-exports.getOrgIdPrefixes = async () => {
+const getOrgIdPrefixes = async () => {
     if (orgIdPrefixInfo === '') {
         const ORG_ID_PREFIX_URL = 'https://org-id.guide/download.json';
         try {
             let fullOrgIdPrefixInfo;
 
-            if ((await aExists('orgIdPrefixInfo')) === 0) {
+            if ((await redisclient.EXISTS('orgIdPrefixInfo')) === 0) {
                 console.log({
                     name: `Fetching OrgId Prefixes from ${ORG_ID_PREFIX_URL}`,
                     value: true,
@@ -261,7 +264,7 @@ exports.getOrgIdPrefixes = async () => {
 
                 // cache to redis for REDIS_CACHE_SEC seconds
                 const orgIdPrefixInfoObject = { fileName, content: orgIdPrefixes };
-                await aSetex(
+                await redisclient.SETex(
                     'orgIdPrefixInfo',
                     config.REDIS_CACHE_SEC,
                     JSON.stringify(orgIdPrefixInfoObject)
@@ -271,7 +274,7 @@ exports.getOrgIdPrefixes = async () => {
                     name: `Fetching OrgId Prefixes from Redis cache key: orgIdPrefixInfo`,
                     value: true,
                 });
-                const orgIdPrefixInfoObject = JSON.parse(await aGet('orgIdPrefixInfo'));
+                const orgIdPrefixInfoObject = JSON.parse(await redisclient.GET('orgIdPrefixInfo'));
                 orgIdPrefixInfo = {
                     ...orgIdPrefixInfoObject,
                     content: new Set(orgIdPrefixInfoObject.content),
@@ -288,7 +291,7 @@ exports.getOrgIdPrefixes = async () => {
 
 let orgIds = '';
 
-exports.getOrgIds = async () => {
+const getOrgIds = async () => {
     if (orgIds === '') {
         const PUBLISHERS_URL = `${config.VALIDATOR_SERVICES_URL}/pvt/publishers`;
         const apiKeyName = config.VALIDATOR_SERVICES_KEY_NAME;
@@ -296,7 +299,7 @@ exports.getOrgIds = async () => {
         try {
             let fullOrgIdInfo;
 
-            if ((await aExists('fullOrgIdInfo')) === 0) {
+            if ((await redisclient.EXISTS('fullOrgIdInfo')) === 0) {
                 console.log({
                     name: `Fetching Publishers (orgIds) from ${PUBLISHERS_URL}`,
                     value: true,
@@ -308,7 +311,7 @@ exports.getOrgIds = async () => {
                 fullOrgIdInfo = await res.json();
 
                 // cache to redis for REDIS_CACHE_SEC seconds
-                await aSetex(
+                await redisclient.SETex(
                     'fullOrgIdInfo',
                     config.REDIS_CACHE_SEC,
                     JSON.stringify(fullOrgIdInfo)
@@ -318,7 +321,7 @@ exports.getOrgIds = async () => {
                     name: `Fetching Publishers (orgIds) from Redis cache key: fullOrgIdInfo `,
                     value: true,
                 });
-                fullOrgIdInfo = JSON.parse(await aGet('fullOrgIdInfo'));
+                fullOrgIdInfo = JSON.parse(await redisclient.GET('fullOrgIdInfo'));
             }
 
             orgIds = fullOrgIdInfo.reduce((acc, orgId) => {
@@ -334,12 +337,12 @@ exports.getOrgIds = async () => {
     return orgIds;
 };
 
-exports.getIdSets = async () => ({
-    'ORG-ID-PREFIX': (await this.getOrgIdPrefixes()).content,
-    'ORG-ID': await this.getOrgIds(),
+const getIdSets = async () => ({
+    'ORG-ID-PREFIX': (await getOrgIdPrefixes()).content,
+    'ORG-ID': await getOrgIds(),
 });
 
-exports.getOrgIdPrefixFileName = async () => (await this.getOrgIdPrefixes()).fileName;
+const getOrgIdPrefixFileName = async () => (await getOrgIdPrefixes()).fileName;
 
 /**
  * stdout is written to output
@@ -381,4 +384,18 @@ const execXmllint = (input, command) =>
  *
  * @param input XML
  */
-exports.validateXMLrecover = (input) => execXmllint(input, `xmllint --nonet --recover -`);
+const validateXMLrecover = (input) => execXmllint(input, `xmllint --nonet --recover -`);
+
+export {
+    validateXMLrecover,
+    getOrgIdPrefixFileName,
+    getIdSets,
+    getOrgIds,
+    getOrgIdPrefixes,
+    getFileInformation,
+    getVersionCodelistRules,
+    getVersionCodelistCommitSha,
+    getRuleset,
+    getSchema,
+    getRulesetCommitSha,
+};
