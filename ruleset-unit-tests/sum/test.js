@@ -1,10 +1,9 @@
-const fs = require('fs/promises');
+import fs from 'fs/promises';
 // eslint-disable-next-line import/no-extraneous-dependencies
-const chai = require('chai');
+import chai from 'chai';
+import { allRulesResult } from '../../services/rulesValidator.js';
 
 const { expect } = chai;
-
-const { allRulesResult } = require('../../services/rulesValidator');
 
 const testMap = [
     { rule: 'sum.json', file: 'bad.xml', expectedResult: false },
@@ -16,8 +15,12 @@ const testMap = [
 describe('sum rules', () => {
     testMap.forEach((test) => {
         it(`Rule ${test.rule} for file ${test.file} should return ${test.expectedResult}`, async () => {
-            const rule = JSON.parse(await fs.readFile(`${__dirname}/rules/${test.rule}`));
-            const xml = (await fs.readFile(`${__dirname}/test-files/${test.file}`)).toString();
+            const rule = JSON.parse(
+                await fs.readFile(new URL(`./rules/${test.rule}`, import.meta.url))
+            );
+            const xml = (
+                await fs.readFile(new URL(`./test-files/${test.file}`, import.meta.url))
+            ).toString();
 
             expect(allRulesResult(rule, xml)).to.equal(test.expectedResult);
         });

@@ -72,7 +72,7 @@ Add in:
 Import
 
 ```
-const config = require("./config");
+import config from "./config.js";
 
 let myEnvVariable = config.ENV_VAR
 ```

@@ -1,7 +1,7 @@
-const { client, getStartTime, getElapsedTime } = require('../config/appInsights');
-const config = require('../config/config');
+import { client, getStartTime, getElapsedTime } from '../config/appInsights.js';
+import config from '../config/config.js';
 
-module.exports = async (context, req) => {
+export default async function pvtGet(context, req) {
     // context.log is equivalent to console.log in Azure Functions
     context.log('JavaScript HTTP trigger function processed a request.');
 
@@ -39,4 +39,4 @@ module.exports = async (context, req) => {
         headers: { 'Content-Type': 'application/json' },
         body: responseMessage,
     };
-};
+}
