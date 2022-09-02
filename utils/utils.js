@@ -264,11 +264,9 @@ const getOrgIdPrefixes = async () => {
 
                 // cache to redis for REDIS_CACHE_SEC seconds
                 const orgIdPrefixInfoObject = { fileName, content: orgIdPrefixes };
-                await redisclient.SETex(
-                    'orgIdPrefixInfo',
-                    config.REDIS_CACHE_SEC,
-                    JSON.stringify(orgIdPrefixInfoObject)
-                );
+                await redisclient.SET('orgIdPrefixInfo', JSON.stringify(orgIdPrefixInfoObject), {
+                    EX: config.REDIS_CACHE_SEC,
+                });
             } else {
                 console.log({
                     name: `Fetching OrgId Prefixes from Redis cache key: orgIdPrefixInfo`,
@@ -311,11 +309,9 @@ const getOrgIds = async () => {
                 fullOrgIdInfo = await res.json();
 
                 // cache to redis for REDIS_CACHE_SEC seconds
-                await redisclient.SETex(
-                    'fullOrgIdInfo',
-                    config.REDIS_CACHE_SEC,
-                    JSON.stringify(fullOrgIdInfo)
-                );
+                await redisclient.SET('fullOrgIdInfo', JSON.stringify(fullOrgIdInfo), {
+                    EX: config.REDIS_CACHE_SEC,
+                });
             } else {
                 console.log({
                     name: `Fetching Publishers (orgIds) from Redis cache key: fullOrgIdInfo `,
