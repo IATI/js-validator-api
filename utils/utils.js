@@ -107,24 +107,25 @@ const schemas = {};
 
 config.VERSIONS.forEach(async (version) => {
     // load codelists
+    const codelistRepo = 'IATI-Validator-Codelists';
     const codelistBranch = `version-${version}`;
     try {
         codelistRules[version] = {};
         if ((await redisclient.EXISTS(`codelistRules${version}`)) === 0) {
             console.log({
-                name: `Fetching codelist rules for version: ${version}, repo: IATI-Validator-Codelists, branch: ${codelistBranch} `,
+                name: `Fetching codelist rules for version: ${version}, repo: ${codelistRepo}, branch: ${codelistBranch} `,
                 value: true,
             });
 
             codelistRules[version].commitSha = await getFileCommitSha(
                 'IATI',
-                'IATI-Validator-Codelists',
+                codelistRepo,
                 codelistBranch,
                 'codelist_rules.json'
             );
             codelistRules[version].content = await getFileBySha(
                 'IATI',
-                'IATI-Validator-Codelists',
+                codelistRepo,
                 codelistRules[version].commitSha,
                 'codelist_rules.json'
             );
