@@ -251,3 +251,25 @@ git push —-tags origin main
 Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
 
 Once deployed successfully PR `main` back into `develop`.
+
+## IATI Resource Dependencies
+
+### Schemas
+
+Schemas are stored statically in the application source code as they are versioned and rarely change.
+
+`./schemas/2.0X/*`
+
+The source is [IATI-Schemas](https://github.com/IATI/IATI-Schemas)
+
+### Codelists
+
+-   [IATI-Validator-Codelists](https://github.com/IATI/IATI-Validator-Codelists)
+
+This repo provides the "Codelist Rules" for evaluating whether the codelists used by an IATI file being validated are correct. This application dynamically loads the `codelist_rules.json` file from this repo for each `version-2.0X` branch. This is also stored in Redis for caching.
+
+### Rulesets
+
+-   [IATI-Rulesets](https://github.com/IATI/IATI-Rulesets)
+
+This repo provides the "Rulesets" for various conditional and restraint rules for IATI data. This application dynamically loads the `rulsets/standard.json` file from this repo for each `version-2.0X` branch. This is also stored in Redis for caching.

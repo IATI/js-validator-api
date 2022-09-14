@@ -106,24 +106,25 @@ const schemas = {};
 
 config.VERSIONS.forEach(async (version) => {
     // load codelists
-    const codelistBranch = `v${version}/validatorCodelist`;
+    const codelistRepo = 'IATI-Validator-Codelists';
+    const codelistBranch = `version-${version}`;
     try {
         codelistRules[version] = {};
         if ((await aExists(`codelistRules${version}`)) === 0) {
             console.log({
-                name: `Fetching codelist rules for version: ${version}, repo: IATI-Codelists, branch: ${codelistBranch} `,
+                name: `Fetching codelist rules for version: ${version}, repo: ${codelistRepo} branch: ${codelistBranch} `,
                 value: true,
             });
 
             codelistRules[version].commitSha = await getFileCommitSha(
                 'IATI',
-                'IATI-Codelists',
+                codelistRepo,
                 codelistBranch,
                 'codelist_rules.json'
             );
             codelistRules[version].content = await getFileBySha(
                 'IATI',
-                'IATI-Codelists',
+                codelistRepo,
                 codelistRules[version].commitSha,
                 'codelist_rules.json'
             );
