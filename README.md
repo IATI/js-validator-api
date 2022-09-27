@@ -334,3 +334,13 @@ This repo provides the "Codelist Rules" for evaluating whether the codelists use
 -   [IATI-Rulesets](https://github.com/IATI/IATI-Rulesets)
 
 This repo provides the "Rulesets" for various conditional and restraint rules for IATI data. This application dynamically loads the `rulsets/standard.json` file from this repo for each `version-2.0X` branch. This is also stored in Redis for caching.
+
+## Known Issues
+
+### Line numbers for Schema Errors in activities longer than 65535 lines
+
+Due to a [known limitation](https://gitlab.gnome.org/GNOME/libxml2/-/issues/361) in the core library `libxml2` used to perform schema validation, if an activity has a schema error at a line greater than 65535, the value will not be accurate in the context.
+
+If this is the case for your validation report, a message like so will be displayed in the context of the schema error:
+
+`At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65537 for this activity.`
