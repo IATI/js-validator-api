@@ -690,7 +690,7 @@ const validateSchema = (xmlString, schema, identifier, title, showDetails, lineO
                 errorDetail.line += lineOffset;
                 errContext = `At line${lineMax ? ' greater than' : ''}: ${errorDetail.line}${
                     lineMax
-                        ? '. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65535 in the activity.'
+                        ? `. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than ${errorDetail.line} for this activity.`
                         : ''
                 }`;
             }
