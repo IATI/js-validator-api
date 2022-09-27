@@ -343,4 +343,4 @@ Due to a [known limitation](https://gitlab.gnome.org/GNOME/libxml2/-/issues/361)
 
 If this is the case for your validation report, a message like so will be displayed in the context of the schema error:
 
-`At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65535 in the activity.`
+`At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65537 for this activity.`
