@@ -2429,6 +2429,47 @@
                         }
                     },
                     "response": []
+                },
+                {
+                    "name": "max-line-number-bug",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () {",
+                                    "    pm.response.to.have.status(422);",
+                                    "});",
+                                    "pm.test(\"Schema error contains warning about inaccurate line number\", function () {",
+                                    "    pm.expect(pm.response.text()).to.include(\"At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65535 in the activity.\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "file",
+                            "file": {
+                                "src": "error_at_70076_in_early_activity.xml"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validate?group=false",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validate"],
+                            "query": [
+                                {
+                                    "key": "group",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
                 }
             ],
             "event": [

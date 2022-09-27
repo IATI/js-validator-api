@@ -686,8 +686,13 @@ const validateSchema = (xmlString, schema, identifier, title, showDetails, lineO
             let errContext;
             const errorDetail = error;
             if ('line' in errorDetail) {
+                const lineMax = errorDetail.line >= 65535;
                 errorDetail.line += lineOffset;
-                errContext = `At line: ${errorDetail.line}`;
+                errContext = `At line${lineMax ? ' greater than' : ''}: ${errorDetail.line}${
+                    lineMax
+                        ? '. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65535 in the activity.'
+                        : ''
+                }`;
             }
             if (!_.has(acc, error.message)) {
                 acc[error.message] = {
