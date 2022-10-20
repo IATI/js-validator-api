@@ -335,6 +335,20 @@ This repo provides the "Codelist Rules" for evaluating whether the codelists use
 
 This repo provides the "Rulesets" for various conditional and restraint rules for IATI data. This application dynamically loads the `rulsets/standard.json` file from this repo for each `version-2.0X` branch. This is also stored in Redis for caching.
 
+#### Organisation IDs
+
+The rulesets contain rules that require evaluation against a list of Publisher organisation identifiers, and valid organisation identifier prefixes. [link](https://iatistandard.org/en/guidance/publishing-data/registering-and-managing-your-organisation-account/how-to-create-your-iati-organisation-identifier/)
+
+These are sourced from the following locations:
+
+-   Organisation Identifier Prefixes (Registration Agencies) - https://org-id.guide/download.json
+
+    -   `response.lists[].code`
+    -   The validator expects the response header from the URL to contain: `Content-Disposition: attachment; filename="<filename>"`
+
+-   Published Organisation Identifiers - https://func-validator-services-dev.azurewebsites.net/api/pvt/publishers
+    -   `response[].iati_id`
+
 ## Known Issues
 
 ### Line numbers for Schema Errors in activities longer than 65535 lines

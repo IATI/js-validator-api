@@ -231,61 +231,103 @@ const getSchema = (fileType, version) => {
     throw new Error(`Unable to retrieve ${fileType} schema for version ${version}`);
 };
 
-let orgIdPrefixInfo = '';
+const ORG_ID_PREFIX_URL = 'https://org-id.guide/download.json';
+
+const parseOrgIdFilename = (headers) =>
+    headers.get('content-disposition').match(/filename="(.+)"/)[1];
+
+const fetchOrgIdFilename = async () => {
+    // check filename
+    const res = await fetch(ORG_ID_PREFIX_URL, {
+        method: 'head',
+        headers: { 'User-Agent': `iati-validator-api/${config.VERSION}` },
+    });
+    if (res.status !== 200)
+        throw new Error(
+            `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, while fetching current filename`
+        );
+    return parseOrgIdFilename(res.headers);
+};
+
+const fetchOrgIdPrefixes = async () => {
+    console.log({
+        name: `Fetching OrgId Prefixes from ${ORG_ID_PREFIX_URL}`,
+        value: true,
+    });
+    const res = await fetch(ORG_ID_PREFIX_URL, {
+        headers: { 'User-Agent': `iati-validator-api/${config.VERSION}` },
+    });
+    const fullOrgIdPrefixInfo = await res.json();
+    if (res.status !== 200)
+        throw new Error(
+            `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, body: ${fullOrgIdPrefixInfo}`
+        );
+    const fileName = parseOrgIdFilename(res.headers);
+
+    const orgIdPrefixesOnly = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
+        if (orgId.confirmed) {
+            acc.push(orgId.code);
+        }
+        return acc;
+    }, []);
+
+    return { fileName, content: orgIdPrefixesOnly };
+};
+
+let orgIdPrefixes = '';
+
+const fetchCacheSaveOrgIdPrefixes = async () => {
+    // fetch
+    const orgIdPrefixInfoObject = await fetchOrgIdPrefixes();
+
+    // cache redis
+    await redisclient.SET('orgIdPrefixInfo', JSON.stringify(orgIdPrefixInfoObject));
+
+    // save globally
+    orgIdPrefixes = {
+        fileName: orgIdPrefixInfoObject.fileName,
+        content: new Set(orgIdPrefixInfoObject.content),
+    };
+
+    return orgIdPrefixes;
+};
 
 const getOrgIdPrefixes = async () => {
-    if (orgIdPrefixInfo === '') {
-        const ORG_ID_PREFIX_URL = 'https://org-id.guide/download.json';
-        try {
-            let fullOrgIdPrefixInfo;
-
-            if ((await redisclient.EXISTS('orgIdPrefixInfo')) === 0) {
-                console.log({
-                    name: `Fetching OrgId Prefixes from ${ORG_ID_PREFIX_URL}`,
-                    value: true,
-                });
-                const res = await fetch(ORG_ID_PREFIX_URL);
-                fullOrgIdPrefixInfo = await res.json();
-                if (res.status !== 200)
-                    throw new Error(
-                        `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, body: ${fullOrgIdPrefixInfo}`
-                    );
-                const fileName = res.headers
-                    .get('content-disposition')
-                    .match(/(org-id-[\w]{10}.json)/)[0];
-
-                const orgIdPrefixes = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
-                    if (orgId.confirmed) {
-                        acc.push(orgId.code);
-                    }
-                    return acc;
-                }, []);
-
-                orgIdPrefixInfo = { fileName, content: new Set(orgIdPrefixes) };
-
-                // cache to redis for REDIS_CACHE_SEC seconds
-                const orgIdPrefixInfoObject = { fileName, content: orgIdPrefixes };
-                await redisclient.SET('orgIdPrefixInfo', JSON.stringify(orgIdPrefixInfoObject), {
-                    EX: config.REDIS_CACHE_SEC,
-                });
-            } else {
-                console.log({
-                    name: `Fetching OrgId Prefixes from Redis cache key: orgIdPrefixInfo`,
-                    value: true,
-                });
-                const orgIdPrefixInfoObject = JSON.parse(await redisclient.GET('orgIdPrefixInfo'));
-                orgIdPrefixInfo = {
-                    ...orgIdPrefixInfoObject,
-                    content: new Set(orgIdPrefixInfoObject.content),
-                };
-            }
-        } catch (error) {
-            console.error(
-                `Error fetching Organsiation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`
-            );
+    try {
+        const fileName = await fetchOrgIdFilename();
+        if (orgIdPrefixes !== '') {
+            // check filename to ensure we have most current file
+            if (fileName === orgIdPrefixes.fileName) return orgIdPrefixes;
         }
+        // not cached in redis
+        if ((await redisclient.EXISTS('orgIdPrefixInfo')) === 0) {
+            return fetchCacheSaveOrgIdPrefixes();
+        }
+        // is available in cache
+        console.log({
+            name: `Fetching OrgId Prefixes from Redis cache key: orgIdPrefixInfo`,
+            value: true,
+        });
+        const orgIdPrefixInfoObject = JSON.parse(await redisclient.GET('orgIdPrefixInfo'));
+
+        // if cached filename doesn't match fetch/cache/save
+        if (fileName !== orgIdPrefixInfoObject.fileName) {
+            return fetchCacheSaveOrgIdPrefixes();
+        }
+
+        // save globally
+        orgIdPrefixes = {
+            fileName: orgIdPrefixInfoObject.fileName,
+            content: new Set(orgIdPrefixInfoObject.content),
+        };
+
+        return orgIdPrefixes;
+    } catch (error) {
+        console.error(
+            `Error fetching Organisation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`
+        );
+        return null;
     }
-    return orgIdPrefixInfo;
 };
 
 let orgIds = '';
@@ -339,7 +381,7 @@ const getIdSets = async () => ({
     'ORG-ID': await getOrgIds(),
 });
 
-const getOrgIdPrefixFileName = async () => (await getOrgIdPrefixes()).fileName;
+const getOrgIdPrefixFileName = () => orgIdPrefixes.fileName;
 
 /**
  * stdout is written to output

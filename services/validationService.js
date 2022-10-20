@@ -83,7 +83,7 @@ const createValidationReport = async (errors, state, groupResults, elementsMeta)
         iatiVersion: state.iatiVersion,
         rulesetCommitSha: getRulesetCommitSha(state.iatiVersion),
         codelistCommitSha: getVersionCodelistCommitSha(state.iatiVersion),
-        orgIdPrefixFileName: state.fileType ? await getOrgIdPrefixFileName() : '',
+        orgIdPrefixFileName: state.fileType ? getOrgIdPrefixFileName() : '',
         apiVersion: config.VERSION,
         summary,
         ...elementsMeta,
