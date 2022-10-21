@@ -242,10 +242,12 @@ const fetchOrgIdFilename = async () => {
         method: 'head',
         headers: { 'User-Agent': `iati-validator-api/${config.VERSION}` },
     });
-    if (res.status !== 200)
-        throw new Error(
+    if (res.status !== 200) {
+        console.error(
             `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, while fetching current filename`
         );
+        return '';
+    }
     return parseOrgIdFilename(res.headers);
 };
 
@@ -257,11 +259,11 @@ const fetchOrgIdPrefixes = async () => {
     const res = await fetch(ORG_ID_PREFIX_URL, {
         headers: { 'User-Agent': `iati-validator-api/${config.VERSION}` },
     });
+    if (res.status !== 200) {
+        console.error(`HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}`);
+        return { fileName: `error-${res.status}`, content: [] };
+    }
     const fullOrgIdPrefixInfo = await res.json();
-    if (res.status !== 200)
-        throw new Error(
-            `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, body: ${fullOrgIdPrefixInfo}`
-        );
     const fileName = parseOrgIdFilename(res.headers);
 
     const orgIdPrefixesOnly = fullOrgIdPrefixInfo.lists.reduce((acc, orgId) => {
@@ -295,9 +297,14 @@ const fetchCacheSaveOrgIdPrefixes = async () => {
 const getOrgIdPrefixes = async () => {
     try {
         const fileName = await fetchOrgIdFilename();
+        if (fileName === '') {
+            console.warn(
+                `No filename in Content-Disposition header from ${ORG_ID_PREFIX_URL}, can't confirm we're using most up-to-date Org-Id prefixes`
+            );
+        }
         if (orgIdPrefixes !== '') {
             // check filename to ensure we have most current file
-            if (fileName === orgIdPrefixes.fileName) return orgIdPrefixes;
+            if (fileName === '' || fileName === orgIdPrefixes.fileName) return orgIdPrefixes;
         }
         // not cached in redis
         if ((await redisclient.EXISTS('orgIdPrefixInfo')) === 0) {
@@ -311,7 +318,7 @@ const getOrgIdPrefixes = async () => {
         const orgIdPrefixInfoObject = JSON.parse(await redisclient.GET('orgIdPrefixInfo'));
 
         // if cached filename doesn't match fetch/cache/save
-        if (fileName !== orgIdPrefixInfoObject.fileName) {
+        if (fileName !== '' && fileName !== orgIdPrefixInfoObject.fileName) {
             return fetchCacheSaveOrgIdPrefixes();
         }
 
@@ -326,7 +333,7 @@ const getOrgIdPrefixes = async () => {
         console.error(
             `Error fetching Organisation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`
         );
-        return null;
+        return { fileName: 'not-available', content: new Set() };
     }
 };
 
