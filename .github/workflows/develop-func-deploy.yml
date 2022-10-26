@@ -148,7 +148,7 @@ jobs:
           image: ${{ env.ACR_LOGIN_SERVER }}/func-${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
 
       - name: 'Tag resource for Tech Climate Impact'
-        uses: 'azure/CLI@v1.0.6'
+        uses: 'azure/CLI@v1.0.7'
         with:
           azcliversion: 2.30.0
           inlineScript: |
