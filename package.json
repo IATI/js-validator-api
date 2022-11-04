@@ -22,7 +22,7 @@
         "dotenv": "^16.0.3",
         "libxmljs2": "^0.31.0",
         "node-fetch": "^3.2.10",
-        "redis": "^4.3.0",
+        "redis": "^4.4.0",
         "underscore": "^1.13.6",
         "xml2js": "^0.4.23",
         "xpath": "github:IATI/xpath#develop"
