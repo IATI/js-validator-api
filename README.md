@@ -188,7 +188,7 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   Unhandled server error, contact the IATI Tech Team
 
-### `POST /pvt/validate-schema`
+### `POST /pvt/validate-schema` - v2.1 ALV Phase I - to be removed after ALV Phase II go-live
 
 -   Request Body
 
@@ -225,7 +225,7 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 -   Unsupported IATI Version - 0.6.1
 -   Not iati-activities file
 
-### `POST /pvt/schema-validate-file`
+### `POST /pvt/schema-validate-file` - v2.2 ALV Phase II
 
 -   Request Body
 
