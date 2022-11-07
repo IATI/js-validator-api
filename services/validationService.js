@@ -331,7 +331,7 @@ export default async function validate(context, req) {
         }
         context.log({
             name: `Ruleset ${state.schemaErrorsPresent ? 'and Schema ' : ''}Validate Time (s)`,
-            value: state.ruleAndSchemaTime,
+            value: state.schemaErrorsPresent ? state.ruleAndSchemaTime : state.ruleTime,
         });
 
         // combine all types of errors
