@@ -15,5 +15,5 @@ COPY . /home/site/wwwroot
 WORKDIR /home/site/wwwroot
 RUN \
     npm i -g npm && \
-    npm set-script prepare "" && \
+    npm pkg delete scripts.prepare && \
     npm ci --production
