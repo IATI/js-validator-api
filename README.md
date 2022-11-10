@@ -356,5 +356,4 @@ These are sourced from the following locations:
 Due to a [known limitation](https://gitlab.gnome.org/GNOME/libxml2/-/issues/361) in the core library `libxml2` used to perform schema validation, if an activity has a schema error at a line greater than 65535, the value will not be accurate in the context.
 
 If this is the case for your validation report, a message like so will be displayed in the context of the schema error:
-
 `At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65537 for this activity.`
