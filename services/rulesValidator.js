@@ -1,9 +1,14 @@
-const { DOMParser } = require('@xmldom/xmldom');
-const xpath = require('xpath').useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
-const _ = require('underscore');
-const compareAsc = require('date-fns/compareAsc');
-const differenceInDays = require('date-fns/differenceInDays');
-const ruleNameObj = require('./ruleNameMap.json');
+import { DOMParser } from '@xmldom/xmldom';
+import xpath from 'xpath';
+import _ from 'underscore';
+import { compareAsc, differenceInDays } from 'date-fns';
+import libxml from 'libxmljs2';
+import { Readable, Transform } from 'stream';
+import { pipeline } from 'stream/promises';
+
+import ruleNameObj from './ruleNameMap.js';
+
+const select = xpath.useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 
 const ruleNameMap = new Map(ruleNameObj);
 
@@ -52,13 +57,14 @@ const getRuleMethodName = (ruleName) => {
 };
 
 class Rules {
-    constructor(element, oneCase, idSets) {
+    constructor(element, oneCase, idSets, lineNumberOffset = 0) {
         this.element = element;
         this.idSets = idSets;
         this.failContext = [];
         this.caseContext = {};
+        this.lineNumberOffset = lineNumberOffset;
         if ('paths' in oneCase) {
-            this.nestedMatches = oneCase.paths.map((path) => xpath(path, element));
+            this.nestedMatches = oneCase.paths.map((path) => select(path, element));
             this.pathMatches = _.flatten(this.nestedMatches);
             this.pathMatchesText = this.pathMatches.map((match) => getText(match));
             this.caseContext.paths = _.flatten(
@@ -71,18 +77,18 @@ class Rules {
                         }
                         const attributes = getAttributes(path);
                         if (path.nodeName === 'reference') {
-                            text = `For the ${parentNodeName} "${xpath(
+                            text = `For the ${parentNodeName} "${select(
                                 'string(../title/narrative)',
                                 path
                             )}"`;
                         } else if (parentNodeName === 'transaction') {
                             const transactionType =
-                                transactionTypes[xpath('string(../transaction-type/@code)', path)];
+                                transactionTypes[select('string(../transaction-type/@code)', path)];
 
-                            text = `For the ${transactionType || parentNodeName} of ${xpath(
+                            text = `For the ${transactionType || parentNodeName} of ${select(
                                 'string(../transaction-date/@iso-date)',
                                 path
-                            )} with value ${xpath('string(../value/@currency)', path)}${xpath(
+                            )} with value ${select('string(../value/@currency)', path)}${select(
                                 'string(../value)',
                                 path
                             )}`;
@@ -92,7 +98,7 @@ class Rules {
                             attributes,
                             name: path.nodeName,
                             value: getText(path),
-                            lineNumber: path.lineNumber,
+                            lineNumber: path.lineNumber + lineNumberOffset,
                             columnNumber: path.columnNumber,
                             text,
                         };
@@ -104,12 +110,12 @@ class Rules {
             this.caseContext.prefix = _.flatten(
                 oneCase.prefix.map((path) => {
                     if (path !== 'ORG-ID-PREFIX') {
-                        return xpath(path, element).map((node) => ({
+                        return select(path, element).map((node) => ({
                             xpath: path,
                             attributes: getAttributes(node),
                             name: node.nodeName,
                             value: getText(node),
-                            lineNumber: node.lineNumber,
+                            lineNumber: node.lineNumber + lineNumberOffset,
                             columnNumber: node.columnNumber,
                         }));
                     }
@@ -144,23 +150,25 @@ class Rules {
         let text;
         const parentNode = getParentNode(node);
         const parentNodeName = parentNode.nodeName;
-        const { nodeName: element, lineNumber, columnNumber } = node;
+        const { nodeName: element, columnNumber } = node;
+        let { lineNumber } = node;
+        lineNumber += this.lineNumberOffset;
         const value = getText(node);
         if (['budget', 'planned-disbursement'].includes(parentNodeName)) {
-            const startDate = xpath('string(period-start/@iso-date)', parentNode);
-            const endDate = xpath('string(period-end/@iso-date)', parentNode);
+            const startDate = select('string(period-start/@iso-date)', parentNode);
+            const endDate = select('string(period-end/@iso-date)', parentNode);
             text = `In the ${parentNodeName} of ${startDate} to ${endDate}`;
         } else if (['transaction'].includes(parentNodeName)) {
-            const transDate = xpath('string(transaction-date/@iso-date)', parentNode);
+            const transDate = select('string(transaction-date/@iso-date)', parentNode);
             text = `In the transaction of ${transDate}`;
         } else if (['transaction'].includes(element)) {
-            const transDate = xpath('string(transaction-date/@iso-date)', node);
+            const transDate = select('string(transaction-date/@iso-date)', node);
             text = `In the transaction of ${transDate}`;
         } else if (['budget-line'].includes(parentNodeName)) {
             const grandParent = getParentNode(parentNode);
-            const startDate = xpath('string(period-start/@iso-date)', grandParent);
-            const endDate = xpath('string(period-end/@iso-date)', grandParent);
-            const narrative = xpath('string(narrative)', parentNode);
+            const startDate = select('string(period-start/@iso-date)', grandParent);
+            const endDate = select('string(period-end/@iso-date)', grandParent);
+            const narrative = select('string(narrative)', parentNode);
             text = `In the ${parentNode.nodeName} '${narrative}' of ${grandParent.nodeName} of ${startDate} to ${endDate}`;
         } else {
             text = `For <${element}> '${value}' at line: ${lineNumber}, column: ${columnNumber}`;
@@ -187,7 +195,7 @@ class Rules {
         return oneCase.excluded.every((excluded) => {
             // no elements from group A can be present
             // if group B exists
-            if (xpath(excluded, this.element).length !== 0) {
+            if (select(excluded, this.element).length !== 0) {
                 return this.pathMatches.length === 0;
             }
             // if no element from group B exists
@@ -201,31 +209,31 @@ class Rules {
     }
 
     oneOrAll(oneCase) {
-        if (xpath(oneCase.one, this.element).length > 0) {
+        if (select(oneCase.one, this.element).length > 0) {
             return true;
         }
         const currencyPaths = ['value', 'forecast', 'loan-status'];
         let result = true;
         switch (oneCase.all) {
             case 'lang':
-                xpath('descendant::narrative', this.element).forEach((narrative) => {
-                    if (xpath('@xml:lang', narrative).length === 0) {
+                select('descendant::narrative', this.element).forEach((narrative) => {
+                    if (select('@xml:lang', narrative).length === 0) {
                         this.addFailureContext(narrative);
                         result = false;
                     }
                 });
                 return result;
             case 'sector':
-                xpath('transaction', this.element).forEach((transaction) => {
-                    if (xpath('sector', transaction).length === 0) {
+                select('transaction', this.element).forEach((transaction) => {
+                    if (select('sector', transaction).length === 0) {
                         this.addFailureContext(transaction);
                         result = false;
                     }
                 });
                 return result;
             case 'recipient-country|recipient-region':
-                return xpath('transaction', this.element).every((transaction) => {
-                    if (xpath('recipient-country|recipient-region', transaction).length === 0) {
+                return select('transaction', this.element).every((transaction) => {
+                    if (select('recipient-country|recipient-region', transaction).length === 0) {
                         this.addFailureContext(transaction);
                         return false;
                     }
@@ -233,8 +241,8 @@ class Rules {
                 });
             case 'currency':
                 currencyPaths.forEach((cpath) =>
-                    xpath(`descendant::${cpath}`, this.element).forEach((currency) => {
-                        if (xpath('@currency', currency).length === 0) {
+                    select(`descendant::${cpath}`, this.element).forEach((currency) => {
+                        if (select('@currency', currency).length === 0) {
                             this.addFailureContext(currency);
                             result = false;
                         }
@@ -267,7 +275,7 @@ class Rules {
             const vocabularies = Array.from(
                 new Set(
                     this.pathMatches.map((path) =>
-                        xpath('string(@vocabulary | ../@vocabulary)', path.ownerElement)
+                        select('string(@vocabulary | ../@vocabulary)', path.ownerElement)
                     )
                 )
             ).join(', ');
@@ -283,7 +291,7 @@ class Rules {
         if (dateXpath === 'NOW') {
             return { parsedDate: new Date() };
         }
-        const dateElements = xpath(dateXpath, this.element);
+        const dateElements = select(dateXpath, this.element);
         if (dateElements.length < 1) return null;
         const dateText = dateElements[0].value;
         if (dateText !== '') {
@@ -291,7 +299,7 @@ class Rules {
             if (parsedDate.toString() !== 'Invalid Date')
                 return {
                     parsedDate,
-                    lineNumber: dateElements[0].lineNumber,
+                    lineNumber: dateElements[0].lineNumber + this.lineNumberOffset,
                     columnNumber: dateElements[0].columnNumber,
                 };
         }
@@ -311,7 +319,7 @@ class Rules {
     betweenDates(oneCase) {
         if (this.date !== null) {
             if ('date' in oneCase) {
-                this.addFailureContext(xpath(oneCase.date, this.element)[0]);
+                this.addFailureContext(select(oneCase.date, this.element)[0]);
             }
             return (
                 compareAsc(this.start.parsedDate, this.date.parsedDate) <= 0 &&
@@ -357,7 +365,7 @@ class Rules {
         }
         // get text matches for start into Array
         const startMatchesText = _.flatten(
-            oneCase.prefix.map((path) => xpath(path, this.element))
+            oneCase.prefix.map((path) => select(path, this.element))
         ).map((match) => getText(match));
 
         // every path match (e.g. iati-identifier), must start with at least one (some) start match (e.g. reporting-org/@ref)
@@ -371,8 +379,8 @@ class Rules {
     }
 
     ifThen(oneCase) {
-        if (xpath(oneCase.if, this.element)) {
-            return xpath(oneCase.then, this.element);
+        if (select(oneCase.if, this.element)) {
+            return select(oneCase.then, this.element);
         }
         return true;
     }
@@ -395,16 +403,16 @@ class Rules {
 }
 
 // Tests a specific rule type for a specific case.
-const testRule = (contextXpath, element, rule, oneCase, idSets) => {
+const testRule = (contextXpath, element, rule, oneCase, idSets, lineNumberOffset = 0) => {
     let result;
     let caseContext;
     let failContext;
     let ruleName;
     // if there is a condition, but not match, don't evalute the rule
-    if ('condition' in oneCase && !xpath(oneCase.condition, element)) {
+    if ('condition' in oneCase && !select(oneCase.condition, element)) {
         result = 'No Condition Match';
     } else {
-        let ruleObject = new Rules(element, oneCase, idSets);
+        let ruleObject = new Rules(element, oneCase, idSets, lineNumberOffset);
         if (ruleObject.idCondition === false) {
             result = 'No ID Condition Match';
         } else {
@@ -423,7 +431,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
         result,
         xpathContext: {
             xpath: contextXpath,
-            lineNumber: element.lineNumber,
+            lineNumber: element.lineNumber + lineNumberOffset,
             columnNumber: element.columnNumber,
         },
         ruleName: ruleName || rule,
@@ -433,7 +441,7 @@ const testRule = (contextXpath, element, rule, oneCase, idSets) => {
     };
 };
 
-const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
+const testRuleLoop = (contextXpath, element, oneCase, idSets, lineCount = 0) => {
     const results = [];
     _.forEach(oneCase.do, (subCases, subRule) => {
         _.forEach(subCases.cases, (subCase) => {
@@ -442,7 +450,7 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
                 subs[sub] = subCase[sub];
             });
             const groups = [
-                ...new Set(xpath(oneCase.foreach, element).map((res) => res.nodeValue)),
+                ...new Set(select(oneCase.foreach, element).map((res) => res.nodeValue)),
             ];
             _.forEach(groups, (val) => {
                 const subCaseTest = { ...subCase };
@@ -453,7 +461,9 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
                         subCaseTest[k] = v.map((vi) => vi.replace(/\$1/g, val));
                     }
                 });
-                results.push(testRule(contextXpath, element, subRule, subCaseTest, idSets));
+                results.push(
+                    testRule(contextXpath, element, subRule, subCaseTest, idSets, lineCount)
+                );
             });
         });
     });
@@ -475,7 +485,7 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets) => {
         oneCase,
     }
 */
-exports.testRuleset = (ruleset, xml, idSets) => {
+const testRuleset = (ruleset, xml, idSets, lineCount = 0) => {
     let document;
     if (typeof xml === 'string') {
         document = new DOMParser().parseFromString(xml);
@@ -484,16 +494,18 @@ exports.testRuleset = (ruleset, xml, idSets) => {
     }
     let result = [];
     Object.keys(ruleset).forEach((contextXpath) => {
-        xpath(contextXpath, document).forEach((element) => {
+        select(contextXpath, document).forEach((element) => {
             Object.keys(ruleset[contextXpath]).forEach((rule) => {
                 const theCases = ruleset[contextXpath][rule].cases;
                 theCases.forEach((oneCase) => {
                     if (rule === 'loop') {
                         result = result.concat(
-                            testRuleLoop(contextXpath, element, oneCase, idSets)
+                            testRuleLoop(contextXpath, element, oneCase, idSets, lineCount)
                         );
                     } else {
-                        result.push(testRule(contextXpath, element, rule, oneCase, idSets));
+                        result.push(
+                            testRule(contextXpath, element, rule, oneCase, idSets, lineCount)
+                        );
                     }
                 });
             });
@@ -503,8 +515,8 @@ exports.testRuleset = (ruleset, xml, idSets) => {
 };
 
 // Return true if all results are true, return false if any are false
-exports.allRulesResult = (ruleset, xml) => {
-    const results = this.testRuleset(ruleset, xml);
+const allRulesResult = (ruleset, xml) => {
+    const results = testRuleset(ruleset, xml);
     if (results.length === 0) {
         return 'No Rule Match';
     }
@@ -666,74 +678,254 @@ const standardiseResultFormat = (result, showDetails) => {
     };
 };
 
+const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 0) => {
+    const xmlDoc = libxml.parseXml(xmlString);
+
+    if (!xmlDoc.validate(schema)) {
+        const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
+            let errContext;
+            const errorDetail = error;
+            if ('line' in errorDetail) {
+                const lineMax = errorDetail.line >= 65535;
+                errorDetail.line += lineOffset;
+                errContext = `At line${lineMax ? ' greater than' : ''}: ${errorDetail.line}${
+                    lineMax
+                        ? `. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than ${errorDetail.line} for this activity.`
+                        : ''
+                }`;
+            }
+            if (!_.has(acc, error.message)) {
+                acc[error.message] = {
+                    id: '0.3.1',
+                    category: 'schema',
+                    severity: 'critical',
+                    message: error.message,
+                    context: [{ text: errContext }],
+                    ...(showDetails && { details: [{ error: errorDetail }] }),
+                    identifier,
+                    title,
+                };
+            } else {
+                acc[error.message] = {
+                    ...acc[error.message],
+                    context: [...acc[error.message].context, { text: errContext }],
+                    ...(showDetails && {
+                        details: [...acc[error.message].details, { error: errorDetail }],
+                    }),
+                };
+            }
+            return acc;
+        }, {});
+        return Object.keys(curSchemaErrors).map((errGroup) => curSchemaErrors[errGroup]);
+    }
+    return [];
+};
+
 const fileDefinition = {
-    activity: {
-        root: 'iati-activities',
+    'iati-activities': {
         subRoot: 'iati-activity',
         identifier: 'iati-identifier',
         titleLocation: 'title/narrative',
     },
-    organisation: {
-        root: 'iati-organisations',
+    'iati-organisations': {
         subRoot: 'iati-organisation',
         identifier: 'organisation-identifier',
         titleLocation: 'name/narrative',
     },
 };
 
-exports.validateIATI = async (ruleset, xml, idSets, showDetails = false) => {
-    const document = new DOMParser().parseFromString(xml, 'text/xml');
-    const isActivity = xpath('/iati-activities', document).length > 0;
-    const fileType = isActivity ? 'activity' : 'organisation';
+const splitXMLTransform = (root, elementName) => {
+    let rootOpen = '';
+    const rootClose = `</${root}>`;
+    const open = `<${elementName}`;
+    const close = `</${elementName}>`;
+    let doc = '';
+    return new Transform({
+        transform(chunk, enc, next) {
+            doc += chunk.toString();
+            if (rootOpen === '') {
+                const rootOpenIndex = doc.indexOf(`<${root}`);
+                const rootCloseIndex = doc.indexOf(`>`, rootOpenIndex);
+                if (rootOpenIndex === -1 || rootCloseIndex === -1) {
+                    next();
+                    return;
+                }
+                rootOpen = doc.slice(rootOpenIndex, rootCloseIndex + 1);
+                doc = doc.slice(rootCloseIndex + 1);
+            }
 
-    const elements = xpath(
-        `/${fileDefinition[fileType].root}/${fileDefinition[fileType].subRoot}`,
-        document
-    );
-    const results = {};
+            let openIndex = doc.indexOf(open);
+            let closeIndex = doc.indexOf(close);
+            while (openIndex !== -1 && closeIndex !== -1) {
+                // get space between root or last element
+                const spacer = doc.slice(0, openIndex);
+
+                // trim before <elementName
+                doc = doc.slice(openIndex);
+
+                // adjust indexes
+                closeIndex -= openIndex;
+                openIndex = 0;
+
+                // push single subelement, wrapped in root
+                this.push(
+                    `${rootOpen}${spacer}${doc.slice(0, closeIndex + close.length)}${rootClose}`
+                );
+
+                // remove subelement that's been pushed
+                doc = doc.slice(closeIndex + close.length);
+
+                // adjust indexes
+                openIndex = doc.indexOf(open);
+                closeIndex = doc.indexOf(close);
+            }
+            next();
+        },
+    });
+};
+
+// get line number of starting <iati-activity or <iati-organisation element
+const getLineStart = (xml, subElement) => {
+    const re = new RegExp(`<${subElement}(\\s|>)`);
+    const chunk = Buffer.from(xml.split(re)[0]);
+    let idx = -1;
+    let lineCount = -1; // Because the loop will run once for idx=-1
+    do {
+        idx = chunk.indexOf(10, idx + 1);
+        lineCount += 1;
+    } while (idx !== -1);
+    return lineCount;
+};
+
+const validateIATI = async (
+    ruleset,
+    xml,
+    fileType,
+    idSets,
+    schema,
+    showDetails = false,
+    showElementMeta = false
+) => {
+    let schemaErrors = [];
+    const ruleErrors = {};
+    let index = 0;
+    let lineCount = getLineStart(xml, fileDefinition[fileType].subRoot);
     const idTracker = new Map();
-    elements.forEach((element) => {
-        const singleElementDoc = new DOMParser().parseFromString(
-            `<${fileDefinition[fileType].root}></${fileDefinition[fileType].root}>`,
-            'text/xml'
-        );
-        singleElementDoc.firstChild.appendChild(element);
-        let identifier =
-            xpath(`string(${fileDefinition[fileType].identifier})`, element) || 'noIdentifier';
-        const title = xpath(`string(${fileDefinition[fileType].titleLocation})`, element) || '';
-        idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
-        if (idTracker.get(identifier) > 1) {
-            // duplicate identifier, drop a file level error
-            results.file = {
-                identifier: 'file',
-                title: 'File level errors',
-                errors: [
-                    {
-                        id: '1.1.2',
-                        severity: 'error',
-                        category: 'identifiers',
-                        message: `The activity identifier must be unique for each activity.`,
-                        context: [
+
+    const elementsMeta = showElementMeta ? { [fileType]: [] } : {};
+
+    const processActivity = () =>
+        new Transform({
+            transform(chunk, enc, next) {
+                let newSchemaErrors = [];
+                const docString = chunk.toString();
+
+                // adjust lineCount to account for added wrapper of root element around each activity
+                lineCount -= getLineStart(docString, fileDefinition[fileType].subRoot);
+
+                // build single activity or org document
+                const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
+
+                // parse identifier and title
+                let identifier =
+                    select(
+                        `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].identifier})`,
+                        singleElementDoc
+                    ) || 'noIdentifier';
+                const title =
+                    select(
+                        `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].titleLocation})`,
+                        singleElementDoc
+                    ) || '';
+
+                // track and duplicate check identifier
+                idTracker.set(identifier, (idTracker.get(identifier) || 0) + 1);
+                if (idTracker.get(identifier) > 1) {
+                    // duplicate identifier, drop a file level error
+                    ruleErrors.file = {
+                        identifier: 'file',
+                        title: 'File level errors',
+                        errors: [
                             {
-                                text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
+                                id: '1.1.2',
+                                severity: 'error',
+                                category: 'identifiers',
+                                message: `The activity identifier must be unique for each activity.`,
+                                context: [
+                                    {
+                                        text: `Duplicate found for ${fileDefinition[fileType].identifier} = '${identifier}'`,
+                                    },
+                                ],
                             },
                         ],
-                    },
-                ],
-            };
-            identifier = `${identifier}(${idTracker.get(identifier)})`;
-            idTracker.set(identifier, idTracker.get(identifier) + 1);
-        }
-        const errors = this.testRuleset(ruleset, singleElementDoc, idSets).reduce((acc, result) => {
-            if (result.result === false) {
-                acc.push(standardiseResultFormat(result, showDetails));
-            }
-            return acc;
-        }, []);
+                    };
+                    identifier = `${identifier}(${idTracker.get(identifier)})`;
+                    idTracker.set(identifier, idTracker.get(identifier) + 1);
+                }
 
-        if (errors.length > 0) {
-            results[identifier] = { identifier, title, errors };
-        }
-    });
-    return results;
+                // validate against iati schema
+                if (schema) {
+                    newSchemaErrors = validateSchema(
+                        docString,
+                        schema,
+                        identifier,
+                        title,
+                        showDetails,
+                        lineCount
+                    );
+                    schemaErrors = [...schemaErrors, ...newSchemaErrors];
+                }
+
+                // add element metadata
+                if (showElementMeta) {
+                    elementsMeta[fileType].push({
+                        identifier,
+                        valid: newSchemaErrors.length === 0,
+                        index,
+                    });
+                }
+
+                // validate against ruleset
+                const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
+                    (acc, result) => {
+                        if (result.result === false) {
+                            acc.push(standardiseResultFormat(result, showDetails));
+                        }
+                        return acc;
+                    },
+                    []
+                );
+
+                if (errors.length > 0) {
+                    ruleErrors[identifier] = { identifier, title, errors };
+                }
+                // increment index and line count
+                index += 1;
+                let idx = -1;
+                do {
+                    idx = chunk.indexOf(10, idx + 1);
+                    lineCount += 1;
+                } while (idx !== -1);
+
+                next();
+            },
+        });
+
+    await pipeline(
+        Readable.from(xml),
+        splitXMLTransform(fileType, fileDefinition[fileType].subRoot),
+        processActivity()
+    );
+
+    // if no iati child elements found, evaluate schema errors at file level
+    if (schema && index === 0) {
+        schemaErrors = [
+            ...schemaErrors,
+            ...validateSchema(xml, schema, 'file', 'File level errors', showDetails),
+        ];
+    }
+
+    return { ruleErrors, schemaErrors, elementsMeta };
 };
+
+export { validateIATI, testRuleset, allRulesResult };

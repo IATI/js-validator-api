@@ -11,9 +11,6 @@ on:
       - develop
       - main
 
-env:
-  NODE_VERSION: '14.x'
-
 jobs:
   build-test-node:
     runs-on: ubuntu-latest
@@ -26,16 +23,16 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
 
-      - name: 'Setup Node ${{ env.NODE_VERSION }} Environment'
-        uses: actions/setup-node@v3.3.0
+      - name: 'Setup Node Environment'
+        uses: actions/setup-node@v3.5.1
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: 'Install Dependencies with Npm'
         run: |
           npm i -g npm
-          npm install
+          npm ci
 
       - name: 'Run unit tests'
         run: npm run rules:test
@@ -57,6 +54,6 @@ jobs:
       pull-requests: write
       contents: write
     steps:
-      - uses: fastify/github-action-merge-dependabot@v3.2.0
+      - uses: fastify/github-action-merge-dependabot@v3.5.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}

@@ -1,16 +1,16 @@
 {
     "env": {
         "browser": false,
-        "commonjs": true,
-        "es2021": true,
-        "node": true,
+        "commonjs": false,
+        "es2022": true,
         "mocha": true
     },
     "extends": ["airbnb-base", "prettier"],
     "parserOptions": {
-        "ecmaVersion": 12
+        "ecmaVersion": 13
     },
     "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "import/extensions": ["warn", "ignorePackages"]
     }
 }

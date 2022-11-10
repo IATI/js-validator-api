@@ -1,15 +1,25 @@
-const appInsights = require('applicationinsights');
-const config = require('./config');
+import appInsights from 'applicationinsights';
+import config from './config.js';
 
-appInsights.setup().start();
-exports.appInsights = appInsights;
-exports.client = appInsights.defaultClient;
+appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING).start();
+const initAppInsights = appInsights;
+export { initAppInsights as appInsights };
+export const client = appInsights.defaultClient;
 
-exports.getStartTime = () => process.hrtime.bigint();
+export function getStartTime() {
+    return process.hrtime.bigint();
+}
 
-exports.getElapsedTime = (startTime) =>
-    Number(Number(Number(process.hrtime.bigint() - startTime) / config.NS_PER_SEC).toFixed(3));
+export function getElapsedTime(startTime) {
+    return Number(
+        Number(Number(process.hrtime.bigint() - startTime) / config.NS_PER_SEC).toFixed(3)
+    );
+}
 
-exports.getStartRSS = () => process.resourceUsage().maxRSS;
+export function getStartRSS() {
+    return process.resourceUsage().maxRSS;
+}
 
-exports.getRSSChange = (beforeRSS) => (process.resourceUsage().maxRSS - beforeRSS) / 1000000;
+export function getRSSChange(beforeRSS) {
+    return (process.resourceUsage().maxRSS - beforeRSS) / 1000000;
+}
