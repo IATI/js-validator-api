@@ -113,7 +113,7 @@ config.VERSIONS.forEach(async (version) => {
         codelistRules[version] = {};
         if ((await redisclient.EXISTS(`codelistRules${version}`)) === 0) {
             console.log({
-                name: `Fetching codelist rules for version: ${version}, repo: ${codelistRepo} branch: ${codelistBranch} `,
+                name: `Fetching codelist rules for version: ${version}, repo: ${codelistRepo}, branch: ${codelistBranch} `,
                 value: true,
             });
 
