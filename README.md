@@ -28,19 +28,38 @@
 
 ### Description
 
-APPINSIGHTS_INSTRUMENTATIONKEY=
+APPLICATIONINSIGHTS_CONNECTION_STRING
 
 -   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
 
+BASIC_GITHUB_TOKEN
+
+-   GitHub PAT token to authenticate to the GitHub API to pull in some external resources from GitHub
+
+REDIS_CACHE_SEC=60
+REDIS_PORT=6379
+REDIS_KEY=
+REDIS_HOSTNAME=
+
+-   Redis connection, leaving the default will connect to a locally installed instance if you have one.
+
+VALIDATOR_SERVICES_URL=https://dev-func-validator-services.azurewebsites.net/api
+VALIDATOR_SERVICES_KEY_NAME=x-functions-key
+VALIDATOR_SERVICES_KEY_VALUE=
+
+-   URL and API Key for Validator Services, used to get list of Publisher Identifiers
+
 ### config defaults
 
--   `APP_NAME`: IATI Validator API
--   `VERSION`: process.env.npm_package_version
--   `NODE_ENV`: process.env.NODE_ENV
--   `APPINSIGHTS_INSTRUMENTATIONKEY`: process.env.APPINSIGHTS_INSTRUMENTATIONKEY
--   `NS_PER_SEC`: 1e9
--   `VERSIONS`: process.env.VERSIONS || ['2.01', '2.02', '2.03']
--   `MAX_FILESIZE`: process.env.MAX_FILESIZE || 60
+```
+   `APP_NAME`: IATI Validator API
+   `VERSION`: process.env.npm_package_version
+   `NODE_ENV`: process.env.NODE_ENV
+   `APPLICATIONINSIGHTS_CONNECTION_STRING`: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
+   `NS_PER_SEC`: 1e9
+   `VERSIONS`: process.env.VERSIONS || ['2.01', '2.02', '2.03']
+   `MAX_FILESIZE`: process.env.MAX_FILESIZE || 60
+```
 
 ### Adding New
 
@@ -53,7 +72,7 @@ Add in:
 Import
 
 ```
-const config = require("./config");
+import config from "./config.js";
 
 let myEnvVariable = config.ENV_VAR
 ```
@@ -109,6 +128,28 @@ Hello, <Name>. This HTTP triggered function executed successfully.
         -   shows all context information for advanced use and debugging
     -   `group=false`
         -   returns errors ungrouped in a "flat" structure, default is to group by Activity/Organisation identifier and Category
+    -   `meta=true`
+        -   returns an additional `"activities"` key for activities files and `"organisations"` key for organisation files which contains an Array of metadata about the activities or organisations present in the file. In the following structure:
+
+```json
+"activities": [
+       {
+           "identifier": "AA-AAA-123456789-ABC123",
+           "valid": false,
+           "index": 0
+       }
+   ],
+```
+
+```json
+"organisations": [
+       {
+            "identifier": "NP-SWC-1234",
+            "valid": true,
+            "index": 0
+       }
+   ],
+```
 
 -   Request Body
 
@@ -147,7 +188,7 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   Unhandled server error, contact the IATI Tech Team
 
-### `POST /pvt/validate-schema`
+### `POST /pvt/validate-schema` - v2.1 ALV Phase I - to be removed after ALV Phase II go-live
 
 -   Request Body
 
@@ -184,6 +225,38 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 -   Unsupported IATI Version - 0.6.1
 -   Not iati-activities file
 
+### `POST /pvt/schema-validate-file` - v2.2 ALV Phase II
+
+-   Request Body
+
+    -   application/xml
+    -   IATI XML
+
+-   Returns
+
+#### `200 OK`
+
+    -   Valid:
+
+```json
+{
+    "valid": true
+}
+```
+
+    - Invalid:
+
+```json
+{
+    "valid": false
+}
+```
+
+#### `400 Bad Request`
+
+-   No Body
+-   Not a application/xml string body
+
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "Function"`
@@ -191,10 +264,6 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 ## AppInsights SDK
 
 -   An example of using the `config/appInsights.js` utility is available in the `pvt-get/index.js` where execution time of the function is measured and then logged in 2 ways to the AppInsights Telemetry.
-
-## Filesystem
-
--   Provided in `config/fileSystem.js` which can be imported to get the promisified versions of common `fs` functions since we're stuck with Node v12 for now (these are standard in Node v14)
 
 ## Unit Tests
 
@@ -231,26 +300,18 @@ Using files:
 -   When ready to export tests to the repo don't forget to copy file to `integration-tests/test-files`
 -   `--working-dir` cli parameter tells `newman` where to look
 
-## Deployment
+## Deployment / Release / Version Management
 
--   Development environment is deployed using GitHub Actions on push
+https://github.com/IATI/IATI-Internal-Wiki#development-process
 
-## Release / Version Management
+## Customised Dependencies
 
-Increment the version on `main` branch using npm:
+### xpath
 
-`npm version major | minor | patch`
-
-Push the new tag and commit to gitHub
-
-```bash
-git push origin main
-git push —-tags origin main
-```
-
-Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
-
-Once deployed successfully PR `main` back into `develop`.
+-   Fork [IATI/xpath](https://github.com/iati/xpath)
+    -   Sent a performance improvement PR that hasn't been merged into the original project: https://github.com/goto100/xpath/pull/107
+    -   If that is ever merged, then we could get rid of this custom dependency.
+    -   Also merged this performance PR to our fork: https://github.com/goto100/xpath/pull/108
 
 ## IATI Resource Dependencies
 
@@ -273,3 +334,26 @@ This repo provides the "Codelist Rules" for evaluating whether the codelists use
 -   [IATI-Rulesets](https://github.com/IATI/IATI-Rulesets)
 
 This repo provides the "Rulesets" for various conditional and restraint rules for IATI data. This application dynamically loads the `rulsets/standard.json` file from this repo for each `version-2.0X` branch. This is also stored in Redis for caching.
+
+#### Organisation IDs
+
+The rulesets contain rules that require evaluation against a list of Publisher organisation identifiers, and valid organisation identifier prefixes. [link](https://iatistandard.org/en/guidance/publishing-data/registering-and-managing-your-organisation-account/how-to-create-your-iati-organisation-identifier/)
+
+These are sourced from the following locations:
+
+-   Organisation Identifier Prefixes (Registration Agencies) - https://org-id.guide/download.json
+
+    -   `response.lists[].code`
+    -   The validator expects the response header from the URL to contain: `Content-Disposition: attachment; filename="<filename>"`
+
+-   Published Organisation Identifiers - https://func-validator-services-dev.azurewebsites.net/api/pvt/publishers
+    -   `response[].iati_id`
+
+## Known Issues
+
+### Line numbers for Schema Errors in activities longer than 65535 lines
+
+Due to a [known limitation](https://gitlab.gnome.org/GNOME/libxml2/-/issues/361) in the core library `libxml2` used to perform schema validation, if an activity has a schema error at a line greater than 65535, the value will not be accurate in the context.
+
+If this is the case for your validation report, a message like so will be displayed in the context of the schema error:
+`At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65537 for this activity.`

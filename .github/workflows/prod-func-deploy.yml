@@ -9,7 +9,6 @@ env:
   NAME: iativalidator
   STAGE: prod # suffix to indicate environment stage
   TAG: ${{ github.sha }}
-  NODE_VERSION: '14.x'
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
   REDIS_HOSTNAME: ${{ secrets.PROD_REDIS_HOSTNAME }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
@@ -33,7 +32,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 'Login via Azure CLI'
-        uses: azure/login@v1.4.5
+        uses: azure/login@v1.4.6
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
@@ -134,7 +133,7 @@ jobs:
           image: ${{ env.ACR_LOGIN_SERVER }}/func-${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
 
       - name: 'Tag resource for Tech Climate Impact'
-        uses: 'azure/CLI@v1.0.6'
+        uses: 'azure/CLI@v1.0.7'
         with:
           azcliversion: 2.30.0
           inlineScript: |

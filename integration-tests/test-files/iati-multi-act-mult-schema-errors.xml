@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iati-activities version="2.03">
+  <iati-activity>
+    <iati-identifier>ID-1</iati-identifier>
+    <reporting-org ref="" type="">
+      <narrative></narrative>
+    </reporting-org>
+    <title>
+      <narrative>Activity 1 Schema Error </narrative>
+    </title>
+    <description>
+      <narrative></narrative>
+    </description>
+    <participating-org>
+    </participating-org>
+    <activity-status code="">
+    </activity-status>
+    <activity-date type="" iso-date="2020-01-01">
+    </activity-date>
+  </iati-activity>
+  <iati-activity>
+    <iati-identifier>ID-2</iati-identifier>
+    <reporting-org ref="" type="">
+      <narrative></narrative>
+    </reporting-org>
+    <title>
+      <narrative>Activity 2 Schema Error</narrative>
+    </title>
+    <description>
+      <narrative></narrative>
+    </description>
+    <participating-org role="">
+    </participating-org>
+    <activity-status code="">
+    </activity-status>
+    <activity-date type="" iso-date="">
+    </activity-date>
+  </iati-activity>
+</iati-activities>

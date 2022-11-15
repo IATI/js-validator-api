@@ -1,11 +1,13 @@
-require('dotenv').config();
-const { version } = require('../package.json');
+import 'dotenv/config';
+import { readFile } from 'fs/promises';
 
-module.exports = {
+const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url)));
+
+const config = {
     APP_NAME: 'IATI Validator API',
     VERSION: version,
     NODE_ENV: process.env.NODE_ENV,
-    APPINSIGHTS_INSTRUMENTATIONKEY: process.env.APPINSIGHTS_INSTRUMENTATIONKEY,
+    APPLICATIONINSIGHTS_CONNECTION_STRING: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
     NS_PER_SEC: 1e9,
     VERSIONS: process.env.VERSIONS || ['2.01', '2.02', '2.03'],
     MAX_FILESIZE: process.env.MAX_FILESIZE || 60,
@@ -18,3 +20,5 @@ module.exports = {
     VALIDATOR_SERVICES_KEY_NAME: process.env.VALIDATOR_SERVICES_KEY_NAME,
     VALIDATOR_SERVICES_KEY_VALUE: process.env.VALIDATOR_SERVICES_KEY_VALUE,
 };
+
+export default config;

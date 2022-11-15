@@ -1,12 +1,12 @@
-const { validate } = require('../services/validationService');
-const { appInsights } = require('../config/appInsights');
+import validate from '../services/validationService.js';
+import { appInsights } from '../config/appInsights.js';
 
 const pubValidatePost = async (context, req) => {
     await validate(context, req);
 };
 
 // Default export wrapped with Application Insights FaaS context propagation
-exports.index = async (context, req) => {
+const index = async (context, req) => {
     // Start an AI Correlation Context using the provided Function context
     const correlationContext = appInsights.startOperation(context, req);
 
@@ -30,4 +30,4 @@ exports.index = async (context, req) => {
     }, correlationContext)();
 };
 
-exports.pubValidatePost = pubValidatePost;
+export { index, pubValidatePost };

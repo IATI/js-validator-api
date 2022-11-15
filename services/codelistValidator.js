@@ -1,6 +1,6 @@
-const xml2js = require('xml2js');
-const _ = require('underscore');
-const { getVersionCodelistRules } = require('../utils/utils');
+import xml2js from 'xml2js';
+import _ from 'underscore';
+import { getVersionCodelistRules } from '../utils/utils.js';
 
 const shortenPath = (path) => {
     if (path.includes('/iati-activities')) {
@@ -42,7 +42,7 @@ const getOrgName = (node) => {
     return 'No Organisation Name Found';
 };
 
-exports.validateCodelists = async (body, version, showDetails) => {
+export default async function validateCodelists(body, version, showDetails) {
     const errors = {};
     let errCache = [];
     const codelistRules = getVersionCodelistRules(version);
@@ -227,4 +227,4 @@ exports.validateCodelists = async (body, version, showDetails) => {
     });
 
     return { errors };
-};
+}
