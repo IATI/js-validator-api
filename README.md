@@ -2,6 +2,10 @@
 
 [![Deploy_To_Dev_Function_On_Push](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml/badge.svg)](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml)
 
+## Endpoints
+
+See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagger UI, you can use the `42crunch.vscode-openapi` VSCode extension.
+
 ## Prerequisities
 
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
