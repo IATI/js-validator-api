@@ -1,0 +1,403 @@
+openapi: '3.0.0'
+info:
+    version: '2.2.0'
+    title: 'js-validator-api'
+    description: JavaScript IATI Validator API
+
+servers:
+    - url: 'http://localhost:7071'
+      description: Local Function
+    - url: 'https://func-iativalidator-dev.azurewebsites.net'
+      description: Dev environment Function (requires auth)
+    - url: 'https://func-iativalidator-prod.azurewebsites.net'
+      description: Production environment Function (requires auth)
+
+paths:
+    /api/pub/version:
+        get:
+            summary: Returns application version.
+            responses:
+                200:
+                    description: Version of the application in semver format
+                    content:
+                        text/plain:
+                            schema:
+                                type: string
+                                example: 1.0.7
+                401:
+                    $ref: '#/components/responses/UnauthorizedError'
+                500:
+                    description: Unexpected server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+    /api/pub:
+        get:
+            summary: GET public route
+            parameters:
+                - name: name
+                  description: A name of your choice
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Metadata about the application
+                    content:
+                        text/plain:
+                            schema:
+                                $ref: "#/components/schemas/AppInfo"
+                401:
+                    $ref: '#/components/responses/UnauthorizedError'
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /api/pvt:
+        get:
+            summary: GET private route
+            parameters:
+                - name: name
+                  description: A name of your choice
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Metadata about the application
+                    content:
+                        text/plain:
+                            schema:
+                                $ref: "#/components/schemas/AppInfo"
+                401:
+                    $ref: '#/components/responses/UnauthorizedError'
+                500:
+                    description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /api/pub/validate:
+        post:
+          summary: Returns a validation report for provided IATI XML.
+          description: "This route allows the user to POST an IATI document to the Validator in the body of the request, and receive a JSON validation report in the response.\n\n[GitHub Repository](https://github.com/IATI/js-validator-api)  \n\n[Error ID Information](https://github.com/IATI/validator-rule-tracker)\n"
+          parameters:
+            - in: query
+              name: details
+              description: Show all context information for advanced use and debugging
+              required: false
+              schema:
+                  type: boolean
+                  default: false
+            - in: query
+              name: group
+              description: If set to false, returns errors ungrouped in a "flat" structure, default is to group by Activity/Organisation identifier and Category
+              required: false
+              schema:
+                  type: boolean
+                  default: true
+            - in: query
+              name: meta
+              description: Returns an additional `"activities"` key for activities files and `"organisations"` key for organisation files which contains an Array of metadata about the activities or organisations present in the file.
+              required: false
+              schema:
+                  type: boolean
+                  default: false
+          requestBody:
+              $ref: '#/components/requestBodies/IATIXML'
+          responses:
+            200:
+              description: No Critical errors were detected with the IATI document and validation was successful. There may be validation errors of severity "error" or "warning" with the document.
+              content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/ValidationReportAdHocValidate'
+            400:
+              description: Bad Request
+              content:
+                  application/json:
+                      schema:
+                        oneOf:
+                          - $ref: '#/components/schemas/Error'
+                          - $ref: '#/components/schemas/ValidationReportAdHocValidate'
+                      examples:
+                        wrongType:
+                          value:
+                            error: 'Body must be an application/xml string'
+                        noBodyError:
+                          value:
+                              error: 'No Body'
+            413:
+              description: Payload Too Large
+              content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Error'
+                    example:  
+                      value:
+                        error: 'Max Filesize of <int> MiB exceeded. File supplied is <int> MiB'
+            422:
+              description: "Content of the body can be interpreted by the application but doesn't make sense for one of the following reasons.\n- Not recognisable as IATI\n- Critical (Schema) Errors\n- Not a supported version of IATI"
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ValidationReportAdHocValidate'
+                  example:
+                    valid: false
+                    fileType: string
+                    iatiVersion: string
+                    rulesetCommitSha: string
+                    codelistCommitSha: string
+                    orgIdPrefixFileName: string
+                    apiVersion: string
+                    summary:
+                      critical: 0
+                      error: 0
+                      warning: 0
+                    errors:
+                      - errors:
+                          - errors:
+                              - id: string
+                                severity: string
+                                message: string
+                                codelist: string
+                                context:
+                                  - text: string
+                            category: string
+                        identifier: string
+                        title: string
+            401:
+              $ref: '#/components/responses/UnauthorizedError'
+            500:
+              description: Unexpected server error
+              content:
+                  application/json:
+                      schema:
+                          $ref: "#/components/schemas/Error"
+    /api/pvt/schema-validate-file:       
+        post:
+          summary: Check file against IATI XML Schema 
+          description: Returns if file validates against the IATI XML Schema
+          requestBody:
+              $ref: '#/components/requestBodies/IATIXML'
+          responses:
+            200:
+              description: Validation status of provided document. 
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      valid: 
+                        type: boolean
+            400:
+              description: Bad Request
+              content:
+                  application/json:
+                      schema:
+                        $ref: '#/components/schemas/Error'
+                      examples:
+                        wrongType:
+                          value:
+                            error: 'Body must be an application/xml string'
+                        noBodyError:
+                          value:
+                              error: 'No Body'
+            401:
+              $ref: '#/components/responses/UnauthorizedError'
+            500:
+              description: Unexpected server error
+              content:
+                  application/json:
+                      schema:
+                          $ref: "#/components/schemas/Error"
+
+components:
+    requestBodies:
+      IATIXML:
+        content:
+          application/xml:
+            schema:
+              type: object
+            examples:
+              iatiActivity:
+                summary: A iati-activities document
+                externalValue: 'https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.03/en/activity-standard/activity-standard-example-annotated.xml'
+              iatiOrganisation:
+                summary: A iati-organisation document
+                externalValue: 'https://raw.githubusercontent.com/IATI/IATI-Extra-Documentation/version-2.03/en/organisation-standard/organisation-standard-example-annotated.xml'
+    responses:
+        UnauthorizedError:
+            description: API key is missing or invalid                                
+    schemas:
+        AppInfo:
+            description: Basic info about the application
+            type: string
+            example: |
+                <Public/Private> API.
+                Version <0.0.0>
+                <greeting>, <Name>. This HTTP triggered function executed successfully.
+        Error:
+            type: object
+            required:
+                - error
+            properties:
+                error:
+                    description: A human readable error message
+                    type: string
+        ValidationReportAdHocValidate:
+          required:
+            - valid
+            - fileType
+            - iatiVersion
+            - rulesetCommitSha
+            - codelistCommitSha
+            - orgIdPrefixFileName
+            - apiVersion
+            - summary
+            - errors
+          type: object
+          properties:
+            valid:
+              type: boolean
+              description: Files with no critical severity errors are considered valid
+            fileType:
+              enum:
+                - iati-activities
+                - iati-organisations
+              type: string
+              description: The type of IATI file
+            iatiVersion:
+              type: string
+              description: Version of the IATI Standard of the file
+            rulesetCommitSha:
+              type: string
+              description: git commit sha of the ruleset used to create the validation report
+            codelistCommitSha:
+              type: string
+              description: git commit sha of the codelist rules used to create the validation report
+            orgIdPrefixFileName:
+              type: string
+              description: file name of org id prefixes from https://org-id.guide/download.json
+            apiVersion:
+              type: string
+              description: version of the validator api
+            summary:
+              required:
+                - critical
+                - error
+                - warning
+              type: object
+              properties:
+                critical:
+                  type: integer
+                  description: Number of critical level validation errors with the file
+                error:
+                  type: integer
+                  description: Number of error level validation errors with the file
+                warning:
+                  type: integer
+                  description: Number of warning level validation errors with the file
+            errors:
+              type: array
+              items:
+                required:
+                  - errors
+                  - identifier
+                  - title
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      required:
+                        - errors
+                        - category
+                      type: object
+                      properties:
+                        errors:
+                          type: array
+                          items:
+                            required:
+                              - id
+                              - severity
+                              - message
+                              - context
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: The unique identifier of the error
+                              severity:
+                                enum:
+                                  - critical
+                                  - danger
+                                  - warning
+                                type: string
+                                description: The severity level of the error
+                              message:
+                                type: string
+                                description: The informational message about the validation error
+                              codelist:
+                                type: string
+                                description: The codelist that is being validated against (if applicable)
+                              context:
+                                type: array
+                                items:
+                                  required:
+                                    - text
+                                  type: object
+                                  properties:
+                                    text:
+                                      type: string
+                                      description: The context of the error
+                        category:
+                          enum:
+                            - identifiers
+                            - organisation
+                            - information
+                            - participating
+                            - geo
+                            - classifications
+                            - financial
+                            - documents
+                            - relations
+                            - performance
+                          type: string
+                          description: The category of the validation error
+                  identifier:
+                    type: string
+                    description: 'The activity''s iati-identifier for iati-activities files, organisation-identifier for iati-organisations file, or ''file'' for file level errors'
+                  title:
+                    type: string
+                    description: 'The activity''s title for iati-activities files, the organisation name for iati-organisations files, or ''File level errors'' for file level errors'
+              description: 'array of errors, if empty the file has no errors'
+              example:
+                valid: false
+                fileType: string
+                iatiVersion: string
+                rulesetCommitSha: string
+                codelistCommitSha: string
+                orgIdPrefixFileName: string
+                apiVersion: string
+                summary:
+                  critical: 0
+                  error: 0
+                  warning: 0
+                errors:
+                  - errors:
+                      - errors:
+                          - id: string
+                            severity: string
+                            message: string
+                            codelist: string
+                            context:
+                              - text: string
+                        category: string
+                    identifier: string
+                    title: string

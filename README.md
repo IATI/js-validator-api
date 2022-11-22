@@ -90,36 +90,6 @@ let myEnvVariable = config.ENV_VAR
 
 ## Endpoints /api
 
-### `GET /pvt?name=Name`
-
--   Returns
-
-```
-Private API.
-Version <0.0.0>
-Hello, <Name>. This HTTP triggered function executed successfully.
-```
-
-### `GET /pub/version`
-
--   Returns
-
-Version
-
-```
-X.X.X
-```
-
-### `GET /pub?name=Name`
-
--   Returns
-
-```
-Public API.
-Version <0.0.0>
-Hello, <Name>. This HTTP triggered function executed successfully.
-```
-
 ### `POST /pub/validate`
 
 -   Query Params
@@ -224,38 +194,6 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 -   Not IATI XML - 0.2.1
 -   Unsupported IATI Version - 0.6.1
 -   Not iati-activities file
-
-### `POST /pvt/schema-validate-file` - v2.2 ALV Phase II
-
--   Request Body
-
-    -   application/xml
-    -   IATI XML
-
--   Returns
-
-#### `200 OK`
-
-    -   Valid:
-
-```json
-{
-    "valid": true
-}
-```
-
-    - Invalid:
-
-```json
-{
-    "valid": false
-}
-```
-
-#### `400 Bad Request`
-
--   No Body
--   Not a application/xml string body
 
 ## Creating a new route
 
