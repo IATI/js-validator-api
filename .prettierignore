@@ -4,7 +4,7 @@ test_data
 test/test_files
 node_modules
 iati-rulesets
-schemas
+./schemas
 var
 *.sef.json
 *.xml

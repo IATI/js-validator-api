@@ -34,7 +34,8 @@ paths:
                                 $ref: '#/components/schemas/Error'
     /api/pub:
         get:
-            summary: GET public route
+            summary: Returns application information.
+            description: Public route to return application information. Mainly to test that the API is functioning.
             parameters:
                 - name: name
                   description: A name of your choice
@@ -59,7 +60,8 @@ paths:
                                 $ref: "#/components/schemas/Error"
     /api/pvt:
         get:
-            summary: GET private route
+            summary: Returns application information.
+            description: Private route to return application information. Mainly to test that the API is functioning.
             parameters:
                 - name: name
                   description: A name of your choice
@@ -181,8 +183,10 @@ paths:
                           $ref: "#/components/schemas/Error"
     /api/pvt/schema-validate-file:       
         post:
-          summary: Check file against IATI XML Schema 
-          description: Returns if file validates against the IATI XML Schema
+          summary: Checks file against IATI XML Schema 
+          description: |
+            Returns response that indicates if file validates against the IATI XML Schema.
+            Used by the Unified Platform `validate` container to perform a Schema check first, before doing a full validation.
           requestBody:
               $ref: '#/components/requestBodies/IATIXML'
           responses:
