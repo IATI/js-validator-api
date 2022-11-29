@@ -143,10 +143,11 @@ https://github.com/IATI/IATI-Internal-Wiki#development-process
 
 ### xpath
 
--   Fork [IATI/xpath](https://github.com/iati/xpath)
+-   Fork [IATI/xpath](https://github.com/iati/xpath) - [v0.0.34](https://github.com/IATI/xpath/releases/tag/v0.0.34)
     -   Sent a performance improvement PR that hasn't been merged into the original project: https://github.com/goto100/xpath/pull/107
-    -   If that is ever merged, then we could get rid of this custom dependency.
-    -   Also merged this performance PR to our fork: https://github.com/goto100/xpath/pull/108
+        -   If that is ever merged, then we could get rid of this custom dependency.
+    -   Also merged this performance PR from another dev to our fork (also hasn't been merged into the original project): https://github.com/goto100/xpath/pull/108
+        -   If that is ever merged, then we could get rid of this custom dependency.
 
 ## IATI Resource Dependencies
 
