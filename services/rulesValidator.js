@@ -734,11 +734,29 @@ const fileDefinition = {
     },
 };
 
+const getCloseAndIndex = (elementName, doc, openIndex) => {
+    let close = '';
+
+    // change close if self-closed
+    if (
+        doc.indexOf('/>', openIndex + 1) !== -1 &&
+        doc.indexOf('/>', openIndex + 1) < doc.indexOf('<', openIndex + 1)
+    ) {
+        close = '/>';
+    } else {
+        close = `</${elementName}>`;
+    }
+    const closeIndex = doc.indexOf(close);
+
+    return { close, closeIndex };
+};
+
 const splitXMLTransform = (root, elementName) => {
     let rootOpen = '';
     const rootClose = `</${root}>`;
     const open = `<${elementName}`;
-    const close = `</${elementName}>`;
+    let close = '';
+    let closeIndex = -1;
     let doc = '';
     return new Transform({
         transform(chunk, enc, next) {
@@ -755,7 +773,7 @@ const splitXMLTransform = (root, elementName) => {
             }
 
             let openIndex = doc.indexOf(open);
-            let closeIndex = doc.indexOf(close);
+            ({ close, closeIndex } = getCloseAndIndex(elementName, doc, openIndex));
             while (openIndex !== -1 && closeIndex !== -1) {
                 // get space between root or last element
                 const spacer = doc.slice(0, openIndex);
@@ -777,7 +795,7 @@ const splitXMLTransform = (root, elementName) => {
 
                 // adjust indexes
                 openIndex = doc.indexOf(open);
-                closeIndex = doc.indexOf(close);
+                ({ close, closeIndex } = getCloseAndIndex(elementName, doc, openIndex));
             }
             next();
         },

@@ -2652,6 +2652,84 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "iati-multi-act-self-closed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"The file is not valid\", function () {",
+									"    pm.expect(jsonData.valid).to.eql(false);",
+									"});",
+									"pm.test(\"fileType value is iati-activities\", function () {",
+									"    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+									"});",
+									"pm.test(\"version is 2.03\", function () {",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"File level error includes error with id 0.3.1\", function () {",
+									"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('0.3.1');",
+									"});",
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});",
+									"pm.test(\"The self-closed element should have invalid status in meta object\", function () {",
+									"    pm.expect(jsonData['iati-activities'].find((obj) => obj.index === 1).valid).to.eq(false);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "iati-multi-act-self-closed.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?group=false&meta=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "false"
+								},
+								{
+									"key": "meta",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
