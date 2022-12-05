@@ -188,43 +188,6 @@ Hello, <Name>. This HTTP triggered function executed successfully.
 
 -   Unhandled server error, contact the IATI Tech Team
 
-### `POST /pvt/validate-schema` - v2.1 ALV Phase I - to be removed after ALV Phase II go-live
-
--   Request Body
-
-    -   application/xml
-    -   Single IATI XML activity wrapped in `<iati-activities>` element
-    -   Only critically invalid files that have an error id of `0.3.1` in the validation report should be sent to this endpoint. Error ids `0.1.1`, `0.2.1.`, `0.6.1` apply to the whole file so those files can be wholly excluded up front. [Validator rule tracker](https://github.com/IATI/validator-rule-tracker/blob/main/application.csv)
-
--   Returns
-
-#### `200 OK`
-
-    -   Valid:
-
-```json
-{
-    "valid": true
-}
-```
-
-    - Invalid:
-
-```json
-{
-    "valid": false
-}
-```
-
-#### `400 Bad Request`
-
-[Validator rule tracker](https://github.com/IATI/validator-rule-tracker/blob/main/application.csv)
-
--   Not XML - 0.1.1
--   Not IATI XML - 0.2.1
--   Unsupported IATI Version - 0.6.1
--   Not iati-activities file
-
 ### `POST /pvt/schema-validate-file` - v2.2 ALV Phase II
 
 -   Request Body
@@ -308,10 +271,11 @@ https://github.com/IATI/IATI-Internal-Wiki#development-process
 
 ### xpath
 
--   Fork [IATI/xpath](https://github.com/iati/xpath)
+-   Fork [IATI/xpath](https://github.com/iati/xpath) - [v0.0.34](https://github.com/IATI/xpath/releases/tag/v0.0.34)
     -   Sent a performance improvement PR that hasn't been merged into the original project: https://github.com/goto100/xpath/pull/107
-    -   If that is ever merged, then we could get rid of this custom dependency.
-    -   Also merged this performance PR to our fork: https://github.com/goto100/xpath/pull/108
+        -   If that is ever merged, then we could get rid of this custom dependency.
+    -   Also merged this performance PR from another dev to our fork (also hasn't been merged into the original project): https://github.com/goto100/xpath/pull/108
+        -   If that is ever merged, then we could get rid of this custom dependency.
 
 ## IATI Resource Dependencies
 
