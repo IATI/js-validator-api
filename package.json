@@ -17,7 +17,7 @@
     "author": "IATI",
     "dependencies": {
         "@xmldom/xmldom": "^0.8.6",
-        "applicationinsights": "^2.4.0",
+        "applicationinsights": "^2.4.1",
         "date-fns": "^2.29.3",
         "dotenv": "^16.0.3",
         "libxmljs2": "^0.31.0",
