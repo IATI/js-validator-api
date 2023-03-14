@@ -74,7 +74,7 @@ const getFileInformation = (body) => {
     let isIati;
     let xmlDoc;
     if (body.toString() !== `<?xml version="1.0"?>\n`) {
-        xmlDoc = libxml.parseXml(body);
+        xmlDoc = libxml.parseXml(body, { huge: true });
         if (xmlDoc) {
             const root = xmlDoc.root().name();
 
