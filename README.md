@@ -2,6 +2,10 @@
 
 [![Deploy_To_Dev_Function_On_Push](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml/badge.svg)](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml)
 
+## Endpoints
+
+See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagger UI, you can use the `42crunch.vscode-openapi` VSCode extension.
+
 ## Prerequisities
 
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
@@ -87,138 +91,6 @@ let myEnvVariable = config.ENV_VAR
 
 -   This is done with eslint following the airbnb-base style and using [Prettier](https://prettier.io). Implemented with [this](https://sourcelevel.io/blog/how-to-setup-eslint-and-prettier-on-node) guide.
 -   If you use VSCode the formatting will happen automagically on save due to the `.vscode/settings.json` > `"editor.formatOnSave": true` setting
-
-## Endpoints /api
-
-### `GET /pvt?name=Name`
-
--   Returns
-
-```
-Private API.
-Version <0.0.0>
-Hello, <Name>. This HTTP triggered function executed successfully.
-```
-
-### `GET /pub/version`
-
--   Returns
-
-Version
-
-```
-X.X.X
-```
-
-### `GET /pub?name=Name`
-
--   Returns
-
-```
-Public API.
-Version <0.0.0>
-Hello, <Name>. This HTTP triggered function executed successfully.
-```
-
-### `POST /pub/validate`
-
--   Query Params
-
-    -   `details=true`
-        -   shows all context information for advanced use and debugging
-    -   `group=false`
-        -   returns errors ungrouped in a "flat" structure, default is to group by Activity/Organisation identifier and Category
-    -   `meta=true`
-        -   returns an additional `"activities"` key for activities files and `"organisations"` key for organisation files which contains an Array of metadata about the activities or organisations present in the file. In the following structure:
-
-```json
-"activities": [
-       {
-           "identifier": "AA-AAA-123456789-ABC123",
-           "valid": false,
-           "index": 0
-       }
-   ],
-```
-
-```json
-"organisations": [
-       {
-            "identifier": "NP-SWC-1234",
-            "valid": true,
-            "index": 0
-       }
-   ],
-```
-
--   Request Body
-
-    -   application/xml
-    -   IATI XML
-
--   Returns
-
-#### HTTP Response Codes (pub-validate-post)
-
-`200 OK`:
-
--   Full validation has run (fullValidation)
-
-`400 Bad Request` aka can't read it:
-
--   No Body
--   Body not application/xml string
--   Not parseable XML (xmlError)
-
-`404 Not Found`:
-
--   This can happen in cases where the Azure Function has crashed and hasn't restarted yet to present the API Route
-
-`413 Payload Too Large`:
-
--   Body is larger than 60 MiB
-
-`422 Unprocessable Entity` aka can read it but it doesn't make sense:
-
--   Not recognisable as IATI (notIati)
--   Not a current version of IATI (notSupportedVersion)
--   Schema Errors (schemaErrors)
-
-`500 Internal Server Error`:
-
--   Unhandled server error, contact the IATI Tech Team
-
-### `POST /pvt/schema-validate-file` - v2.2 ALV Phase II
-
--   Request Body
-
-    -   application/xml
-    -   IATI XML
-
--   Returns
-
-#### `200 OK`
-
-    -   Valid:
-
-```json
-{
-    "valid": true
-}
-```
-
-    - Invalid:
-
-```json
-{
-    "valid": false
-}
-```
-
-#### `400 Bad Request`
-
--   No Body
--   Not a application/xml string body
 
 ## Creating a new route
 

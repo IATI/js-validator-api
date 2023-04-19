@@ -1,6 +1,6 @@
 {
     "name": "js-validator-api",
-    "version": "2.2.1",
+    "version": "2.3.0",
     "description": "JavaScript IATI Validator api",
     "license": "AGPL-3.0-or-later",
     "type": "module",
@@ -16,28 +16,28 @@
     },
     "author": "IATI",
     "dependencies": {
-        "@xmldom/xmldom": "^0.8.6",
-        "applicationinsights": "^2.3.6",
+        "@xmldom/xmldom": "^0.8.7",
+        "applicationinsights": "^2.5.1",
         "date-fns": "^2.29.3",
         "dotenv": "^16.0.3",
         "libxmljs2": "^0.31.0",
-        "node-fetch": "^3.3.0",
+        "node-fetch": "^3.3.1",
         "redis": "^4.4.0",
         "underscore": "^1.13.6",
-        "xml2js": "^0.4.23",
+        "xml2js": "^0.5.0",
         "xpath": "github:IATI/xpath#v0.0.34"
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^2.2.0",
         "chai": "*",
-        "eslint": "^8.28.0",
+        "eslint": "^8.38.0",
         "eslint-config-airbnb-base": "^15.0.0",
-        "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-import": "^2.26.0",
-        "husky": "^8.0.2",
-        "lint-staged": "^13.0.4",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-import": "^2.27.5",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.2.1",
         "mocha": "*",
-        "prettier": "^2.8.0"
+        "prettier": "^2.8.7"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",
