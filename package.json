@@ -1,6 +1,6 @@
 {
     "name": "js-validator-api",
-    "version": "2.2.1",
+    "version": "2.3.0",
     "description": "JavaScript IATI Validator api",
     "license": "AGPL-3.0-or-later",
     "type": "module",
