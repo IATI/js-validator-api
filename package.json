@@ -20,7 +20,7 @@
         "applicationinsights": "^2.5.1",
         "date-fns": "^2.29.3",
         "dotenv": "^16.0.3",
-        "libxmljs2": "^0.31.0",
+        "libxmljs2": "^0.32.0",
         "node-fetch": "^3.3.1",
         "redis": "^4.4.0",
         "underscore": "^1.13.6",
