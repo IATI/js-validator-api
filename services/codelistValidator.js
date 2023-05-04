@@ -42,6 +42,19 @@ const getOrgName = (node) => {
     return 'No Organisation Name Found';
 };
 
+const getIdsWithAttributes = (nodes) => {
+    const ids = [];
+    nodes.forEach((node) => {
+        if (typeof node === 'object') {
+            ids.push(node._);
+        } else {
+            ids.push(node);
+        }
+    });
+
+    return ids;
+};
+
 export default async function validateCodelists(body, version, showDetails) {
     const errors = {};
     let errCache = [];
@@ -181,7 +194,8 @@ export default async function validateCodelists(body, version, showDetails) {
             let identifier;
             const activityTitle = getActivityTitle(newValue);
             if (newValue['iati-identifier']) {
-                identifier = newValue['iati-identifier'].join() || 'noIdentifier';
+                identifier =
+                    getIdsWithAttributes(newValue['iati-identifier']).join() || 'noIdentifier';
             } else {
                 identifier = 'noIdentifier';
             }
@@ -199,7 +213,9 @@ export default async function validateCodelists(body, version, showDetails) {
             let identifier;
             const orgName = getOrgName(newValue);
             if (newValue['organisation-identifier']) {
-                identifier = newValue['organisation-identifier'].join() || 'noIdentifier';
+                identifier =
+                    getIdsWithAttributes(newValue['organisation-identifier']).join() ||
+                    'noIdentifier';
             } else {
                 identifier = 'noIdentifier';
             }

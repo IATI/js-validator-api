@@ -1,6 +1,6 @@
 {
     "name": "js-validator-api",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "description": "JavaScript IATI Validator api",
     "license": "AGPL-3.0-or-later",
     "type": "module",
@@ -17,10 +17,10 @@
     "author": "IATI",
     "dependencies": {
         "@xmldom/xmldom": "^0.8.7",
-        "applicationinsights": "^2.5.1",
-        "date-fns": "^2.29.3",
+        "applicationinsights": "^2.6.0",
+        "date-fns": "^2.30.0",
         "dotenv": "^16.0.3",
-        "libxmljs2": "^0.31.0",
+        "libxmljs2": "^0.32.0",
         "node-fetch": "^3.3.1",
         "redis": "^4.4.0",
         "underscore": "^1.13.6",
@@ -30,14 +30,14 @@
     "devDependencies": {
         "@prettier/plugin-xml": "^2.2.0",
         "chai": "*",
-        "eslint": "^8.38.0",
+        "eslint": "^8.39.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-import": "^2.27.5",
         "husky": "^8.0.3",
-        "lint-staged": "^13.2.1",
+        "lint-staged": "^13.2.2",
         "mocha": "*",
-        "prettier": "^2.8.7"
+        "prettier": "^2.8.8"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",
