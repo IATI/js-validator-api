@@ -56,6 +56,16 @@ const getRuleMethodName = (ruleName) => {
     return name;
 };
 
+const getParentNodeTagname = (xml, xpathContext) => {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xml, 'text/xml');
+    const elementNode = select(xpathContext.xpath, xmlDoc).find(
+        (element) => element.lineNumber === xpathContext.lineNumber
+    );
+    const parentElement = elementNode.parentNode;
+    return parentElement.tagName;
+};
+
 class Rules {
     constructor(element, oneCase, idSets, lineNumberOffset = 0) {
         this.element = element;
@@ -546,7 +556,7 @@ const createPathsContext = (caseContext, xpathContext, concatenate) => {
     return [];
 };
 
-const standardiseResultFormat = (result, showDetails) => {
+const standardiseResultFormat = (result, showDetails, xml) => {
     let context = [];
     let id;
     let severity;
@@ -559,9 +569,11 @@ const standardiseResultFormat = (result, showDetails) => {
     switch (ruleName) {
         case 'atLeastOne':
             context.push({
-                text: `For <${xpathContext.xpath.split('/').pop()}> at line: ${
-                    xpathContext.lineNumber
-                }, column: ${xpathContext.columnNumber}`,
+                text: `For ${getParentNodeTagname(xml, xpathContext)}/${xpathContext.xpath
+                    .split('/')
+                    .pop()} at line: ${xpathContext.lineNumber}, column: ${
+                    xpathContext.columnNumber
+                }`,
             });
             break;
         case 'dateNow':
@@ -909,7 +921,7 @@ const validateIATI = async (
                 const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
                     (acc, result) => {
                         if (result.result === false) {
-                            acc.push(standardiseResultFormat(result, showDetails));
+                            acc.push(standardiseResultFormat(result, showDetails, xml));
                         }
                         return acc;
                     },
