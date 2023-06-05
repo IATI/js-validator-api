@@ -569,11 +569,13 @@ const standardiseResultFormat = (result, showDetails, xml) => {
     switch (ruleName) {
         case 'atLeastOne':
             context.push({
-                text: `For ${getParentNodeTagname(xml, xpathContext)}/${xpathContext.xpath
-                    .split('/')
-                    .pop()} at line: ${xpathContext.lineNumber}, column: ${
-                    xpathContext.columnNumber
-                }`,
+                text: `For ${
+                    xpathContext.xpath === '//description'
+                        ? `${getParentNodeTagname(xml, xpathContext)}/${xpathContext.xpath
+                              .split('/')
+                              .pop()}`
+                        : xpathContext.xpath.split('/').pop()
+                } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
             });
             break;
         case 'dateNow':
