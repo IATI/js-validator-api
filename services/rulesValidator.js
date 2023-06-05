@@ -574,7 +574,7 @@ const standardiseResultFormat = (result, showDetails, xml) => {
                         ? `${getParentNodeTagname(xml, xpathContext)}/${xpathContext.xpath
                               .split('/')
                               .pop()}`
-                        : xpathContext.xpath.split('/').pop()
+                        : `<${xpathContext.xpath.split('/').pop()}>`
                 } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
             });
             break;
