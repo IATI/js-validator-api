@@ -56,14 +56,14 @@ const getRuleMethodName = (ruleName) => {
     return name;
 };
 
-const getParentNodeTagname = (xml, xpathContext) => {
+const getFullContext = (xml, xpathContext) => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/xml');
     const elementNode = select(xpathContext.xpath, xmlDoc).find(
         (element) => element.lineNumber === xpathContext.lineNumber
     );
     const parentElement = elementNode.parentNode;
-    return parentElement.tagName;
+    return `${parentElement.tagName}/${elementNode.tagName}`;
 };
 
 class Rules {
@@ -571,9 +571,7 @@ const standardiseResultFormat = (result, showDetails, xml) => {
             context.push({
                 text: `For ${
                     xpathContext.xpath === '//description'
-                        ? `${getParentNodeTagname(xml, xpathContext)}/${xpathContext.xpath
-                              .split('/')
-                              .pop()}`
+                        ? `${getFullContext(xml, xpathContext)}`
                         : `<${xpathContext.xpath.split('/').pop()}>`
                 } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
             });
