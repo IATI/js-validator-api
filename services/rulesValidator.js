@@ -56,16 +56,6 @@ const getRuleMethodName = (ruleName) => {
     return name;
 };
 
-const getFullContext = (xml, xpathContext) => {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'text/xml');
-    const elementNode = select(xpathContext.xpath, xmlDoc).find(
-        (element) => element.lineNumber === xpathContext.lineNumber
-    );
-    const parentElement = elementNode.parentNode;
-    return `${parentElement.tagName}/${elementNode.tagName}`;
-};
-
 class Rules {
     constructor(element, oneCase, idSets, lineNumberOffset = 0) {
         this.element = element;
@@ -556,7 +546,7 @@ const createPathsContext = (caseContext, xpathContext, concatenate) => {
     return [];
 };
 
-const standardiseResultFormat = (result, showDetails, xml) => {
+const standardiseResultFormat = (result, showDetails) => {
     let context = [];
     let id;
     let severity;
@@ -569,11 +559,9 @@ const standardiseResultFormat = (result, showDetails, xml) => {
     switch (ruleName) {
         case 'atLeastOne':
             context.push({
-                text: `For ${
-                    xpathContext.xpath === '//description'
-                        ? `${getFullContext(xml, xpathContext)}`
-                        : `<${xpathContext.xpath.split('/').pop()}>`
-                } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
+                text: `For <${xpathContext.xpath.split('/').pop()}> at line: ${
+                    xpathContext.lineNumber
+                }, column: ${xpathContext.columnNumber}`,
             });
             break;
         case 'dateNow':
@@ -921,7 +909,7 @@ const validateIATI = async (
                 const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
                     (acc, result) => {
                         if (result.result === false) {
-                            acc.push(standardiseResultFormat(result, showDetails, xml));
+                            acc.push(standardiseResultFormat(result, showDetails));
                         }
                         return acc;
                     },
