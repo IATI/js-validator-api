@@ -56,6 +56,15 @@ const getRuleMethodName = (ruleName) => {
     return name;
 };
 
+const getFullContext = (xml, xpathContext, lineCount) => {
+    const elementNode = select(xpathContext.xpath, xml).find(
+        (element) => element.lineNumber + lineCount === xpathContext.lineNumber
+    );
+
+    const parentElement = elementNode.parentNode;
+    return `${parentElement.tagName}/${elementNode.tagName}`;
+};
+
 class Rules {
     constructor(element, oneCase, idSets, lineNumberOffset = 0) {
         this.element = element;
@@ -546,7 +555,7 @@ const createPathsContext = (caseContext, xpathContext, concatenate) => {
     return [];
 };
 
-const standardiseResultFormat = (result, showDetails) => {
+const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
     let context = [];
     let id;
     let severity;
@@ -559,9 +568,11 @@ const standardiseResultFormat = (result, showDetails) => {
     switch (ruleName) {
         case 'atLeastOne':
             context.push({
-                text: `For <${xpathContext.xpath.split('/').pop()}> at line: ${
-                    xpathContext.lineNumber
-                }, column: ${xpathContext.columnNumber}`,
+                text: `For ${
+                    xpathContext.xpath === '//description'
+                        ? `${getFullContext(xml, xpathContext, lineCount)}`
+                        : `<${xpathContext.xpath.split('/').pop()}>`
+                } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
             });
             break;
         case 'dateNow':
@@ -909,7 +920,14 @@ const validateIATI = async (
                 const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
                     (acc, result) => {
                         if (result.result === false) {
-                            acc.push(standardiseResultFormat(result, showDetails));
+                            acc.push(
+                                standardiseResultFormat(
+                                    result,
+                                    showDetails,
+                                    singleElementDoc,
+                                    lineCount
+                                )
+                            );
                         }
                         return acc;
                     },
