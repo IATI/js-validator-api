@@ -569,7 +569,7 @@ const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
         case 'atLeastOne':
             context.push({
                 text: `For ${
-                    xpathContext.xpath === '//description'
+                    xpathContext.xpath === '//description' || xpathContext.xpath === '//title'
                         ? `${getFullContext(xml, xpathContext, lineCount)}`
                         : `<${xpathContext.xpath.split('/').pop()}>`
                 } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
