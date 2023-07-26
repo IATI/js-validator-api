@@ -24,7 +24,7 @@
         "node-fetch": "^3.3.2",
         "redis": "^4.4.0",
         "underscore": "^1.13.6",
-        "xml2js": "^0.6.1",
+        "xml2js": "^0.6.2",
         "xpath": "github:IATI/xpath#v0.0.34"
     },
     "devDependencies": {
