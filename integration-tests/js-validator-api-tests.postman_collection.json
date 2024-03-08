@@ -3,7 +3,8 @@
 		"_postman_id": "4a0049ac-ff32-4d7a-ac58-7149a7b2f704",
 		"name": "js-validator-api-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "13097277"
+		"_exporter_id": "29844336",
+		"_collection_link": "https://iatisecretariat.postman.co/workspace/IATI~c354ba4e-15bf-41ee-9d69-a5a5360da160/collection/13097277-4a0049ac-ff32-4d7a-ac58-7149a7b2f704?action=share&source=collection_link&creator=29844336"
 	},
 	"item": [
 		{
@@ -1572,7 +1573,7 @@
 					"response": []
 				},
 				{
-					"name": "iati-act-no-errors",
+					"name": "iati-act-no-errors - group false meta true",
 					"event": [
 						{
 							"listen": "test",
@@ -1660,7 +1661,189 @@
 					"response": []
 				},
 				{
-					"name": "iati-org-no-errors",
+					"name": "iati-activity-line-endings-cr-and-crlf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"The file is valid\", function () {",
+									"    pm.expect(jsonData.valid).to.eql(true);",
+									"});",
+									"pm.test(\"fileType value is iati-activities\", function () {",
+									"    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+									"});",
+									"pm.test(\"version is 2.02\", function () {",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"rulesetCommitSha is present\", function () {",
+									"    pm.expect(jsonData.rulesetCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"codelistCommitSha is present\", function () {",
+									"    pm.expect(jsonData.codelistCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"orgIdPrefixFileName is present\", function () {",
+									"    pm.expect(jsonData.orgIdPrefixFileName).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"No file level errors are present\", function () {",
+									"    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
+									"});",
+									"pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains identifier error 1.14.8\", function () {",
+									"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('1.14.8');",
+									"});",
+									"pm.test(\"Response containes expected activities object\", function () {",
+									"    pm.expect(jsonData['iati-activities'][0]).to.eql({",
+									"            \"identifier\": \"AA-AAA-123456789-ABC123\",",
+									"            \"valid\": true,",
+									"            \"index\": 0",
+									"        });",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "iati-act-line-endings-cr-and-crlf.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?group=false&meta=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "false"
+								},
+								{
+									"key": "meta",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "iati-activity-line-endings-cr",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"The file is valid\", function () {",
+									"    pm.expect(jsonData.valid).to.eql(true);",
+									"});",
+									"pm.test(\"fileType value is iati-activities\", function () {",
+									"    pm.expect(jsonData.fileType).to.eql('iati-activities');",
+									"});",
+									"pm.test(\"version is 2.02\", function () {",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"rulesetCommitSha is present\", function () {",
+									"    pm.expect(jsonData.rulesetCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"codelistCommitSha is present\", function () {",
+									"    pm.expect(jsonData.codelistCommitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"orgIdPrefixFileName is present\", function () {",
+									"    pm.expect(jsonData.orgIdPrefixFileName).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"No file level errors are present\", function () {",
+									"    pm.expect(jsonData.errors.map(obj => (obj.title))).to.not.include('file');",
+									"});",
+									"pm.test(\"Activities identifier is equal to AA-AAA-123456789-ABC123 and contains identifier error 1.14.8\", function () {",
+									"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('1.14.8');",
+									"});",
+									"pm.test(\"Response containes expected activities object\", function () {",
+									"    pm.expect(jsonData['iati-activities'][0]).to.eql({",
+									"            \"identifier\": \"AA-AAA-123456789-ABC123\",",
+									"            \"valid\": true,",
+									"            \"index\": 0",
+									"        });",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "iati-act-line-endings-cr.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?group=false&meta=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "false"
+								},
+								{
+									"key": "meta",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "iati-org-no-errors - meta true",
 					"event": [
 						{
 							"listen": "test",
@@ -3591,7 +3774,7 @@
 							]
 						},
 						{
-							"name": "iati-act-atLeastOne-error",
+							"name": "iati-act-atLeastOne-error-01",
 							"event": [
 								{
 									"listen": "test",
@@ -3627,7 +3810,74 @@
 								"body": {
 									"mode": "file",
 									"file": {
-										"src": "iati-act-atLeastOne-error.xml"
+										"src": "iati-act-atLeastOne-error-01.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?details=true&group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "details",
+											"value": "true"
+										},
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "iati-act-atLeastOne-error-02-transaction-desc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Errors Array contains error id 4.4.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('4.4.1');",
+											"});",
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});",
+											"pm.test(\"Context text correctly identifies transaction/description at line 268 as the problem\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors[0].context[0].text).to.equal(\"For transaction/description at line: 268, column: 4\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-atLeastOne-error-02.xml"
 									}
 								},
 								"url": {
@@ -4564,6 +4814,255 @@
 							"    pm.expect(jsonData.errors.map((err) => err.identifier)).to.not.include('file');",
 							"});",
 							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Rule Specific Tests - non 200",
+			"item": [
+				{
+					"name": "Activities",
+					"item": [
+						{
+							"name": "iati-act-atLeastOne-error-03-iati-activity-desc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+											"pm.test(\"The file is not valid\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.valid).to.eql(false);",
+											"});",
+											"pm.test(\"Errors Array contains error id 4.4.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('4.4.1');",
+											"});",
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});",
+											"pm.test(\"Context text correctly identifies the iati-activity/description as the problem element\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors[1].context[0].text).to.be.equal(\"For iati-activity/description at line: 29, column: 3\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-atLeastOne-error-03.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?details=true&group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "details",
+											"value": "true"
+										},
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "iati-act-atLeastOne-error-04-transaction-desc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+											"pm.test(\"The file is not valid\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.valid).to.eql(false);",
+											"});",
+											"pm.test(\"Errors Array contains error id 4.4.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('4.4.1');",
+											"});",
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});",
+											"pm.test(\"Context text correctly identifies transaction/description at line 268 as the problem\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors[1].context[0].text).to.equal(\"For transaction/description at line: 268, column: 4\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-atLeastOne-error-04.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?details=true&group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "details",
+											"value": "true"
+										},
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "iati-act-atLeastOne-error-05-result-title",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+											"pm.test(\"The file is not valid\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.valid).to.eql(false);",
+											"});",
+											"pm.test(\"Errors Array contains error id 4.3.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('4.3.1');",
+											"});",
+											"pm.test(\"Errors contain a context Array with at least 1 string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors.map(obj => (obj.context)).map((con) => con.text).length).to.be.greaterThan(0);",
+											"});",
+											"pm.test(\"Context text correctly identifies the result/title as the problem element\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.errors[1].context[0].text).to.be.equal(\"For result/title at line: 322, column: 4\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-atLeastOne-error-05.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?details=true&group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "details",
+											"value": "true"
+										},
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});"
 						]
 					}
 				}
