@@ -87,12 +87,11 @@ BASIC_GITHUB_TOKEN
 
 -   GitHub personal access token. This is needed to pull in the Codelists from the `IATI/IATI-Validator-Codelists` repository. Note that you cannot use a "Personal Access Token (Classic)"; you must generate a fine-grained access token.
 
-REDIS_CACHE_SEC=60  
 REDIS_PORT=6379  
-REDIS_KEY=  
-REDIS_HOSTNAME=
+REDIS_HOSTNAME=redis
 
--   Redis connection, leaving the default will connect to a locally installed instance if you have one.
+-   Redis connection, configured for `docker compose use`. If you develop outside
+    docker, change these settings as appropriate.
 
 VALIDATOR_SERVICES_URL=https://func-validator-services-dev.azurewebsites.net/api  
 VALIDATOR_SERVICES_KEY_NAME=x-functions-key  
