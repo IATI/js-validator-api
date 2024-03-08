@@ -31,7 +31,7 @@ jobs:
 
       - name: 'Install Dependencies with Npm'
         run: |
-          npm i -g npm
+          npm i -g npm@8.19.4
           npm ci
 
       - name: 'Run unit tests'
