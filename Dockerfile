@@ -14,6 +14,6 @@ COPY . /home/site/wwwroot
 # Install node_modules 
 WORKDIR /home/site/wwwroot
 RUN \
-    npm i -g npm && \
+    npm i -g npm@8.19.4 && \
     npm pkg delete scripts.prepare && \
     npm ci --production

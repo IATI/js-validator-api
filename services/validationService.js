@@ -167,7 +167,7 @@ export default async function validate(context, req) {
             // Clean input with xmllint for future steps, only need to replace body with this if no XML errors.
             const { output, error: xmlError } = await validateXMLrecover(body);
 
-            if (!xmlError) {
+            if (xmlError === undefined || xmlError === null || xmlError === '') {
                 body = output;
             }
         } catch (error) {
@@ -358,7 +358,6 @@ export default async function validate(context, req) {
             body: JSON.stringify(validationReport),
         };
         body = null;
-        return;
     } catch (error) {
         context.log(error);
 

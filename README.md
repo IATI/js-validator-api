@@ -11,18 +11,65 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
 -   Node LTS
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
--   [Azure Functions Core Tools v3](https://github.com/Azure/azure-functions-core-tools)
+-   [Azure Functions Core Tools v4](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
 -   [Docker Engine](https://docs.docker.com/engine/install/#server)
 -   [Docker Compose](https://docs.docker.com/compose/install/)
+-   `xmllint`
+    - There are two ways to run this locally: directly, or using the `docker compose` setup. The docker build includes the `xmllint` tool. If you run it directly, you may need to install this tool.
+        - On Ubuntu it is in `libxml2-utils`, so you'll need something like `sudo apt install libxml2-utils`.  
 
 ## Getting Started
 
 1. Clone this repository
 1. Follow instructions for nvm/node prerequisties above
-1. Run `npm i` to install dependencies
+1. Setup the environment variables using the `.env` file (instructions below)
+      * If running directly (option 1), this will mean setting up a `redis` database.
+
+### Option 1: running directly
+
+4. Run `npm i` to install dependencies
 1. Run `npm start` to run the Function locally using the Azure Functions Core Tools
-1. Run `npm run docker:start` to run the Function inside a Docker container using docker-compose.yml to create a Redis instance.
+1. The API end points will be available on `localhost:7071`
+
+### Option 2: using docker
+
+4. Run `npm run docker:start` to run the Function inside a Docker container using docker-compose.yml to create a Redis instance.
+1. The API end points will be available on `localhost:8080`
+
+
+### Test setup
+
+To test the basic setup, you can run the following command:
+
+`curl http://localhost:8080/api/pub/version`
+
+This should return a version number (change port if running directly instead of via docker).
+
+To test the validation is working, obtain an IATI XML file, and run the following command (this is if running via the docker setup; change port to `7071` if running directly):
+
+`curl -X POST -d @PATH_TO_IATI_XML http://localhost:8080/api/pub/validate`
+
+You should see something like (if the file is a valid IATI file):
+
+    {
+      "valid": true,
+      "fileType": "iati-activities",
+      "iatiVersion": "2.03",
+      "rulesetCommitSha": "2cd1a14f6c584000ae6d76e708c73ddcc12b6c40",
+      "codelistCommitSha": "cf571799b909eb894c071dc364cd2a4dfbcd5d7c",
+      "orgIdPrefixFileName": "org-id-fa56731af7.json",
+      "apiVersion": "2.3.2",
+      "summary": {
+        "critical": 0,
+        "error": 0,
+        "warning": 0
+      },
+      "errors": []
+    }
+
+If it has warnings or errors, you'll see them listed.
+
 
 ## Environment Variables
 
@@ -38,22 +85,21 @@ APPLICATIONINSIGHTS_CONNECTION_STRING
 
 BASIC_GITHUB_TOKEN
 
--   GitHub PAT token to authenticate to the GitHub API to pull in some external resources from GitHub
+-   GitHub personal access token. This is needed to pull in the Codelists from the `IATI/IATI-Validator-Codelists` repository. Note that you cannot use a "Personal Access Token (Classic)"; you must generate a fine-grained access token.
 
-REDIS_CACHE_SEC=60
-REDIS_PORT=6379
-REDIS_KEY=
-REDIS_HOSTNAME=
+REDIS_PORT=6379  
+REDIS_HOSTNAME=redis
 
--   Redis connection, leaving the default will connect to a locally installed instance if you have one.
+-   Redis connection, configured for `docker compose use`. If you develop outside
+    docker, change these settings as appropriate.
 
-VALIDATOR_SERVICES_URL=https://dev-func-validator-services.azurewebsites.net/api
-VALIDATOR_SERVICES_KEY_NAME=x-functions-key
+VALIDATOR_SERVICES_URL=https://func-validator-services-dev.azurewebsites.net/api  
+VALIDATOR_SERVICES_KEY_NAME=x-functions-key  
 VALIDATOR_SERVICES_KEY_VALUE=
 
 -   URL and API Key for Validator Services, used to get list of Publisher Identifiers
 
-### config defaults
+### App config defaults (set in `config/config.js`)
 
 ```
    `APP_NAME`: IATI Validator API
@@ -192,4 +238,5 @@ These are sourced from the following locations:
 Due to a [known limitation](https://gitlab.gnome.org/GNOME/libxml2/-/issues/361) in the core library `libxml2` used to perform schema validation, if an activity has a schema error at a line greater than 65535, the value will not be accurate in the context.
 
 If this is the case for your validation report, a message like so will be displayed in the context of the schema error:
-`At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65537 for this activity.`
+
+    At line greater than: 65537. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than 65537 for this activity.

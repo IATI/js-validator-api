@@ -24,14 +24,14 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 'Setup Node Environment'
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3.8.1
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: 'Install Dependencies with Npm'
         run: |
-          npm i -g npm
+          npm i -g npm@8.19.4
           npm ci
 
       - name: 'Run unit tests'
@@ -54,6 +54,6 @@ jobs:
       pull-requests: write
       contents: write
     steps:
-      - uses: fastify/github-action-merge-dependabot@v3.9.0
+      - uses: fastify/github-action-merge-dependabot@v3.9.1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
