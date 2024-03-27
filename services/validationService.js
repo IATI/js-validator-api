@@ -12,6 +12,7 @@ import {
 import { client, getStartTime, getElapsedTime } from '../config/appInsights.js';
 import validateCodelists from './codelistValidator.js';
 import { validateIATI } from './rulesValidator.js';
+import validateAdvisories from './advisoryValidator.js';
 import config from '../config/config.js';
 
 const logValidationSummary = (context, state) => {
@@ -36,7 +37,7 @@ const flattenErrors = (errObject) => {
 };
 
 const countSeverities = (flatErrors) => {
-    const summary = { critical: 0, error: 0, warning: 0 };
+    const summary = { critical: 0, error: 0, warning: 0, advisory: 0 };
     flatErrors.forEach((error) => {
         summary[error.severity] = (summary[error.severity] || 0) + 1;
     });
@@ -94,6 +95,7 @@ const createValidationReport = async (errors, state, groupResults, elementsMeta)
 export default async function validate(context, req) {
     try {
         let { body } = req;
+        let adjustLineCountForMissingXmlTag = false;
         const { details, group, meta } = req.query;
 
         // details - default - false
@@ -142,6 +144,7 @@ export default async function validate(context, req) {
             ruleAndSchemaTime: '',
             exitCategory: '',
             schemaErrorsPresent: '',
+            advisoriesTime: '',
         };
 
         // Metric: File Size (MiB)
@@ -168,6 +171,7 @@ export default async function validate(context, req) {
             const { output, error: xmlError } = await validateXMLrecover(body);
 
             if (xmlError === undefined || xmlError === null || xmlError === '') {
+                adjustLineCountForMissingXmlTag = body.startsWith('<?xml');
                 body = output;
             }
         } catch (error) {
@@ -177,7 +181,7 @@ export default async function validate(context, req) {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
                 body: {
-                    feedback: 'unhandled server error please contact the iati technical team',
+                    feedback: 'An unexpected server error occurred preprocessing the XML file. Please contact IATI Secretariat Support.',
                     error,
                 },
             };
@@ -232,7 +236,8 @@ export default async function validate(context, req) {
         state.fileInfoTime = getElapsedTime(fileInfoStart);
         context.log({ name: 'FileInfo Parse Time (s)', value: state.fileInfoTime });
 
-        // IATI Check
+        // Check the XML file root element is <iati-activities> or <iati-organisation>
+        // (it doesn't do anything more than that)
         if (!state.isIati) {
             const errors = [
                 {
@@ -260,7 +265,7 @@ export default async function validate(context, req) {
             return;
         }
 
-        // Version Check
+        // Check that the version is latest IATI version
         if (!state.supportedVersion) {
             const errors = [
                 {
@@ -292,7 +297,7 @@ export default async function validate(context, req) {
             return;
         }
 
-        // File level Schema Check
+        // Check the file validates against the IATI schema
         const fileSchemaStart = getStartTime();
         state.schemaErrorsPresent = !xmlDoc.validate(getSchema(state.fileType, state.iatiVersion));
         xmlDoc = null;
@@ -334,11 +339,18 @@ export default async function validate(context, req) {
             value: state.schemaErrorsPresent ? state.ruleAndSchemaTime : state.ruleTime,
         });
 
+        // Advisory Validation
+        const advisoriesStart = getStartTime();
+        const advisories = await validateAdvisories(state.iatiVersion, body, adjustLineCountForMissingXmlTag, showDetails);
+        state.advisoriesTime = getElapsedTime(advisoriesStart);
+        context.log({ name: 'Advisory Validate Time (s)', value: state.advisoriesTime });
+
         // combine all types of errors
         const combinedErrors = [
             ...schemaErrors,
             ...flattenErrors(codelistResult),
             ...flattenErrors(ruleErrors),
+            ...advisories           
         ];
 
         state.exitCategory = 'fullValidation';
@@ -365,7 +377,7 @@ export default async function validate(context, req) {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
             body: {
-                feedback: 'unhandled server error please contact the iati technical team',
+                feedback: 'An unexpected server error occurred running validations. Please contact IATI Secretariat Support.',
                 error,
             },
         };
