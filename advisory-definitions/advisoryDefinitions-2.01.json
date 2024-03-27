@@ -1,0 +1,32 @@
+[   
+    {
+        "advisoryXPath": "/iati-activities/iati-activity/transaction/provider-org",
+        "advisoryTestName": "iati_identifier_exists",
+        "attributeToTest": "provider-activity-id",
+        "id": "1000.0.4",
+        "severity": "advisory",
+        "category": "identifiers",
+        "message": "The linked activity ID in the transaction/provider-org/@provider-activity-id attribute should exist in the file being validated or in the IATI Datastore.",
+        "link": ""
+    },
+    {
+        "advisoryXPath": "/iati-activities/iati-activity/transaction/receiver-org",
+        "advisoryTestName": "iati_identifier_exists",
+        "attributeToTest": "receiver-activity-id",
+        "id": "1000.0.5",
+        "severity": "advisory",
+        "category": "identifiers",
+        "message": "The linked activity ID in the transaction/receiver-org/@receiver-activity-id attribute should exist in the file being validated or in the IATI Datastore.",
+        "link": ""
+    },
+    {
+        "advisoryXPath": "/iati-activities/iati-activity/related-activity",
+        "advisoryTestName": "iati_identifier_exists",
+        "attributeToTest": "ref",
+        "id": "1000.0.6",
+        "severity": "advisory",
+        "category": "identifiers",
+        "message": "The related activity ID in related-activity/@ref should exist in the file being validated or in the IATI Datastore.",
+        "link": ""
+    }
+]

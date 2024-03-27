@@ -703,7 +703,8 @@
 									"    pm.expect(jsonData.summary.critical).to.eq(1);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -2552,11 +2553,12 @@
 									"});",
 									"pm.test(\"Only activities with errors are returned in the errors object\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors.map((err) => err.identifier)).to.not.contain('US-GOV-1-A');",
+									"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').map((err) => err.identifier)).to.not.contain('US-GOV-1-A');",
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -4101,7 +4103,8 @@
 											"    }, []).map((con) => con.text).length).to.be.greaterThan(1);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4161,7 +4164,7 @@
 											"});",
 											"pm.test(\"The 1 noSpaces error contain a context Array with at least 1 string\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors.reduce((acc, obj) => {",
+											"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').reduce((acc, obj) => {",
 											"        if (obj.details.ruleName === 'noSpaces') {",
 											"            return acc.concat(obj.context)",
 											"        }",
@@ -4169,7 +4172,8 @@
 											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4225,7 +4229,7 @@
 										"exec": [
 											"pm.test(\"Error Array contains error id 3.4.2 twice\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.eql([ '3.4.2', '3.4.2' ]);",
+											"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').map(obj => (obj.id))).to.eql([ '3.4.2', '3.4.2' ]);",
 											"});",
 											"pm.test(\"The 2 strictSum errors contain a context Array with at least 1 string each\", function () {",
 											"    var jsonData = pm.response.json();",
@@ -4238,7 +4242,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4294,7 +4299,7 @@
 										"exec": [
 											"pm.test(\"Error Array contains error ids 1.1.3 and 1.1.21\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.eql(['1.1.3', '1.1.21']);",
+											"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').map(obj => (obj.id))).to.eql(['1.1.3', '1.1.21']);",
 											"});",
 											"pm.test(\"The 2 unique errors contain a context Array with at least 1 string each\", function () {",
 											"    var jsonData = pm.response.json();",
@@ -4316,7 +4321,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4372,7 +4378,7 @@
 										"exec": [
 											"pm.test(\"Error Array contains error id 12.2.1, 7.9.4, 2.2.1\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.eql([ '7.9.4', '12.2.1', '2.2.1' ]);",
+											"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').map(obj => (obj.id))).to.eql([ '7.9.4', '12.2.1', '2.2.1' ]);",
 											"});",
 											"pm.test(\"The 1 range error contain a context Array with at least 1 string\", function () {",
 											"    var jsonData = pm.response.json();",
@@ -4393,7 +4399,8 @@
 											"    }, []).map((con) => con.text).length).to.be.greaterThan(1);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4449,7 +4456,7 @@
 										"exec": [
 											"pm.test(\"Error Array contains error id 7.5.3\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.eql([ '7.5.3' ]);",
+											"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').map(obj => (obj.id))).to.eql([ '7.5.3' ]);",
 											"});",
 											"pm.test(\"The 1 timeLimit error contain a context Array with at least 1 string\", function () {",
 											"    var jsonData = pm.response.json();",
@@ -4461,7 +4468,8 @@
 											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -4517,7 +4525,7 @@
 										"exec": [
 											"pm.test(\"Error Array contains error id 107.1.2\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('107.1.2');",
+											"    pm.expect(jsonData.errors.filter((err) => err.severity !== 'advisory').map(obj => (obj.id))).to.include('107.1.2');",
 											"});",
 											"pm.test(\"The 1 noMoreThanOne error contain a context Array with at least 1 string\", function () {",
 											"    var jsonData = pm.response.json();",
@@ -4529,7 +4537,8 @@
 											"    }, []).map((con) => con.text).length).to.be.greaterThan(0);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -5062,6 +5071,1475 @@
 							"pm.test(\"Validation Report contains API version\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Advisory Tests - 200",
+			"item": [
+				{
+					"name": "Activities",
+					"item": [
+						{
+							"name": "x-ref-iati-identifiers-01-none",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"pm.test(\"There are no 'identifiers' advisories listed under each activity\", function () {",
+											"    jsonData.errors.forEach(errorsForIdentifier => {",
+											"        errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"            if (errorsByCategory.category === \"identifiers\") {",
+											"                pm.expect(errorsByCategory.errors.length).to.eql(1);",
+											"            }",
+											"        });",
+											"    });",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-01-1-act-no-x-ref.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-02-2-act-x-refs-in-same-file",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"pm.test(\"There are no 'identifiers' advisories listed under each activity\", function () {",
+											"    jsonData.errors.forEach(errorsForIdentifier => {",
+											"        errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"            if (errorsByCategory.category === \"identifiers\") {",
+											"                pm.expect(errorsByCategory.errors.length).to.eql(1);",
+											"            }",
+											"        });",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-02-2-act-x-refs-in-same-file.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-03-1-act-x-refs-in-datastore",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"pm.test(\"There are no 'identifiers' advisories listed under each activity\", function () {",
+											"    jsonData.errors.forEach(errorsForIdentifier => {",
+											"        errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"            if (errorsByCategory.category === \"identifiers\") {",
+											"                pm.expect(errorsByCategory.errors.length).to.eql(1);",
+											"            }",
+											"        });",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-03-1-act-x-refs-in-datastore.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-04-2-act-x-refs-in-datastore",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"pm.test(\"There are no 'identifiers' advisories listed under each activity\", function () {",
+											"    jsonData.errors.forEach(errorsForIdentifier => {",
+											"        errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"            if (errorsByCategory.category === \"identifiers\") {",
+											"                pm.expect(errorsByCategory.errors.length).to.eql(1);",
+											"            }",
+											"        });",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-04-2-act-x-refs-in-datastore.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-05-2-act-x-refs-in-file-and-datastore",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"pm.test(\"There are no 'identifiers' advisories listed under each activity\", function () {",
+											"    jsonData.errors.forEach(errorsForIdentifier => {",
+											"        errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"            if (errorsByCategory.category === \"identifiers\") {",
+											"                pm.expect(errorsByCategory.errors.length).to.eql(1);",
+											"            }",
+											"        });",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-05-2-act-x-refs-in-file-and-datastore.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-06-1-act-x-refs-empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"pm.test(\"There are no 'identifiers' advisories listed under each activity\", function () {",
+											"    jsonData.errors.forEach(errorsForIdentifier => {",
+											"        errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"            if (errorsByCategory.category === \"identifiers\") {",
+											"                pm.expect(errorsByCategory.errors.length).to.eql(1);",
+											"            }",
+											"        });",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-06-1-act-x-refs-empty.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-07-1-act-multiple-x-refs-not-found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 8 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(8);",
+											"});",
+											"",
+											"jsonData.errors.forEach(errorsForIdentifier => {",
+											"    errorsForIdentifier.errors.forEach(errorsByCategory => {",
+											"        if (errorsByCategory.category === \"identifiers\") {",
+											"",
+											"            advisories1000_0_1 = errorsByCategory.errors.filter(singleError => singleError.id === \"1000.0.1\");",
+											"            advisories1000_0_2 = errorsByCategory.errors.filter(singleError => singleError.id === \"1000.0.2\");",
+											"            advisories1000_0_3 = errorsByCategory.errors.filter(singleError => singleError.id === \"1000.0.3\");",
+											"            advisories1000_0_4 = errorsByCategory.errors.filter(singleError => singleError.id === \"1000.0.4\");",
+											"            advisories1000_0_5 = errorsByCategory.errors.filter(singleError => singleError.id === \"1000.0.5\");",
+											"            advisories1000_0_6 = errorsByCategory.errors.filter(singleError => singleError.id === \"1000.0.6\");",
+											"",
+											"            pm.test(\"Three 1000.0.1 'IATI Identifier Exists' advisories for <participating-org>\", function () {",
+											"                pm.expect(advisories1000_0_1.length).to.eql(3);",
+											"            });",
+											"            ",
+											"            pm.test(\"Three 1000.0.2 'IATI Identifier Exists' advisories for planned-disbursement/provider-org\", function () {",
+											"                pm.expect(advisories1000_0_2.length).to.eql(1);",
+											"            });",
+											"",
+											"            pm.test(\"Three 1000.0.3 'IATI Identifier Exists' advisories for planned-disbursement/receiver-org\", function () {",
+											"                pm.expect(advisories1000_0_3.length).to.eql(1);",
+											"            });",
+											"",
+											"            pm.test(\"One 1000.0.4 'IATI Identifier Exists' advisories for transaction/provider-org\", function () {",
+											"                pm.expect(advisories1000_0_4.length).to.eql(1);",
+											"            });",
+											"",
+											"            pm.test(\"One 1000.0.5 'IATI Identifier Exists' advisories for transaction/receiver-org\", function () {",
+											"                pm.expect(advisories1000_0_5.length).to.eql(1);",
+											"            });            ",
+											"",
+											"            pm.test(\"One 1000.0.6 'IATI Identifier Exists' advisories for related-activity\", function () {",
+											"                pm.expect(advisories1000_0_6.length).to.eql(1);",
+											"            });",
+											"        }",
+											"    });",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-07-1-act-x-refs-not-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-08-participating-org-x-ref-not-found-has-xml-tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 3 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(3);",
+											"});",
+											"",
+											"advisories1000_0_1 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.1\");",
+											"",
+											"pm.test(\"There are 3 1000.0.1 'IATI Identifier Exists' advisories for <participating-org>\", function () {",
+											"    pm.expect(advisories1000_0_1.length).to.eql(3);",
+											"});",
+											"",
+											"pm.test(\"The first 1000.0.1 'IATI Identifier Exists' advisories should be at line 45\", function () {",
+											"    pm.expect(advisories1000_0_1[0].context[0].lineNumber).to.eql(45);",
+											"});",
+											"",
+											"pm.test(\"The second 1000.0.1 'IATI Identifier Exists' advisories should be at line 48\", function () {",
+											"    pm.expect(advisories1000_0_1[1].context[0].lineNumber).to.eql(48);",
+											"});",
+											"",
+											"pm.test(\"The third 1000.0.1 'IATI Identifier Exists' advisories should be at line 51\", function () {",
+											"    pm.expect(advisories1000_0_1[2].context[0].lineNumber).to.eql(51);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-08-participating-org-x-ref-not-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-09-participating-org-x-ref-not-found-missing-xml",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 3 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(3);",
+											"});",
+											"",
+											"advisories1000_0_1 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.1\");",
+											"            ",
+											"pm.test(\"There are 3 1000.0.1 'IATI Identifier Exists' advisories for <participating-org>\", function () {",
+											"    pm.expect(advisories1000_0_1.length).to.eql(3);",
+											"});",
+											"",
+											"pm.test(\"The first 1000.0.1 'IATI Identifier Exists' advisories should be at line 44\", function () {",
+											"    pm.expect(advisories1000_0_1[0].context[0].lineNumber).to.eql(44);",
+											"});",
+											"",
+											"pm.test(\"The second 1000.0.1 'IATI Identifier Exists' advisories should be at line 47\", function () {",
+											"    pm.expect(advisories1000_0_1[1].context[0].lineNumber).to.eql(47);",
+											"});",
+											"",
+											"pm.test(\"The third 1000.0.1 'IATI Identifier Exists' advisories should be at line 50\", function () {",
+											"    pm.expect(advisories1000_0_1[2].context[0].lineNumber).to.eql(50);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-09-participating-org-x-ref-not-found-no-xml-tag.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-10-participating-org-x-ref-not-found-missing-xml",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 3 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(3);",
+											"});",
+											"",
+											"advisories1000_0_1 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-DEF456\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.1\");",
+											"            ",
+											"pm.test(\"There are 3 1000.0.1 'IATI Identifier Exists' advisories for <participating-org>\", function () {",
+											"    pm.expect(advisories1000_0_1.length).to.eql(3);",
+											"});",
+											"",
+											"pm.test(\"The first 1000.0.1 'IATI Identifier Exists' advisories should be at line 508\", function () {",
+											"    pm.expect(advisories1000_0_1[0].context[0].lineNumber).to.eql(508);",
+											"});",
+											"",
+											"pm.test(\"The second 1000.0.1 'IATI Identifier Exists' advisories should be at line 511\", function () {",
+											"    pm.expect(advisories1000_0_1[1].context[0].lineNumber).to.eql(511);",
+											"});",
+											"",
+											"pm.test(\"The third 1000.0.1 'IATI Identifier Exists' advisories should be at line 514\", function () {",
+											"    pm.expect(advisories1000_0_1[2].context[0].lineNumber).to.eql(514);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-10-participating-org-x-ref-not-found-in-2nd-act-no-xml-tag.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-11-planned-disbursement-x-ref-not-found-missing-xml",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 3 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(2);",
+											"});",
+											"",
+											"advisories1000_0_2 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.2\");",
+											"            ",
+											"advisories1000_0_3 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.3\");",
+											"",
+											"pm.test(\"There is one 1000.0.2 and one 1000.0.3 advisory AA-AAA-123456789-ABC123\", function () {",
+											"    pm.expect(advisories1000_0_2.length).to.eql(1);",
+											"    pm.expect(advisories1000_0_3.length).to.eql(1);    ",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.2 'IATI Identifier Exists' advisory should be at line 245\", function () {",
+											"    pm.expect(advisories1000_0_2[0].context[0].lineNumber).to.eql(245);",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.3 'IATI Identifier Exists' advisories should be at line 248\", function () {",
+											"    pm.expect(advisories1000_0_3[0].context[0].lineNumber).to.eql(248);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-11-planned-disbursement-x-ref-not-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-12-transaction-x-ref-not-found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 2 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(2);",
+											"});",
+											"",
+											"advisories1000_0_4 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.4\");",
+											"            ",
+											"advisories1000_0_5 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.5\");",
+											"",
+											"pm.test(\"There is one 1000.0.4 and one 1000.0.5 advisory AA-AAA-123456789-ABC123\", function () {",
+											"    pm.expect(advisories1000_0_4.length).to.eql(1);",
+											"    pm.expect(advisories1000_0_5.length).to.eql(1);    ",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.4 'IATI Identifier Exists' advisory should be at line 274\", function () {",
+											"    pm.expect(advisories1000_0_4[0].context[0].lineNumber).to.eql(274);",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.5 'IATI Identifier Exists' advisories should be at line 277\", function () {",
+											"    pm.expect(advisories1000_0_5[0].context[0].lineNumber).to.eql(277);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-12-transaction-x-ref-not-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-13-related-activity-x-ref-not-found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 2 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(2);",
+											"});",
+											"",
+											"advisories1000_0_6_A = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.6\");",
+											"            ",
+											"advisories1000_0_6_B = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-DEF456\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.6\");",
+											"",
+											"",
+											"pm.test(\"The 1000.0.6 'IATI Identifier Exists' advisory for AA-AAA-123456789-ABC123 should be at line 306\", function () {",
+											"    pm.expect(advisories1000_0_6_A[0].context[0].lineNumber).to.eql(306);",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.6 'IATI Identifier Exists' advisories for AA-AAA-123456789-DEF456 should be at line 770\", function () {",
+											"    pm.expect(advisories1000_0_6_B[0].context[0].lineNumber).to.eql(770);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-13-related-activity-x-ref-not-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-14-x-ref-not-found-2.01",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The IATI Version is 2.01\", function () {",
+											"    pm.expect(jsonData.iatiVersion).to.eql(\"2.01\");",
+											"});",
+											"",
+											"pm.test(\"The file summary info reports 3 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(3);",
+											"});",
+											"",
+											"advisories1000_0_4 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.4\");",
+											"            ",
+											"advisories1000_0_5 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.5\");",
+											"",
+											"advisories1000_0_6 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.6\");                        ",
+											"",
+											"pm.test(\"There is one 1000.0.4, 1000.0.5 and 1000.0.6 advisories AA-AAA-123456789-ABC123\", function () {",
+											"    pm.expect(advisories1000_0_4.length).to.eql(1);",
+											"    pm.expect(advisories1000_0_5.length).to.eql(1);    ",
+											"    pm.expect(advisories1000_0_6.length).to.eql(1);       ",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.4 'IATI Identifier Exists' advisory should be at line 245\", function () {",
+											"    pm.expect(advisories1000_0_4[0].context[0].lineNumber).to.eql(245);",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.5 'IATI Identifier Exists' advisories should be at line 248\", function () {",
+											"    pm.expect(advisories1000_0_5[0].context[0].lineNumber).to.eql(248);",
+											"});",
+											"",
+											"pm.test(\"The 1000.0.6 'IATI Identifier Exists' advisories should be at line 260\", function () {",
+											"    pm.expect(advisories1000_0_6[0].context[0].lineNumber).to.eql(260);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-14-transaction-x-ref-not-found-201.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-15-x-ref-found-2.01",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The IATI Version is 2.01\", function () {",
+											"    pm.expect(jsonData.iatiVersion).to.eql(\"2.01\");",
+											"});",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"advisories1000_0_4 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.4\");",
+											"            ",
+											"advisories1000_0_5 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.5\");",
+											"",
+											"advisories1000_0_6 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.6\");                        ",
+											"",
+											"pm.test(\"There are no advisories for the first activity AA-AAA-123456789-ABC123\", function () {",
+											"    pm.expect(advisories1000_0_4.length).to.eql(0);",
+											"    pm.expect(advisories1000_0_5.length).to.eql(0);",
+											"    pm.expect(advisories1000_0_6.length).to.eql(0);      ",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-15-transaction-x-ref-found-201.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-16-x-ref-found-2.02",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The IATI Version is 2.02\", function () {",
+											"    pm.expect(jsonData.iatiVersion).to.eql(\"2.02\");",
+											"});",
+											"",
+											"pm.test(\"The file summary info reports 0 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(0);",
+											"});",
+											"",
+											"advisories1000_0_4 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.4\");",
+											"            ",
+											"advisories1000_0_5 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.5\");",
+											"",
+											"advisories1000_0_6 = jsonData.errors.find(errorsForIdentifier => errorsForIdentifier.identifier === \"AA-AAA-123456789-ABC123\")",
+											"                        .errors.find(errorsByCategory => errorsByCategory.category === \"identifiers\")",
+											"                        .errors.filter(singleError => singleError.id === \"1000.0.6\");                        ",
+											"",
+											"pm.test(\"There are no advisories for the first activity AA-AAA-123456789-ABC123\", function () {",
+											"    pm.expect(advisories1000_0_4.length).to.eql(0);",
+											"    pm.expect(advisories1000_0_5.length).to.eql(0);",
+											"    pm.expect(advisories1000_0_6.length).to.eql(0);      ",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-16-1-act-x-refs-in-datastore-202.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-17-x-ref-not-found-2.02",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The IATI Version is 2.02\", function () {",
+											"    pm.expect(jsonData.iatiVersion).to.eql(\"2.02\");",
+											"});",
+											"",
+											"pm.test(\"The file summary info reports 16 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(16);",
+											"});",
+											"",
+											"",
+											"var advisoryTypesExpected = {\"1000.0.1\": 6, ",
+											"                             \"1000.0.2\": 2,",
+											"                             \"1000.0.3\": 2,",
+											"                             \"1000.0.4\": 2,",
+											"                             \"1000.0.5\": 2,",
+											"                             \"1000.0.6\": 2",
+											"                             };",
+											"",
+											"Object.keys(advisoryTypesExpected).forEach(function (advisoryType) { ",
+											"",
+											"    var advisories = jsonData.errors.filter(singleError => singleError.id === advisoryType);",
+											"",
+											"    pm.expect(advisories.length).to.eql(advisoryTypesExpected[advisoryType]);",
+											"",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-17-2-act-x-refs-not-found-202.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-18-over-5000-to-check-not-found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 12000 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(12000);",
+											"});",
+											"",
+											"",
+											"var advisoryTypesExpected = {\"1000.0.1\": 0, ",
+											"                             \"1000.0.2\": 6000,",
+											"                             \"1000.0.3\": 6000,",
+											"                             \"1000.0.4\": 0,",
+											"                             \"1000.0.5\": 0,",
+											"                             \"1000.0.6\": 0",
+											"                             };",
+											"",
+											"pm.test(\"The file has 6000 each 1000.2 and 1000.0.3 advisories\", function () {",
+											"    Object.keys(advisoryTypesExpected).forEach(function (advisoryType) { ",
+											"",
+											"        var advisories = jsonData.errors.filter(singleError => singleError.id === advisoryType);",
+											"",
+											"        pm.expect(advisories.length).to.eql(advisoryTypesExpected[advisoryType]);",
+											"",
+											"",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-18-over-5000-to-check-not-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "x-ref-iati-identifiers-19-over-5000-to-check-some-found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The file summary info reports 11996 advisories\", function () {",
+											"    pm.expect(jsonData.summary.advisory).to.eql(11996);",
+											"});",
+											"",
+											"",
+											"var advisoryTypesExpected = {\"1000.0.1\": 0, ",
+											"                             \"1000.0.2\": 5998,",
+											"                             \"1000.0.3\": 5998,",
+											"                             \"1000.0.4\": 0,",
+											"                             \"1000.0.5\": 0,",
+											"                             \"1000.0.6\": 0",
+											"                             };",
+											"",
+											"pm.test(\"The file has 5998 each 1000.2 and 1000.0.3 advisories\", function () {",
+											"",
+											"    Object.keys(advisoryTypesExpected).forEach(function (advisoryType) { ",
+											"",
+											"        var advisories = jsonData.errors.filter(singleError => singleError.id === advisoryType);",
+											"",
+											"        pm.expect(advisories.length).to.eql(advisoryTypesExpected[advisoryType]);",
+											"",
+											"    });",
+											"",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "iati-act-identifier-exists-19-over-5000-to-check-found.xml"
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/pub/validate?group=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validate"
+									],
+									"query": [
+										{
+											"key": "group",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});",
+							"pm.test(\"The file is valid\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
 							"});"
 						]
 					}
@@ -5950,6 +7428,40 @@
 							}
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Advisory Tests - Non-200",
+			"item": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+							"pm.test(\"Validation Report contains API version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apiVersion).to.exist;",
+							"});",
+							"pm.test(\"The file is valid\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
+							"});"
+						]
+					}
 				}
 			]
 		}
