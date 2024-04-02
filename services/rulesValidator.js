@@ -197,6 +197,9 @@ class Rules {
     }
 
     atLeastOne() {
+        if (this.pathMatches.length === 0) {
+            this.addFailureContext(this.element);
+        }
         return this.pathMatches.length >= 1;
     }
 
@@ -561,18 +564,24 @@ const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
     let severity;
     let category;
     let message;
+    let elementContext;
     const { xpathContext, ruleName, ruleCase, caseContext, failContext } = result;
     if ('ruleInfo' in ruleCase) {
         ({ id, severity, category, message } = ruleCase.ruleInfo);
     }
     switch (ruleName) {
         case 'atLeastOne':
+            if (xpathContext.xpath === '//description' || xpathContext.xpath === '//title') {
+                if (failContext.length === 1) {
+                    elementContext = `${failContext[0].parent}/${failContext[0].element}`;
+                } else {
+                    elementContext = getFullContext(xml, xpathContext, lineCount);
+                }
+            } else {
+                elementContext = `<${xpathContext.xpath.split('/').pop()}>`;
+            }
             context.push({
-                text: `For ${
-                    xpathContext.xpath === '//description' || xpathContext.xpath === '//title'
-                        ? `${getFullContext(xml, xpathContext, lineCount)}`
-                        : `<${xpathContext.xpath.split('/').pop()}>`
-                } at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
+                text: `For ${elementContext} at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`
             });
             break;
         case 'dateNow':
@@ -847,26 +856,26 @@ const validateIATI = async (
 
     const processActivity = () =>
         new Transform({
-            transform(chunk, enc, next) {
+            transform(oneIatiActivity, enc, next) {
                 let newSchemaErrors = [];
-                const docString = chunk.toString();
+                const docString = oneIatiActivity.toString();
 
                 // adjust lineCount to account for added wrapper of root element around each activity
                 lineCount -= getLineStart(docString, fileDefinition[fileType].subRoot);
 
                 // build single activity or org document
-                const singleElementDoc = new DOMParser().parseFromString(docString, 'text/xml');
+                const singleActivityDoc = new DOMParser().parseFromString(docString, 'text/xml');
 
                 // parse identifier and title
                 let identifier =
                     select(
                         `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].identifier})`,
-                        singleElementDoc
+                        singleActivityDoc,
                     ) || 'noIdentifier';
                 const title =
                     select(
                         `string(/${fileType}/${fileDefinition[fileType].subRoot}/${fileDefinition[fileType].titleLocation})`,
-                        singleElementDoc
+                        singleActivityDoc,
                     ) || '';
 
                 // track and duplicate check identifier
@@ -902,7 +911,7 @@ const validateIATI = async (
                         identifier,
                         title,
                         showDetails,
-                        lineCount
+                        lineCount,
                     );
                     schemaErrors = [...schemaErrors, ...newSchemaErrors];
                 }
@@ -916,15 +925,15 @@ const validateIATI = async (
                     });
                 }
 
-                // validate against ruleset
-                const errors = testRuleset(ruleset, singleElementDoc, idSets, lineCount).reduce(
+                // this validates a single IATI Activity (wrapped in an <iati-activities>) against the rulesets
+                const errors = testRuleset(ruleset, singleActivityDoc, idSets, lineCount).reduce(
                     (acc, result) => {
                         if (result.result === false) {
                             acc.push(
                                 standardiseResultFormat(
                                     result,
                                     showDetails,
-                                    singleElementDoc,
+                                    singleActivityDoc,
                                     lineCount
                                 )
                             );
@@ -941,7 +950,7 @@ const validateIATI = async (
                 index += 1;
                 let idx = -1;
                 do {
-                    idx = chunk.indexOf(10, idx + 1);
+                    idx = oneIatiActivity.indexOf(10, idx + 1);
                     lineCount += 1;
                 } while (idx !== -1);
 

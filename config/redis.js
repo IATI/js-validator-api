@@ -26,12 +26,16 @@ if (config.REDIS_KEY && config.REDIS_HOSTNAME) {
             },
         },
     };
+} else {
+    connectionOptions = {
+        url: `redis://${config.REDIS_HOSTNAME}:${config.REDIS_PORT}`
+    };
 }
 const client = createClient(connectionOptions);
 client.on('ready', () => {
     console.log({
         name: 'redisConnect',
-        value: `Redis: Connection to ${config.REDIS_HOSTNAME || 'local'} ready`,
+        value: `Redis: Connection to ${config.REDIS_HOSTNAME} ready`,
     });
 });
 client.on('error', (err) => {
