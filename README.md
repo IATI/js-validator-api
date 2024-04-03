@@ -99,6 +99,14 @@ VALIDATOR_SERVICES_KEY_VALUE=
 
 -   URL and API Key for Validator Services, used to get list of Publisher Identifiers
 
+DATASTORE_SERVICES_URL=https://dev-func-datastore-services.azurewebsites.net/api
+DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME=x-functions-key
+DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE=
+DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS=5000
+
+- URL and API Key for datastore services, used by the advisory system to check for the
+  existence of IATI Identifiers in the Datastore
+
 ### App config defaults (set in `config/config.js`)
 
 ```

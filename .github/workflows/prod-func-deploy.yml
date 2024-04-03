@@ -23,6 +23,10 @@ env:
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
   KV_URI: ${{ secrets.PROD_KV_URI }}
   BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
+  DATASTORE_SERVICES_URL: ${{ secrets.PROD_DATASTORE_SERVICES_URL }}
+  DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME: ${{ secrets.PROD_DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME }}
+  DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE: ${{ secrets.PROD_DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE }}
+  DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS: ${{ secrets.PROD_DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS }}
 
 jobs:
   build-test-deploy:
@@ -122,6 +126,26 @@ jobs:
                 {
                     "name": "languageWorkers__node__arguments",
                     "value": "--max-old-space-size=6656",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DATASTORE_SERVICES_URL",
+                    "value": "${{ env.DATASTORE_SERVICES_URL }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME",
+                    "value": "${{ env.DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE",
+                    "value": "${{ env.DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS",
+                    "value": "${{ env.DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS }}",
                     "slotSetting": false
                 }
             ]
