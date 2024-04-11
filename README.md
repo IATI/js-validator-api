@@ -61,7 +61,7 @@ This should return a version number (change port if running directly instead of 
 
 To test the validation is working, obtain an IATI XML file, and run the following command (this is if running via the docker setup; change port to `7071` if running directly):
 
-`curl -X POST -d @PATH_TO_IATI_XML http://localhost:8080/api/pub/validate`
+`curl -X POST --data-binary @PATH_TO_IATI_XML http://localhost:8080/api/pub/validate`
 
 You should see something like (if the file is a valid IATI file):
 
