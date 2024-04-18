@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-functions/node:4.7.2.1-node16
+FROM mcr.microsoft.com/azure-functions/node:4.33.1-node20
 
 # install libxml2-utils for xmllint
 RUN \
@@ -14,6 +14,6 @@ COPY . /home/site/wwwroot
 # Install node_modules 
 WORKDIR /home/site/wwwroot
 RUN \
-    npm i -g npm@8.19.4 && \
+    npm i -g npm@^10 && \
     npm pkg delete scripts.prepare && \
     npm ci --production

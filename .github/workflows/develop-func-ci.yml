@@ -21,17 +21,17 @@ jobs:
           sudo apt-get install libxml2-utils
 
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 'Setup Node Environment'
-        uses: actions/setup-node@v3.8.1
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: 'Install Dependencies with Npm'
         run: |
-          npm i -g npm@8.19.4
+          npm i -g npm@^10
           npm ci
 
       - name: 'Run unit tests'
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 'Build Docker Image'
         run: |

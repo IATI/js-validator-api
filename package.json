@@ -44,8 +44,8 @@
         "*.{js,css,md}": "prettier --write"
     },
     "engines": {
-        "node": ">=16 <17",
-        "npm": ">=8"
+        "node": "20.x.x",
+        "npm": "10.x.x"
     },
     "directories": {
         "doc": "docs"
