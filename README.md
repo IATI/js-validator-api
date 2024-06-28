@@ -1,3 +1,16 @@
+Summary
+=======
+
+Product  |  Validator API Endpoints
+--- | ---
+Description | Node.JS app that provides API end points to validate IATI XML files, is used by https://validator.iatistandard.org/
+Website |  [https://developer.iatistandard.org/](https://developer.iatistandard.org/)
+Related | [IATI/validator-services](https://github.com/IATI/validator-services), [IATI/validator-web](https://github.com/IATI/validator-web)
+Documentation | [https://developer.iatistandard.org/](https://developer.iatistandard.org/)
+Technical Issues | https://github.com/IATI/js-validator-api/issues
+Support | https://iatistandard.org/en/guidance/get-support/
+
+
 # IATI JavaScript Validator API
 
 [![Deploy_To_Dev_Function_On_Push](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml/badge.svg)](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml)
@@ -48,7 +61,7 @@ This should return a version number (change port if running directly instead of 
 
 To test the validation is working, obtain an IATI XML file, and run the following command (this is if running via the docker setup; change port to `7071` if running directly):
 
-`curl -X POST -d @PATH_TO_IATI_XML http://localhost:8080/api/pub/validate`
+`curl -X POST --data-binary @PATH_TO_IATI_XML http://localhost:8080/api/pub/validate`
 
 You should see something like (if the file is a valid IATI file):
 
@@ -98,6 +111,14 @@ VALIDATOR_SERVICES_KEY_NAME=x-functions-key
 VALIDATOR_SERVICES_KEY_VALUE=
 
 -   URL and API Key for Validator Services, used to get list of Publisher Identifiers
+
+DATASTORE_SERVICES_URL=https://dev-func-datastore-services.azurewebsites.net/api
+DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME=x-functions-key
+DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE=
+DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS=5000
+
+- URL and API Key for datastore services, used by the advisory system to check for the
+  existence of IATI Identifiers in the Datastore
 
 ### App config defaults (set in `config/config.js`)
 

@@ -104,6 +104,7 @@ const getFileInformation = (body) => {
 const codelistRules = {};
 const ruleset = {};
 const schemas = {};
+const advisoryDefinitions = {};
 
 config.VERSIONS.forEach(async (version) => {
     // load codelists
@@ -187,6 +188,19 @@ config.VERSIONS.forEach(async (version) => {
             { baseUrl: `./schemas/${version}/` }
         );
     });
+
+    // load advisories
+    try {
+        const advisoriesJson = (await fs.readFile(`advisory-definitions/advisoryDefinitions-${version}.json`)).toString();
+        advisoryDefinitions[version] = JSON.parse(advisoriesJson);
+        console.log(`Loaded advisories for version ${version}`);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            advisoryDefinitions[version] = {};
+        } else {
+            console.error(`Problem fetching advisories for version ${version}: ${error}`);
+        }
+    }
 });
 
 const getVersionCodelistRules = (version) => {
@@ -211,6 +225,14 @@ const getRuleset = (version) => {
     }
     throw new Error(`Unable to retrieve standard.json ruleset for version ${version}`);
 };
+
+const getAdvisoryDefinitions = (version) => {
+    if (config.VERSIONS.includes(version)) {
+        return advisoryDefinitions[version];
+    }
+    throw new Error(`Unable to retrieve advisories in advisoryDefinitions-${version}.json`);
+};
+
 
 const getRulesetCommitSha = (version) => {
     if (config.VERSIONS.includes(version)) {
@@ -442,6 +464,7 @@ export {
     getVersionCodelistRules,
     getVersionCodelistCommitSha,
     getRuleset,
+    getAdvisoryDefinitions,
     getSchema,
     getRulesetCommitSha,
 };
