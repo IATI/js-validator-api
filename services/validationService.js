@@ -8,6 +8,7 @@ import {
     getVersionCodelistCommitSha,
     getOrgIdPrefixFileName,
     validateXMLrecover,
+    getObjectWithPropertiesAsEnumerable,
 } from '../utils/utils.js';
 import { client, getStartTime, getElapsedTime } from '../config/appInsights.js';
 import validateCodelists from './codelistValidator.js';
@@ -58,7 +59,7 @@ const groupErrors = (errors, groupKey, additionalKeys) => {
             (acc, addKey) => ({ ...acc, [addKey]: grouped[key][0][addKey] }),
             {
                 errors: cleanGroups,
-            }
+            },
         );
     });
 };
@@ -181,7 +182,8 @@ export default async function validate(context, req) {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
                 body: {
-                    feedback: 'An unexpected server error occurred preprocessing the XML file. Please contact IATI Secretariat Support.',
+                    feedback:
+                        'An unexpected server error occurred preprocessing the XML file. Please contact IATI Secretariat Support.',
                     error,
                 },
             };
@@ -275,7 +277,7 @@ export default async function validate(context, req) {
                     message: `Version ${
                         state.iatiVersion
                     } of the IATI Standard is no longer supported. Supported versions: ${config.VERSIONS.join(
-                        ', '
+                        ', ',
                     )}`,
                     context: [{ text: '' }],
                     identifier: 'file',
@@ -309,7 +311,7 @@ export default async function validate(context, req) {
         const { errors: codelistResult } = await validateCodelists(
             body,
             state.iatiVersion,
-            showDetails
+            showDetails,
         );
 
         state.codelistTime = getElapsedTime(codelistStart);
@@ -326,7 +328,7 @@ export default async function validate(context, req) {
             idSets,
             state.schemaErrorsPresent ? getSchema(state.fileType, state.iatiVersion) : '',
             showDetails,
-            showElementMeta
+            showElementMeta,
         );
 
         if (state.schemaErrorsPresent) {
@@ -341,7 +343,29 @@ export default async function validate(context, req) {
 
         // Advisory Validation
         const advisoriesStart = getStartTime();
-        const advisories = await validateAdvisories(state.iatiVersion, body, adjustLineCountForMissingXmlTag, showDetails);
+        let advisories;
+        try {
+            advisories = await validateAdvisories(
+                state.iatiVersion,
+                body,
+                adjustLineCountForMissingXmlTag,
+                showDetails,
+            );
+        } catch (error) {
+            context.res = {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    feedback:
+                        'There was a problem using the Datastore API to check advisories. Please contact IATI Secretariat Support.',
+                    error: getObjectWithPropertiesAsEnumerable(
+                        error,
+                        Object.getOwnPropertyNames(error).filter((elem) => elem !== 'stack'),
+                    ),
+                },
+            };
+            return;
+        }
         state.advisoriesTime = getElapsedTime(advisoriesStart);
         context.log({ name: 'Advisory Validate Time (s)', value: state.advisoriesTime });
 
@@ -350,7 +374,7 @@ export default async function validate(context, req) {
             ...schemaErrors,
             ...flattenErrors(codelistResult),
             ...flattenErrors(ruleErrors),
-            ...advisories           
+            ...advisories,
         ];
 
         state.exitCategory = 'fullValidation';
@@ -361,7 +385,7 @@ export default async function validate(context, req) {
             combinedErrors,
             state,
             groupResults,
-            elementsMeta
+            elementsMeta,
         );
 
         context.res = {
@@ -377,7 +401,8 @@ export default async function validate(context, req) {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
             body: {
-                feedback: 'An unexpected server error occurred running validations. Please contact IATI Secretariat Support.',
+                feedback:
+                    'An unexpected server error occurred running validations. Please contact IATI Secretariat Support.',
                 error,
             },
         };
