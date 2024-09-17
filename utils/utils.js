@@ -21,7 +21,7 @@ const getFileBySha = async (owner, repo, sha, filePath) => {
     const body = res.json();
     if (res.status !== 200)
         throw new Error(
-            `Error fetching file from github api. Status: ${res.status} Message: ${body.message} `
+            `Error fetching file from github api. Status: ${res.status} Message: ${body.message} `,
         );
     return body;
 };
@@ -38,7 +38,7 @@ const getFileCommitSha = async (owner, repo, branch, filePath) => {
     const branchBody = await branchRes.json();
     if (branchRes.status !== 200)
         throw new Error(
-            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${branchBody.message} `
+            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${branchBody.message} `,
         );
     const { sha } = branchBody.commit;
     // https://api.github.com/repos/IATI/IATI-Validator-Codelists/commits?sha={sha}&path=codelist_rules.json
@@ -50,17 +50,17 @@ const getFileCommitSha = async (owner, repo, branch, filePath) => {
                 Accept: 'application/vnd.github.v3+json',
                 Authorization: `token ${config.BASIC_GITHUB_TOKEN}`,
             },
-        }
+        },
     );
     const fileBody = await fileRes.json();
     if (fileRes.status !== 200)
         throw new Error(
-            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${fileBody.message} `
+            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${fileBody.message} `,
         );
     // sort to get newest commit
     fileBody.sort(
         (first, second) =>
-            new Date(second.commit.committer.date) - new Date(first.commit.committer.date)
+            new Date(second.commit.committer.date) - new Date(first.commit.committer.date),
     );
     return fileBody[0].sha;
 };
@@ -122,17 +122,17 @@ config.VERSIONS.forEach(async (version) => {
                 'IATI',
                 codelistRepo,
                 codelistBranch,
-                'codelist_rules.json'
+                'codelist_rules.json',
             );
             codelistRules[version].content = await getFileBySha(
                 'IATI',
                 codelistRepo,
                 codelistRules[version].commitSha,
-                'codelist_rules.json'
+                'codelist_rules.json',
             );
             await redisclient.SET(
                 `codelistRules${version}`,
-                JSON.stringify(codelistRules[version])
+                JSON.stringify(codelistRules[version]),
             );
         } else {
             console.log({
@@ -160,13 +160,13 @@ config.VERSIONS.forEach(async (version) => {
                 'IATI',
                 'IATI-Rulesets',
                 rulesetBranch,
-                'rulesets/standard.json'
+                'rulesets/standard.json',
             );
             ruleset[version].content = await getFileBySha(
                 'IATI',
                 'IATI-Rulesets',
                 ruleset[version].commitSha,
-                'rulesets/standard.json'
+                'rulesets/standard.json',
             );
             await redisclient.SET(`ruleset${version}`, JSON.stringify(ruleset[version]));
         } else {
@@ -185,13 +185,15 @@ config.VERSIONS.forEach(async (version) => {
     ['iati-activities', 'iati-organisations'].forEach(async (fileType) => {
         schemas[`${fileType}-${version}`] = libxml.parseXml(
             (await fs.readFile(`schemas/${version}/${fileType}-schema.xsd`)).toString(),
-            { baseUrl: `./schemas/${version}/` }
+            { baseUrl: `./schemas/${version}/` },
         );
     });
 
     // load advisories
     try {
-        const advisoriesJson = (await fs.readFile(`advisory-definitions/advisoryDefinitions-${version}.json`)).toString();
+        const advisoriesJson = (
+            await fs.readFile(`advisory-definitions/advisoryDefinitions-${version}.json`)
+        ).toString();
         advisoryDefinitions[version] = JSON.parse(advisoriesJson);
         console.log(`Loaded advisories for version ${version}`);
     } catch (error) {
@@ -233,7 +235,6 @@ const getAdvisoryDefinitions = (version) => {
     throw new Error(`Unable to retrieve advisories in advisoryDefinitions-${version}.json`);
 };
 
-
 const getRulesetCommitSha = (version) => {
     if (config.VERSIONS.includes(version)) {
         if ('commitSha' in ruleset[version]) {
@@ -266,7 +267,7 @@ const fetchOrgIdFilename = async () => {
     });
     if (res.status !== 200) {
         console.error(
-            `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, while fetching current filename`
+            `HTTP Response from ${ORG_ID_PREFIX_URL}: ${res.status}, while fetching current filename`,
         );
         return '';
     }
@@ -321,7 +322,7 @@ const getOrgIdPrefixes = async () => {
         const fileName = await fetchOrgIdFilename();
         if (fileName === '') {
             console.warn(
-                `No filename in Content-Disposition header from ${ORG_ID_PREFIX_URL}, can't confirm we're using most up-to-date Org-Id prefixes`
+                `No filename in Content-Disposition header from ${ORG_ID_PREFIX_URL}, can't confirm we're using most up-to-date Org-Id prefixes`,
             );
         }
         if (orgIdPrefixes !== '') {
@@ -353,7 +354,7 @@ const getOrgIdPrefixes = async () => {
         return orgIdPrefixes;
     } catch (error) {
         console.error(
-            `Error fetching Organisation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`
+            `Error fetching Organisation ID Prefixes from ${ORG_ID_PREFIX_URL}. Error: ${error}`,
         );
         return { fileName: 'not-available', content: new Set() };
     }
@@ -398,7 +399,7 @@ const getOrgIds = async () => {
             }, new Set());
         } catch (error) {
             console.error(
-                `Error fetching Organsiation IDs from ${PUBLISHERS_URL}. Error: ${error}`
+                `Error fetching Organsiation IDs from ${PUBLISHERS_URL}. Error: ${error}`,
             );
         }
     }
@@ -437,8 +438,8 @@ const execXmllint = (input, command) =>
             }
             return reject(
                 new Error(
-                    `xmllint exited with code ${code} when executed with ${command}:\n${error}`
-                )
+                    `xmllint exited with code ${code} when executed with ${command}:\n${error}`,
+                ),
             );
         });
         // pipe input to process
@@ -454,6 +455,14 @@ const execXmllint = (input, command) =>
  */
 const validateXMLrecover = (input) => execXmllint(input, `xmllint --nonet --recover -`);
 
+const getObjectWithPropertiesAsEnumerable = (obj, propertiesToInclude) => {
+    const enumerableError = {};
+    Object.values(propertiesToInclude).forEach((propertyName) => {
+        enumerableError[propertyName] = obj[propertyName];
+    });
+    return enumerableError;
+};
+
 export {
     validateXMLrecover,
     getOrgIdPrefixFileName,
@@ -467,4 +476,5 @@ export {
     getAdvisoryDefinitions,
     getSchema,
     getRulesetCommitSha,
+    getObjectWithPropertiesAsEnumerable,
 };
