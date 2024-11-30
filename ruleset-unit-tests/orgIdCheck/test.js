@@ -54,6 +54,11 @@ const testMap = [
     {
         rule: 'X.X.13_act_id.json',
         file: 'X.X.13_act_id_existing_pre.xml',
+        expectedResult: false,
+    },
+    {
+        rule: 'X.X.13_act_id.json',
+        file: 'X.X.13_act_id_existing_pre_good.xml',
         expectedResult: true,
     },
     {
