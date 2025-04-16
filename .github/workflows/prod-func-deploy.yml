@@ -1,7 +1,7 @@
 name: Deploy_To_PROD_Function_On_Published_Release
 
-# Runs when a Release is published from GitHub UI
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
