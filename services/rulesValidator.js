@@ -145,12 +145,13 @@ class Rules {
                 );
             }
             if (oneCase.idCondition === 'NOT_EXISTING_ORG_ID_PREFIX') {
-                this.idCondition = this.pathMatchesText.every(
-                    (pathText) =>
-                        !Array.from(idSets['ORG-ID']).some((orgId) =>
-                            pathText.startsWith(`${orgId}-`)
-                        )
-                );
+                this.idCondition =
+                    this.pathMatchesText.every(
+                        (pathText) =>
+                            !Array.from(idSets['ORG-ID']).some((orgId) =>
+                                pathText.startsWith(`${orgId}-`)
+                            )
+                    ) || this.regexNoMatches(oneCase);
             }
         }
     }
