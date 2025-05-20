@@ -2977,7 +2977,7 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "/home/s/dev/js-validator-api/integration-tests/test-files/iati-org-schema-errors-broken-root-element.xml"
+								"src": "iati-org-schema-errors-broken-root-element.xml"
 							}
 						},
 						"url": {
