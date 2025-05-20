@@ -2915,6 +2915,83 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "iati-org-schema-error-broken-root-tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(422); });",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"The file is invalid\", function () {",
+									"    pm.expect(jsonData.valid).to.eql(false);",
+									"});",
+									"pm.test(\"fileType value is iati-organisations\", function () {",
+									"    pm.expect(jsonData.fileType).to.eql('iati-organisations');",
+									"});",
+									"pm.test(\"version is 2.02\", function () {",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.02');",
+									"});",
+									"pm.test(\"two errors\", function () {",
+									"    pm.expect(jsonData.errors[0].errors[0].errors.length).to.eql(2);",
+									"});",
+									"pm.test(\"two errors\", function () {",
+									"    pm.expect(jsonData.errors[0].errors[0].errors[0].id).to.eql(\"0.3.1\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "/home/s/dev/js-validator-api/integration-tests/test-files/iati-org-schema-errors-broken-root-element.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
