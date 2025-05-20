@@ -710,7 +710,9 @@ const validateSchema = (xmlString, schema, identifier, title, showDetails, lineO
                 category: 'schema',
                 severity: 'critical',
                 message: error.message,
-                context: [{ text: `At line ${lineOffset + error.line}` }],
+                context: [
+                    { text: `At line ${lineOffset + (error.line === undefined ? 0 : error.line)}` },
+                ],
             },
         ];
     }
