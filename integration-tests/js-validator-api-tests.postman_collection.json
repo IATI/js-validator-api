@@ -2923,7 +2923,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
 									"const jsonData = pm.response.json();",
 									"pm.test(\"The file is invalid\", function () {",
 									"    pm.expect(jsonData.valid).to.eql(false);",
@@ -2934,10 +2934,10 @@
 									"pm.test(\"version is 2.02\", function () {",
 									"    pm.expect(jsonData.iatiVersion).to.eql('2.02');",
 									"});",
-									"pm.test(\"two errors\", function () {",
+									"pm.test(\"Two schema errors in first group\", function () {",
 									"    pm.expect(jsonData.errors[0].errors[0].errors.length).to.eql(2);",
 									"});",
-									"pm.test(\"two errors\", function () {",
+									"pm.test(\"Error ID should be 0.3.1\", function () {",
 									"    pm.expect(jsonData.errors[0].errors[0].errors[0].id).to.eql(\"0.3.1\");",
 									"});",
 									""
