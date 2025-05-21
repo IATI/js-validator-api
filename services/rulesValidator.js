@@ -58,7 +58,7 @@ const getRuleMethodName = (ruleName) => {
 
 const getFullContext = (xml, xpathContext, lineCount) => {
     const elementNode = select(xpathContext.xpath, xml).find(
-        (element) => element.lineNumber + lineCount === xpathContext.lineNumber
+        (element) => element.lineNumber + lineCount === xpathContext.lineNumber,
     );
 
     const parentElement = elementNode.parentNode;
@@ -88,7 +88,7 @@ class Rules {
                         if (path.nodeName === 'reference') {
                             text = `For the ${parentNodeName} "${select(
                                 'string(../title/narrative)',
-                                path
+                                path,
                             )}"`;
                         } else if (parentNodeName === 'transaction') {
                             const transactionType =
@@ -96,10 +96,10 @@ class Rules {
 
                             text = `For the ${transactionType || parentNodeName} of ${select(
                                 'string(../transaction-date/@iso-date)',
-                                path
+                                path,
                             )} with value ${select('string(../value/@currency)', path)}${select(
                                 'string(../value)',
-                                path
+                                path,
                             )}`;
                         }
                         return {
@@ -111,8 +111,8 @@ class Rules {
                             columnNumber: path.columnNumber,
                             text,
                         };
-                    })
-                )
+                    }),
+                ),
             );
         }
         if ('prefix' in oneCase) {
@@ -129,7 +129,7 @@ class Rules {
                         }));
                     }
                     return {};
-                })
+                }),
             );
         }
         ['less', 'more', 'start', 'date', 'end'].forEach((timeCase) => {
@@ -141,15 +141,15 @@ class Rules {
         if ('idCondition' in oneCase) {
             if (oneCase.idCondition === 'NOT_EXISTING_ORG_ID') {
                 this.idCondition = this.pathMatchesText.every(
-                    (pathText) => !idSets['ORG-ID'].has(pathText)
+                    (pathText) => !idSets['ORG-ID'].has(pathText),
                 );
             }
             if (oneCase.idCondition === 'NOT_EXISTING_ORG_ID_PREFIX') {
                 this.idCondition = this.pathMatchesText.every(
                     (pathText) =>
                         !Array.from(idSets['ORG-ID']).some((orgId) =>
-                            pathText.startsWith(`${orgId}-`)
-                        )
+                            pathText.startsWith(`${orgId}-`),
+                        ),
                 );
             }
         }
@@ -258,7 +258,7 @@ class Rules {
                             this.addFailureContext(currency);
                             result = false;
                         }
-                    })
+                    }),
                 );
                 return result;
             default:
@@ -277,19 +277,19 @@ class Rules {
 
     strictSum(oneCase) {
         const computedSum = Number(
-            this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0).toFixed(4)
+            this.pathMatchesText.reduce((acc, val) => Number(acc) + Number(val), 0).toFixed(4),
         );
         const limitSum = Number(oneCase.sum);
         if (computedSum !== limitSum) {
             const elements = Array.from(
-                new Set(this.pathMatches.map((path) => path.ownerElement.nodeName))
+                new Set(this.pathMatches.map((path) => path.ownerElement.nodeName)),
             ).join(', ');
             const vocabularies = Array.from(
                 new Set(
                     this.pathMatches.map((path) =>
-                        select('string(@vocabulary | ../@vocabulary)', path.ownerElement)
-                    )
-                )
+                        select('string(@vocabulary | ../@vocabulary)', path.ownerElement),
+                    ),
+                ),
             ).join(', ');
             const text = `The sum is ${computedSum} for ${elements} in vocabulary ${vocabularies}`;
             this.failContext.push({
@@ -350,7 +350,7 @@ class Rules {
     regex(oneCase, allMatches) {
         const regEx = new RegExp(oneCase.regex);
         return this.pathMatchesText.every(
-            (pathMatchText) => pathMatchText === '' || regEx.test(pathMatchText) === allMatches
+            (pathMatchText) => pathMatchText === '' || regEx.test(pathMatchText) === allMatches,
         );
     }
 
@@ -377,7 +377,7 @@ class Rules {
         }
         // get text matches for start into Array
         const startMatchesText = _.flatten(
-            oneCase.prefix.map((path) => select(path, this.element))
+            oneCase.prefix.map((path) => select(path, this.element)),
         ).map((match) => getText(match));
 
         // every path match (e.g. iati-identifier), must start with at least one (some) start match (e.g. reporting-org/@ref)
@@ -386,7 +386,7 @@ class Rules {
                 const separator = _.has(oneCase, 'separator') ? oneCase.separator : '';
                 const textWithSep = startText + separator;
                 return pathMatchText.startsWith(textWithSep);
-            })
+            }),
         );
     }
 
@@ -409,7 +409,7 @@ class Rules {
 
     noSpaces() {
         return this.pathMatchesText.every(
-            (pathMatchText) => pathMatchText === pathMatchText.trim()
+            (pathMatchText) => pathMatchText === pathMatchText.trim(),
         );
     }
 }
@@ -474,7 +474,7 @@ const testRuleLoop = (contextXpath, element, oneCase, idSets, lineCount = 0) => 
                     }
                 });
                 results.push(
-                    testRule(contextXpath, element, subRule, subCaseTest, idSets, lineCount)
+                    testRule(contextXpath, element, subRule, subCaseTest, idSets, lineCount),
                 );
             });
         });
@@ -512,11 +512,11 @@ const testRuleset = (ruleset, xml, idSets, lineCount = 0) => {
                 theCases.forEach((oneCase) => {
                     if (rule === 'loop') {
                         result = result.concat(
-                            testRuleLoop(contextXpath, element, oneCase, idSets, lineCount)
+                            testRuleLoop(contextXpath, element, oneCase, idSets, lineCount),
                         );
                     } else {
                         result.push(
-                            testRule(contextXpath, element, rule, oneCase, idSets, lineCount)
+                            testRule(contextXpath, element, rule, oneCase, idSets, lineCount),
                         );
                     }
                 });
@@ -547,7 +547,7 @@ const createPathsContext = (caseContext, xpathContext, concatenate) => {
                     `${acc}${i === 0 ? 'For ' : ' and '}${xpathContext.xpath}/${path.xpath} = '${
                         path.value
                     }' at line: ${path.lineNumber}, column: ${path.columnNumber}`,
-                ''
+                '',
             );
             return [{ text }];
         }
@@ -581,7 +581,7 @@ const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
                 elementContext = `<${xpathContext.xpath.split('/').pop()}>`;
             }
             context.push({
-                text: `For ${elementContext} at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`
+                text: `For ${elementContext} at line: ${xpathContext.lineNumber}, column: ${xpathContext.columnNumber}`,
             });
             break;
         case 'dateNow':
@@ -661,8 +661,8 @@ const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
                     caseContext.prefix.map((prefixPath) =>
                         caseContext.paths.map((casePath) => ({
                             text: `For prefix: ${xpathContext.xpath}/${prefixPath.xpath} = '${prefixPath.value}' at line: ${prefixPath.lineNumber}, column: ${prefixPath.columnNumber} and ${xpathContext.xpath}/${casePath.xpath} = '${casePath.value}' at line: ${casePath.lineNumber}, column: ${casePath.columnNumber}`,
-                        }))
-                    )
+                        })),
+                    ),
                 );
             }
             break;
@@ -699,9 +699,25 @@ const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
 };
 
 const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 0) => {
-    const xmlDoc = libxml.parseXml(xmlString);
+    let xmlDoc = null;
 
-    if (!xmlDoc.validate(schema)) {
+    try {
+        xmlDoc = libxml.parseXml(xmlString);
+    } catch (error) {
+        return [
+            {
+                id: '0.3.1',
+                category: 'schema',
+                severity: 'critical',
+                message: error.message,
+                context: [
+                    { text: `At line ${lineOffset + (error.line === undefined ? 0 : error.line)}` },
+                ],
+            },
+        ];
+    }
+
+    if (xmlDoc != null && !xmlDoc.validate(schema)) {
         const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
             let errContext;
             const errorDetail = error;
@@ -809,7 +825,7 @@ const splitXMLTransform = (root, elementName) => {
 
                 // push single subelement, wrapped in root
                 this.push(
-                    `${rootOpen}${spacer}${doc.slice(0, closeIndex + close.length)}${rootClose}`
+                    `${rootOpen}${spacer}${doc.slice(0, closeIndex + close.length)}${rootClose}`,
                 );
 
                 // remove subelement that's been pushed
@@ -844,7 +860,7 @@ const validateIATI = async (
     idSets,
     schema,
     showDetails = false,
-    showElementMeta = false
+    showElementMeta = false,
 ) => {
     let schemaErrors = [];
     const ruleErrors = {};
@@ -934,13 +950,13 @@ const validateIATI = async (
                                     result,
                                     showDetails,
                                     singleActivityDoc,
-                                    lineCount
-                                )
+                                    lineCount,
+                                ),
                             );
                         }
                         return acc;
                     },
-                    []
+                    [],
                 );
 
                 if (errors.length > 0) {
@@ -961,7 +977,7 @@ const validateIATI = async (
     await pipeline(
         Readable.from(xml),
         splitXMLTransform(fileType, fileDefinition[fileType].subRoot),
-        processActivity()
+        processActivity(),
     );
 
     // if no iati child elements found, evaluate schema errors at file level

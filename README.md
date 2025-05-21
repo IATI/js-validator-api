@@ -1,15 +1,13 @@
-Summary
-=======
+# Summary
 
-Product  |  Validator API Endpoints
---- | ---
-Description | Node.JS app that provides API end points to validate IATI XML files, is used by https://validator.iatistandard.org/
-Website |  [https://developer.iatistandard.org/](https://developer.iatistandard.org/)
-Related | [IATI/validator-services](https://github.com/IATI/validator-services), [IATI/validator-web](https://github.com/IATI/validator-web)
-Documentation | [https://developer.iatistandard.org/](https://developer.iatistandard.org/)
-Technical Issues | https://github.com/IATI/js-validator-api/issues
-Support | https://iatistandard.org/en/guidance/get-support/
-
+| Product          | Validator API Endpoints                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Description      | Node.JS app that provides API end points to validate IATI XML files, is used by https://validator.iatistandard.org/                |
+| Website          | [https://developer.iatistandard.org/](https://developer.iatistandard.org/)                                                         |
+| Related          | [IATI/validator-services](https://github.com/IATI/validator-services), [IATI/validator-web](https://github.com/IATI/validator-web) |
+| Documentation    | [https://developer.iatistandard.org/](https://developer.iatistandard.org/)                                                         |
+| Technical Issues | https://github.com/IATI/js-validator-api/issues                                                                                    |
+| Support          | https://iatistandard.org/en/guidance/get-support/                                                                                  |
 
 # IATI JavaScript Validator API
 
@@ -29,15 +27,15 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 -   [Docker Engine](https://docs.docker.com/engine/install/#server)
 -   [Docker Compose](https://docs.docker.com/compose/install/)
 -   `xmllint`
-    - There are two ways to run this locally: directly, or using the `docker compose` setup. The docker build includes the `xmllint` tool. If you run it directly, you may need to install this tool.
-        - On Ubuntu it is in `libxml2-utils`, so you'll need something like `sudo apt install libxml2-utils`.  
+    -   There are two ways to run this locally: directly, or using the `docker compose` setup. The docker build includes the `xmllint` tool. If you run it directly, you may need to install this tool.
+        -   On Ubuntu it is in `libxml2-utils`, so you'll need something like `sudo apt install libxml2-utils`.
 
 ## Getting Started
 
 1. Clone this repository
 1. Follow instructions for nvm/node prerequisties above
 1. Setup the environment variables using the `.env` file (instructions below)
-      * If running directly (option 1), this will mean setting up a `redis` database.
+    - If running directly (option 1), this will mean setting up a `redis` database.
 
 ### Option 1: running directly
 
@@ -49,7 +47,6 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 
 4. Run `npm run docker:start` to run the Function inside a Docker container using docker-compose.yml to create a Redis instance.
 1. The API end points will be available on `localhost:8080`
-
 
 ### Test setup
 
@@ -82,7 +79,6 @@ You should see something like (if the file is a valid IATI file):
     }
 
 If it has warnings or errors, you'll see them listed.
-
 
 ## Environment Variables
 
@@ -117,8 +113,8 @@ DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME=x-functions-key
 DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE=
 DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS=5000
 
-- URL and API Key for datastore services, used by the advisory system to check for the
-  existence of IATI Identifiers in the Datastore
+-   URL and API Key for datastore services, used by the advisory system to check for the
+    existence of IATI Identifiers in the Datastore
 
 ### App config defaults (set in `config/config.js`)
 
@@ -181,7 +177,7 @@ Locally
 
 -   Install newman globally `npm i -g newman`
 -   Start function `npm start`
--   Run Tests `npm int:test`
+-   Run Tests `npm run int:test`
 
 In Docker container
 
