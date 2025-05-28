@@ -6,18 +6,31 @@ import { spawn } from 'child_process';
 import redisclient from '../config/redis.js';
 import config from '../config/config.js';
 
-const GITHUB_RAW = 'https://raw.githubusercontent.com';
 const GITHUB_API = 'https://api.github.com';
 
 const getFileBySha = async (owner, repo, sha, filePath) => {
-    // https://raw.githubusercontent.com/IATI/IATI-Validator-Codelists/{sha}/codelist_rules.json
-    const res = await fetch(`${GITHUB_RAW}/${owner}/${repo}/${sha}/${filePath}`, {
-        method: 'GET',
-        headers: {
-            Accept: 'text/plain',
-            Authorization: `token ${config.BASIC_GITHUB_TOKEN}`,
+    const headers = { Accept: "application/vnd.github.raw+json" };
+    if (
+        config.GITHUB_OAUTH_APP_CLIENT_ID &&
+        config.GITHUB_OAUTH_APP_CLIENT_SECRET
+    ) {
+        headers["Authorization"] =
+            "Basic " +
+            Buffer.from(
+                config.GITHUB_OAUTH_APP_CLIENT_ID +
+                ":" +
+                config.GITHUB_OAUTH_APP_CLIENT_SECRET,
+            ).toString("base64");
+    }
+    const res = await fetch(
+        `${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}?ref=${sha}`,
+        {
+            method: "GET",
+            headers: headers,
         },
-    });
+    );
+    // This can be useful to check auth. You should see headers like x-ratelimit-limit, x-ratelimit-remaining
+    //console.log(res.headers);
     const body = res.json();
     if (res.status !== 200)
         throw new Error(
@@ -27,35 +40,32 @@ const getFileBySha = async (owner, repo, sha, filePath) => {
 };
 
 const getFileCommitSha = async (owner, repo, branch, filePath) => {
-    // https://api.github.com/repos/IATI/IATI-Validator-Codelists/branches/version-2.03
-    const branchRes = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/branches/${branch}`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/vnd.github.v3+json',
-            Authorization: `token ${config.BASIC_GITHUB_TOKEN}`,
-        },
-    });
-    const branchBody = await branchRes.json();
-    if (branchRes.status !== 200)
-        throw new Error(
-            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${branchBody.message} `,
-        );
-    const { sha } = branchBody.commit;
-    // https://api.github.com/repos/IATI/IATI-Validator-Codelists/commits?sha={sha}&path=codelist_rules.json
+    const headers = { Accept: "application/vnd.github.v3+json" };
+    if (
+        config.GITHUB_OAUTH_APP_CLIENT_ID &&
+        config.GITHUB_OAUTH_APP_CLIENT_SECRET
+    ) {
+        headers["Authorization"] =
+            "Basic " +
+            Buffer.from(
+                config.GITHUB_OAUTH_APP_CLIENT_ID +
+                ":" +
+                config.GITHUB_OAUTH_APP_CLIENT_SECRET,
+            ).toString("base64");
+    }
     const fileRes = await fetch(
-        `${GITHUB_API}/repos/${owner}/${repo}/commits?sha=${sha}&path=${filePath}`,
+        `${GITHUB_API}/repos/${owner}/${repo}/commits?sha=${branch}&path=${filePath}`,
         {
-            method: 'GET',
-            headers: {
-                Accept: 'application/vnd.github.v3+json',
-                Authorization: `token ${config.BASIC_GITHUB_TOKEN}`,
-            },
+            method: "GET",
+            headers: headers,
         },
     );
+    // This can be useful to check auth. You should see headers like x-ratelimit-limit, x-ratelimit-remaining
+    //console.log(fileRes.headers);
     const fileBody = await fileRes.json();
     if (fileRes.status !== 200)
         throw new Error(
-            `Error fetching sha from github api. Status: ${branchRes.status} Message: ${fileBody.message} `,
+            `Error fetching sha from github api. Status: ${fileRes.status} Message: ${fileBody.message} `,
         );
     // sort to get newest commit
     fileBody.sort(

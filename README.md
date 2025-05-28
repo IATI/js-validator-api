@@ -92,9 +92,10 @@ APPLICATIONINSIGHTS_CONNECTION_STRING
 
 -   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
 
-BASIC_GITHUB_TOKEN
+GITHUB_OAUTH_APP_CLIENT_ID
+GITHUB_OAUTH_APP_CLIENT_SECRET
 
--   GitHub personal access token. This is needed to pull in the Codelists from the `IATI/IATI-Validator-Codelists` repository. Note that you cannot use a "Personal Access Token (Classic)"; you must generate a fine-grained access token.
+-   GitHub OAuth app. No special permissions or access needed. Optional, but you may get rate limited very easily if you don't.
 
 REDIS_PORT=6379  
 REDIS_HOSTNAME=redis
