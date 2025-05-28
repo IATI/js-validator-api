@@ -22,7 +22,8 @@ env:
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
   KV_URI: ${{ secrets.PROD_KV_URI }}
-  BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
+  GITHUB_OAUTH_APP_CLIENT_ID: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_ID }}
+  GITHUB_OAUTH_APP_CLIENT_SECRET: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_SECRET }}
   DATASTORE_SERVICES_URL: ${{ secrets.PROD_DATASTORE_SERVICES_URL }}
   DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME: ${{ secrets.PROD_DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME }}
   DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE: ${{ secrets.PROD_DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE }}
@@ -119,8 +120,13 @@ jobs:
                     "slotSetting": false
                 },
                 {
-                    "name": "BASIC_GITHUB_TOKEN",
-                    "value": "${{ env.BASIC_GITHUB_TOKEN }}",
+                    "name": "GITHUB_OAUTH_APP_CLIENT_ID",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_ID }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_SECRET",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_SECRET }}",
                     "slotSetting": false
                 },
                 {
