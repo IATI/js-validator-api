@@ -90,7 +90,12 @@ If it has warnings or errors, you'll see them listed.
 
 APPLICATIONINSIGHTS_CONNECTION_STRING
 
--   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
+-   **Required — the app will not start without it.** `config/appInsights.js` calls
+    `appInsights.setup(...).start()` at module load. If the value is empty or malformed the SDK throws
+    `Instrumentation key not found`, the Functions worker fails to load every function that imports it,
+    and requests get `503 Function host is not running` (or an empty 500) naming no cause.
+    For local development any syntactically valid connection string works; no telemetry is sent. The
+    value shipped in `.env.example` is a usable dummy:
 
 GITHUB_OAUTH_APP_CLIENT_ID
 GITHUB_OAUTH_APP_CLIENT_SECRET
@@ -109,13 +114,18 @@ VALIDATOR_SERVICES_KEY_VALUE=
 
 -   URL and API Key for Validator Services, used to get list of Publisher Identifiers
 
-DATASTORE_SERVICES_URL=https://dev-func-datastore-services.azurewebsites.net/api
+DATASTORE_SERVICES_URL=https://func-datastore-services-dev.azurewebsites.net/api
 DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME=x-functions-key
 DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE=
 DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS=5000
 
 -   URL and API Key for datastore services, used by the advisory system to check for the
     existence of IATI Identifiers in the Datastore
+
+-   VALIDATOR_SERVICES_KEY_VALUE and DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE are outbound
+    credentials for Azure Functions. If you are an authorised developer on this
+    codebase you can get them from the Azure portal for the respective Function Apps.
+    If you do not have Azure access, ask the team.
 
 ### App config defaults (set in `config/config.js`)
 
@@ -185,7 +195,7 @@ In Docker container
 -   Install newman globally `npm i -g newman`
 -   Edit `function.json` files to set `"authLevel": "anonymous"`, don't forget to change back!
 -   Start function `npm run docker:start`
--   Run Tests `npm docker:int:test`
+-   Run Tests `npm run docker:int:test`
 
 ### Modifying/Adding
 
