@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iati-activities version="2.03" generated-datetime="2026-01-01T00:00:00">
+    <iati-activity last-updated-datetime="2026-01-01T00:00:00" xml:lang="en" default-currency="USD">
+        <iati-identifier>AA-AAA-123456789-ABC123</iati-identifier>
+        <reporting-org ref="AA-AAA-123456789" type="40">
+            <narrative>Example narrative</narrative>
+        </reporting-org>
+        <title>
+            <narrative>Example narrative</narrative>
+        </title>
+        <description>
+            <narrative>Example narrative</narrative>
+        </description>
+        <participating-org role="1" ref="AA-AAA-123456789" />
+        <activity-status code="2" />
+        <activity-date iso-date="2026-01-01" type="1" />
+        <budget>
+            <period-start iso-date="2026-01-01" />
+            <period-end iso-date="2026-12-31" />
+            <value currency="USD" value-date="2026-01-01"> - </value>
+        </budget>
+    </iati-activity>
+</iati-activities>
