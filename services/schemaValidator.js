@@ -1,4 +1,6 @@
-import { validateXMLrecover, getFileInformation, getSchema } from '../utils/utils.js';
+import { XmlValidateError } from 'libxml2-wasm';
+import { validateXMLrecover, getSchema } from '../utils/utils.js';
+import { parseFileBody, getFileInformation } from '../utils/iatiFile.js';
 
 // pvt-schema-validate-file-post
 // Schema Check on full file, happens before full validation to enable the safety valve functionality in unified platform
@@ -48,14 +50,21 @@ const schemaValidateFile = async (context, req) => {
         }
         let fileType = '';
         let version = '';
-        let xmlDoc = '';
         let isIati = '';
         let supportedVersion = '';
+        // Undefined rather than '', so the xmlDoc?.dispose() below is a genuine no-op when
+        // no document was produced. `''?.dispose()` would be a TypeError.
+        let xmlDoc;
 
         // Parse file and get metadata for further checks
         try {
-            ({ fileType, version, supportedVersion, xmlDoc, isIati } = getFileInformation(body));
+            xmlDoc = parseFileBody(body);
+            ({ fileType, version, supportedVersion, isIati } = getFileInformation(xmlDoc));
         } catch (error) {
+            // The parse may have succeeded and the inspection failed, so this path can own a
+            // document. Unparseable input is simply not valid here, hence 200 either way.
+            xmlDoc?.dispose();
+
             context.res = {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },
@@ -66,31 +75,47 @@ const schemaValidateFile = async (context, req) => {
             return;
         }
 
-        // IATI Check
-        if (!isIati) {
-            context.res = {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' },
-                body: {
-                    valid: false,
-                },
-            };
-            return;
+        // This scope owns xmlDoc from here: off-heap memory, so the finally below covers the
+        // two early returns as well as the schema check. See validationService for why that
+        // is deterministic rather than left to the library's FinalizationRegistry backstop.
+        let schemaValid;
+        try {
+            // IATI Check
+            if (!isIati) {
+                context.res = {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: {
+                        valid: false,
+                    },
+                };
+                return;
+            }
+
+            // Version Check
+            if (!supportedVersion) {
+                context.res = {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: {
+                        valid: false,
+                    },
+                };
+                return;
+            }
+
+            try {
+                getSchema(fileType, version).validate(xmlDoc);
+                schemaValid = true;
+            } catch (error) {
+                if (!(error instanceof XmlValidateError)) throw error;
+                schemaValid = false;
+            }
+        } finally {
+            xmlDoc?.dispose();
         }
 
-        // Version Check
-        if (!supportedVersion) {
-            context.res = {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' },
-                body: {
-                    valid: false,
-                },
-            };
-            return;
-        }
-
-        if (!xmlDoc.validate(getSchema(fileType, version))) {
+        if (!schemaValid) {
             context.res = {
                 headers: { 'Content-Type': 'application/json' },
                 body: { valid: false },

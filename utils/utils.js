@@ -1,10 +1,16 @@
-import libxml from 'libxmljs2';
+import { XmlDocument, XsdValidator } from 'libxml2-wasm';
+import { xmlRegisterFsInputProviders } from 'libxml2-wasm/lib/nodejs.mjs';
 import fs from 'fs/promises';
 import fetch from 'node-fetch';
 import { spawn } from 'child_process';
 
 import redisclient from '../config/redis.js';
 import config from '../config/config.js';
+
+// Lets libxml2 resolve xsd:include / xsd:import from disk when compiling the schemas
+// below. Must be called exactly once per process: repeated register/cleanup leaks
+// entries from the wasm function table (libxml2-wasm issue #166).
+xmlRegisterFsInputProviders();
 
 const GITHUB_API = 'https://api.github.com';
 
@@ -62,41 +68,6 @@ const getFileCommitSha = async (owner, repo, branch, filePath) => {
 };
 
 // parse xml body to JSON to check the root element, don't attempt to parse if output from xmllint --recover was just blank XML doc
-const getFileInformation = (body) => {
-    let fileType = '';
-    let version = '';
-    let generatedDateTime = '';
-    let supportedVersion;
-    let isIati;
-    let xmlDoc;
-    if (body.toString() !== `<?xml version="1.0"?>\n`) {
-        xmlDoc = libxml.parseXml(body, { huge: true });
-        if (xmlDoc) {
-            const root = xmlDoc.root().name();
-
-            isIati = root === 'iati-activities' || root === 'iati-organisations';
-            // set fileType to '' for non IATI files
-            fileType = isIati ? root : '';
-
-            if (xmlDoc.get(`/${fileType}/@version`) !== undefined) {
-                version = xmlDoc.get(`/${fileType}/@version`).value();
-            }
-            if (xmlDoc.get(`/${fileType}/@generated-datetime`) !== undefined) {
-                generatedDateTime = xmlDoc.get(`/${fileType}/@generated-datetime`).value();
-            }
-            supportedVersion = version && config.VERSIONS.includes(version);
-        }
-    }
-    return {
-        fileType,
-        version,
-        generatedDateTime,
-        supportedVersion,
-        isIati,
-        xmlDoc,
-    };
-};
-
 const codelistRules = {};
 const ruleset = {};
 const schemas = {};
@@ -179,10 +150,20 @@ config.VERSIONS.forEach(async (version) => {
 
     // load schemas
     ['iati-activities', 'iati-organisations'].forEach(async (fileType) => {
-        schemas[`${fileType}-${version}`] = libxml.parseXml(
-            (await fs.readFile(`schemas/${version}/${fileType}-schema.xsd`)).toString(),
-            { baseUrl: `./schemas/${version}/` },
-        );
+        try {
+            const path = `schemas/${version}/${fileType}-schema.xsd`;
+            // Parsed strictly rather than through xmlParse.js - a malformed XSD must fail
+            // here rather than be tolerated.
+            const xsdDoc = XmlDocument.fromBuffer(await fs.readFile(path), { url: path });
+            try {
+                schemas[`${fileType}-${version}`] = XsdValidator.fromDoc(xsdDoc);
+            } finally {
+                // The validator retains what it needs; the source document does not.
+                xsdDoc.dispose();
+            }
+        } catch (error) {
+            console.error(`Error loading ${fileType} schema for version ${version}: ${error}`);
+        }
     });
 
     // load advisories
@@ -240,6 +221,11 @@ const getRulesetCommitSha = (version) => {
     return '';
 };
 
+/*
+ * Returns a compiled XsdValidator, not a parsed XSD document as it did under libxmljs2.
+ * Callers validate with `getSchema(...).validate(doc)`, which THROWS XmlValidateError on
+ * a schema-invalid document rather than returning false.
+ */
 const getSchema = (fileType, version) => {
     if (
         config.VERSIONS.includes(version) &&
@@ -465,7 +451,6 @@ export {
     getIdSets,
     getOrgIds,
     getOrgIdPrefixes,
-    getFileInformation,
     getVersionCodelistRules,
     getVersionCodelistCommitSha,
     getRuleset,

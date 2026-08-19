@@ -2,7 +2,8 @@ import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chai from 'chai';
-import libxml from 'libxmljs2';
+import { XmlDocument, XsdValidator, XmlValidateError } from 'libxml2-wasm';
+import { xmlRegisterFsInputProviders } from 'libxml2-wasm/lib/nodejs.mjs';
 
 import { validateIATI } from '../services/rulesValidator.js';
 
@@ -27,10 +28,6 @@ const { expect } = chai;
  * regression has therefore been invisible to PR CI.
  *
  * Run by the same `npm run rules:test` command, so no CI change is needed.
- *
- * Five of these cases FAIL until libxmljs2 is replaced (js-validator-api#574). That is
- * intentional: they assert the corrected behaviour, so they go green with the fix.
- * The two CONTROL cases pass either side.
  *
  * Only 2.03 fixtures are validated, though config.VERSIONS is 2.01, 2.02 and 2.03. The
  * defect is in libxml2's handling of xs:decimal, an XSD built-in type, so it behaves the
@@ -58,9 +55,6 @@ const testMap = [
         message: DECIMAL_ERROR,
     },
     {
-        // The same defect in an activity file, so both 2.03 schemas are exercised,
-        // not just the organisation one. See the Schema compilation block for the
-        // other four.
         file: 'act_value_sign_only.xml',
         fileType: 'iati-activities',
         what: 'a sign-only decimal is rejected in an activity file too',
@@ -88,6 +82,18 @@ const testMap = [
         message: DECIMAL_ERROR,
     },
     {
+        // The libraries disagree on when a parse failure is fatal: libxmljs2 threw only
+        // if no document could be built, libxml2-wasm throws whenever the parser
+        // recorded anything at all. An undeclared namespace prefix is not fatal to
+        // building a tree, so it must stay a schema error here rather than becoming a
+        // file-level parse error. See utils/xmlParse.js, which restores the old rule.
+        file: 'org_undeclared_ns_prefix.xml',
+        fileType: 'iati-organisations',
+        what: 'an undeclared namespace prefix is a schema error, not a parse failure',
+        occurrences: 1,
+        message: 'This element is not expected',
+    },
+    {
         // Positive control. Guards against the suite going green by not validating at
         // all - validateIATI silently skips schema work when `schema` is undefined.
         file: 'org_bad_datetime.xml',
@@ -105,36 +111,43 @@ const testMap = [
     },
 ];
 
-/* -------------------------------------------------------------------------
- * XML-LIBRARY-COUPLED SECTION - the only two functions that touch libxmljs2.
- * Replacing the library (js-validator-api#574) means rewriting these two and
- * nothing else in this file: the fixtures, the expectations and the assertions
- * are all library-agnostic, which is what makes the red-to-green transition
- * meaningful rather than an artefact of rewriting the tests.
- * ---------------------------------------------------------------------- */
+// Lets xsd:include / xsd:import resolve from disk. utils.js registers these too, under a
+// comment saying it must happen once per process - which holds because this suite
+// deliberately does not import utils.js, that being what keeps it free of Redis. If the
+// two are ever loaded together, one of these calls has to go.
+xmlRegisterFsInputProviders();
 
 /*
- * Reads an XSD and returns whatever object the validator expects. Note this does
- * NOT compile it: libxmljs2 defers that to validate(). See assertSchemaUsable.
+ * Reads an XSD and returns a compiled XsdValidator, mirroring what utils.js getSchema
+ * now caches. Unlike libxmljs2, compilation happens here rather than being deferred to
+ * validate(), so an unresolvable xsd:include throws at this point.
  */
 const loadSchema = async (fileType, version) => {
-    const xsd = new URL(`../schemas/${version}/${fileType}-schema.xsd`, import.meta.url);
-    const baseUrl = fileURLToPath(new URL(`../schemas/${version}/`, import.meta.url));
-    return libxml.parseXml((await fs.readFile(xsd)).toString(), { baseUrl });
+    const xsdPath = fileURLToPath(
+        new URL(`../schemas/${version}/${fileType}-schema.xsd`, import.meta.url),
+    );
+    const xsdDoc = XmlDocument.fromBuffer(await fs.readFile(xsdPath), { url: xsdPath });
+    try {
+        return XsdValidator.fromDoc(xsdDoc);
+    } finally {
+        xsdDoc.dispose();
+    }
 };
 
 /*
- * Forces libxml2 to actually compile the schema, which loadSchema alone does not:
- * parseXml happily returns a document even when xsd:include cannot be resolved, and
- * the failure surfaces only later as "Invalid XSD schema" thrown from validate().
- * Without this the compilation tests below would pass with broken includes.
+ * Retained from the libxmljs2 version, where loadSchema could return a document whose
+ * includes had silently failed to resolve. libxml2-wasm throws during compilation
+ * instead, so this is now belt-and-braces - it still fails if a schema builds but
+ * cannot validate.
  */
 const assertSchemaUsable = (schema, fileType, version) => {
-    const probe = libxml.parseXml(`<${fileType} version="${version}" />`);
-    expect(() => probe.validate(schema)).to.not.throw();
+    const probe = XmlDocument.fromString(`<${fileType} version="${version}" />`);
+    try {
+        expect(() => schema.validate(probe)).to.throw(XmlValidateError);
+    } finally {
+        probe.dispose();
+    }
 };
-
-/* ------------------------- end library-coupled section ------------------- */
 
 // Rule evaluation is not under test here, so an empty ruleset and empty id sets.
 const emptyRuleset = {};

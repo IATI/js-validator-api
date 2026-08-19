@@ -58,6 +58,13 @@ jobs:
           npm i -g npm@^10
           npm ci
 
+      # Runs before the unit tests because it catches a class they cannot: a source file
+      # importing a package that is not installed. No unit test imports utils.js - it
+      # pulls in Redis - so a tree where utils.js and package.json disagree about the XML
+      # library still reports every test passing.
+      - name: 'Lint'
+        run: npx eslint .
+
       - name: 'Run unit tests'
         run: npm run rules:test
 

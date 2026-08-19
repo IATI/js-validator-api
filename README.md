@@ -213,6 +213,23 @@ Using files:
 
 https://github.com/IATI/IATI-Internal-Wiki#development-process
 
+## XML Library
+
+XML parsing and XSD schema validation use [`libxml2-wasm`](https://github.com/jameslan/libxml2-wasm), a WebAssembly build of libxml2. `libxml2-wasm` builds its libxml2 from a git submodule, and from v0.7.0 that submodule points at the maintainer's own fork rather than upstream — earlier releases such as v0.6.0 pinned a clean upstream release tag. Version 0.7.1 pins commit `f52e859`, which is the **v2.15.1 release plus two unmerged commits** by the `libxml2-wasm` maintainer adding Windows path handling. It contains all of 2.15.1, but sits on a branch off it, so those two commits are not in 2.15.2 or 2.15.3.
+
+Those patches touch `uri.c` and `xmlIO.c`, which is the code resolving `xsd:include`, but they do not change behaviour here: every branch they add is guarded by a runtime flag that defaults to off, and `libxml2-wasm` explicitly disables it on any platform other than Windows (`node_modules/libxml2-wasm/lib/libxml2.mjs`). Behaviour was also compared against v0.6.0, which pins the clean upstream v2.14.5 tag, across 426 real published datasets with no disagreement in verdict or error count.
+
+When upgrading `libxml2-wasm`, check whether the submodule has returned to an upstream tag. While it stays on the fork, each bump also takes whatever else is on that branch.
+
+It replaced the native `libxmljs2`, which is no longer maintained and still bundles libxml2 2.9.9 from 2019 — old enough to accept values that later versions correctly reject, so the Validator disagreed with the Dashboard on whether a file was schema valid. No release of `libxmljs2` carries a newer libxml2, which is why the library was changed rather than upgraded.
+
+Two things to know when working with it:
+
+-   Documents and compiled schemas hold memory outside the JS heap and must be `dispose()`d. Whatever creates an `XmlDocument` is responsible for freeing it, normally in a `finally`.
+-   It throws on a parse failure whenever libxml2 recorded any error at all, even when a usable document was still produced. `libxmljs2` threw only when no document could be built, so problems that do not prevent a tree being built — an undeclared namespace prefix, say — were reported later as schema errors. `utils/xmlParse.js` restores that behaviour; without it such files would be rejected with a file level `0.1.1` instead.
+
+Note the `xmllint --recover` pre-pass is a separate, system-installed libxml2 (see Prerequisities), so it is generally an older version than the one used for validation.
+
 ## Customised Dependencies
 
 ### xpath
