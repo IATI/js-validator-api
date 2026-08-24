@@ -27,7 +27,7 @@ const { expect } = chai;
  * parameter (schema) undefined, so the `if (schema)` guards short-circuit. A schema
  * regression has therefore been invisible to PR CI.
  *
- * Run by the same `npm run rules:test` command, so no CI change is needed.
+ * Picked up by the `npm run unit:test` glob, so PR CI runs it with everything else.
  *
  * Only 2.03 fixtures are validated, though config.VERSIONS is 2.01, 2.02 and 2.03. The
  * defect is in libxml2's handling of xs:decimal, an XSD built-in type, so it behaves the

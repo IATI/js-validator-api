@@ -176,7 +176,7 @@ let myEnvVariable = config.ENV_VAR
 
 ## Unit Tests
 
--   `npm run rules:test`
+-   `npm run unit:test`
 
 There is a large set of Mocha unit tests for the Rulesets logic in `ruleset-unit-tests`.
 
