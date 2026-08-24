@@ -1,6 +1,6 @@
 import _ from 'underscore';
+import { XmlValidateError } from 'libxml2-wasm';
 import {
-    getFileInformation,
     getRuleset,
     getSchema,
     getIdSets,
@@ -10,6 +10,7 @@ import {
     validateXMLrecover,
     getObjectWithPropertiesAsEnumerable,
 } from '../utils/utils.js';
+import { parseFileBody, getFileInformation } from '../utils/iatiFile.js';
 import { client, getStartTime, getElapsedTime } from '../config/appInsights.js';
 import validateCodelists from './codelistValidator.js';
 import { validateIATI } from './rulesValidator.js';
@@ -189,21 +190,34 @@ export default async function validate(context, req) {
             };
         }
 
+        /*
+         * This scope owns xmlDoc: it holds memory outside the JS heap, so every path leaving
+         * between here and the schema check below disposes it first. Three do - the two early
+         * exits and the schema check's own `finally`.
+         *
+         * It is freed at the schema check rather than at the end of the function on purpose:
+         * codelist, ruleset and advisory validation all re-read the body as a string and
+         * never touch this document, so holding it that long would keep tens of MiB alive
+         * for most of the request. That is why one try/finally cannot simply wrap the whole
+         * function.
+         */
         let xmlDoc;
         try {
+            xmlDoc = parseFileBody(body);
             ({
                 fileType: state.fileType,
                 version: state.iatiVersion,
                 generatedDateTime: state.generatedDateTime,
                 supportedVersion: state.supportedVersion,
                 isIati: state.isIati,
-                xmlDoc,
-            } = getFileInformation(body));
+            } = getFileInformation(xmlDoc));
         } catch (error) {
+            xmlDoc?.dispose();
+
             let errContext;
-            const { str1, str2, str3, line, level, int1, domain, column } = error;
+            const [{ line, col } = {}] = error.details ?? [];
             if (line) {
-                errContext = `At line: ${error.line}`;
+                errContext = `At line: ${line}`;
             }
 
             const errors = [
@@ -214,7 +228,7 @@ export default async function validate(context, req) {
                     message: error.message,
                     context: [{ text: errContext }],
                     ...(showDetails && {
-                        details: { str1, str2, str3, line, level, int1, domain, column },
+                        details: { line, column: col },
                     }),
                     identifier: 'file',
                     title: 'File level errors',
@@ -241,6 +255,9 @@ export default async function validate(context, req) {
         // Check the XML file root element is <iati-activities> or <iati-organisation>
         // (it doesn't do anything more than that)
         if (!state.isIati) {
+            // Per the contract on the declaration above: dispose before returning.
+            xmlDoc?.dispose();
+
             const errors = [
                 {
                     id: '0.2.1',
@@ -269,6 +286,8 @@ export default async function validate(context, req) {
 
         // Check that the version is latest IATI version
         if (!state.supportedVersion) {
+            xmlDoc?.dispose();
+
             const errors = [
                 {
                     id: '0.6.1',
@@ -301,8 +320,15 @@ export default async function validate(context, req) {
 
         // Check the file validates against the IATI schema
         const fileSchemaStart = getStartTime();
-        state.schemaErrorsPresent = !xmlDoc.validate(getSchema(state.fileType, state.iatiVersion));
-        xmlDoc = null;
+        try {
+            getSchema(state.fileType, state.iatiVersion).validate(xmlDoc);
+            state.schemaErrorsPresent = false;
+        } catch (error) {
+            if (!(error instanceof XmlValidateError)) throw error;
+            state.schemaErrorsPresent = true;
+        } finally {
+            xmlDoc?.dispose();
+        }
         state.fileSchemaTime = getElapsedTime(fileSchemaStart);
 
         // Codelist Validation
