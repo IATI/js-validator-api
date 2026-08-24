@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 'Login via Azure CLI'
         uses: azure/login@v3.0.1
@@ -181,7 +181,7 @@ jobs:
         run: sleep 300
 
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 'Install newman'
         run: |
