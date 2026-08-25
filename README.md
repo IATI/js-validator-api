@@ -213,6 +213,22 @@ Using files:
 
 https://github.com/IATI/IATI-Internal-Wiki#development-process
 
+### Deploying to dev
+
+Dev deploys are handled by `.github/workflows/develop-func-deploy.yml`, which triggers on push to `develop` and on a daily 04:19 UTC cron.
+
+-   Dependabot PRs are auto-merged with `GITHUB_TOKEN`. GitHub never triggers workflows on `GITHUB_TOKEN` pushes, so those merges are deployed by the next daily cron, not immediately.
+-   This is a public repo, so GitHub auto-disables any workflow with a `schedule` trigger after 60 days without repo activity. When that happens the whole deploy workflow **stops responding to all** triggers, including human pushes to `develop`. Pushing again does not re-enable it.
+-   The workflow will be re-enabled when a commit touches the workflow file itself (e.g. a dependabot action bump), after which the next 04:19 UTC cron deploys. It can also be re-enabled via the GitHub UI, or via this command:
+
+    `gh workflow enable develop-func-deploy.yml`
+
+-   If a merge to `develop` does not deploy, check the workflow state:
+
+    `gh api repos/IATI/js-validator-api/actions/workflows --jq '.workflows[] | "\(.state) \(.path)"'`
+
+    If the deploy workflow is not `active`, use one of the methods detailed above to re-enable the workflow, then do a manual dispatch.
+
 ## XML Library
 
 XML parsing and XSD schema validation use [`libxml2-wasm`](https://github.com/jameslan/libxml2-wasm), a WebAssembly build of libxml2. `libxml2-wasm` builds its libxml2 from a git submodule, and from v0.7.0 that submodule points at the maintainer's own fork rather than upstream — earlier releases such as v0.6.0 pinned a clean upstream release tag. Version 0.7.1 pins commit `f52e859`, which is the **v2.15.1 release plus two unmerged commits** by the `libxml2-wasm` maintainer adding Windows path handling. It contains all of 2.15.1, but sits on a branch off it, so those two commits are not in 2.15.2 or 2.15.3.
