@@ -405,6 +405,10 @@
 									"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.map(obj => (obj.message))).to.include(\"Start tag expected, '<' not found\\n\");",
+									"});",
+									"pm.test(\"Error context reports the line of the parse failure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].context[0].text).to.eql(\"At line: 1\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -473,9 +477,19 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.map(obj => (obj.message))).to.include(\"Start tag expected, '<' not found\\n\");",
 									"});",
-									"pm.test(\"Error object contains a details object\", function () {",
+									"pm.test(\"Details object contains the line and column of the parse failure\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.errors[0]).to.have.property('details');",
+									"    pm.expect(jsonData.errors[0].details).to.eql({ line: 1, column: 1 });",
+									"});",
+									"// The message is deliberately absent from details - it is already on the error itself,",
+									"// asserted above - so guard against it creeping back in.",
+									"pm.test(\"Details object does not repeat the message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].details).to.not.have.property('message');",
+									"});",
+									"pm.test(\"Error context reports the line of the parse failure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].context[0].text).to.eql(\"At line: 1\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -551,6 +565,10 @@
 									"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.map(obj => (obj.message))).to.include(\"Start tag expected, '<' not found\\n\");",
+									"});",
+									"pm.test(\"Error context reports the line of the parse failure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].context[0].text).to.eql(\"At line: 1\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -626,6 +644,10 @@
 									"pm.test(\"Summary object should have 1 critical error\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});",
+									"pm.test(\"Error context reports the line of the parse failure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].context[0].text).to.eql(\"At line: 4\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1228,6 +1250,87 @@
 					"response": []
 				},
 				{
+					"name": "iati-org-value-sign-only - expect 0.3.1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Regression test for js-validator-api#574. A sign-only xs:decimal",
+									"// (\"<value> - </value>\") was accepted by the old bundled libxml2 (2.9.9),",
+									"// so the file validated clean while the IATI Dashboard reported it as failing.",
+									"pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
+									"pm.test(\"The file is not valid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.valid).to.eql(false);",
+									"});",
+									"pm.test(\"fileType value is iati-organisations\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.fileType).to.eql('iati-organisations');",
+									"});",
+									"pm.test(\"version is 2.03\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.iatiVersion).to.eql('2.03');",
+									"});",
+									"pm.test(\"Errors include schema error id 0.3.1\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.map(obj => (obj.id))).to.include('0.3.1');",
+									"});",
+									"pm.test(\"The sign-only decimal is named in the error context\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"is not a valid value of the atomic type 'xs:decimal'\");",
+									"});",
+									"pm.test(\"Summary object should have 1 critical error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.summary.critical).to.eq(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "iati-org-value-sign-only.xml"
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pub/validate?group=false",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validate"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "iati-act-root-only - expect 0.3.1",
 					"event": [
 						{
@@ -1390,6 +1493,10 @@
 									"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.map(obj => (obj.message))).to.include(\"Opening and ending tag mismatch: reporting-org line 5 and not-reporting-org\\n\");",
+									"});",
+									"pm.test(\"Error context reports the line of the parse failure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].context[0].text).to.eql(\"At line: 7\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1457,6 +1564,10 @@
 									"pm.test(\"Raw feedback from the xml2js parser should be displayed in the error message\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.errors.map(obj => (obj.message))).to.include(\"Opening and ending tag mismatch: reporting-org line 13 and not-reporting-org\\n\");",
+									"});",
+									"pm.test(\"Error context reports the line of the parse failure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors[0].context[0].text).to.eql(\"At line: 15\");",
 									"});"
 								],
 								"type": "text/javascript"

@@ -2,11 +2,12 @@ import { DOMParser } from '@xmldom/xmldom';
 import xpath from 'xpath';
 import _ from 'underscore';
 import { compareAsc, differenceInDays } from 'date-fns';
-import libxml from 'libxmljs2';
+import { XmlValidateError } from 'libxml2-wasm';
 import { Readable, Transform } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import ruleNameObj from './ruleNameMap.js';
+import { parseXmlString } from '../utils/xmlParse.js';
 
 const select = xpath.useNamespaces({ xml: 'http://www.w3.org/XML/1998/namespace' });
 
@@ -698,65 +699,85 @@ const standardiseResultFormat = (result, showDetails, xml, lineCount) => {
     };
 };
 
+const toReportedDetail = ({ col }, line) => ({ line, column: col });
+
+/*
+ * Turns validation into a value. libxml2-wasm throws XmlValidateError where libxmljs2
+ * returned false, and the compiled XsdValidator is the receiver rather than the document.
+ * Confined to here so the grouping below is not nested inside a catch. Anything that is
+ * not a validation failure is rethrown - a fault in the validator itself must not be
+ * reported as a schema error in the file.
+ */
+const collectSchemaErrors = (schema, xmlDoc) => {
+    try {
+        schema.validate(xmlDoc);
+        return [];
+    } catch (error) {
+        if (!(error instanceof XmlValidateError)) throw error;
+        return error.details;
+    }
+};
+
 const validateSchema = (xmlString, schema, identifier, title, showDetails, lineOffset = 0) => {
-    let xmlDoc = null;
+    let xmlDoc;
 
     try {
-        xmlDoc = libxml.parseXml(xmlString);
+        xmlDoc = parseXmlString(xmlString);
     } catch (error) {
+        const line = error.details?.[0]?.line;
         return [
             {
                 id: '0.3.1',
                 category: 'schema',
                 severity: 'critical',
                 message: error.message,
-                context: [
-                    { text: `At line ${lineOffset + (error.line === undefined ? 0 : error.line)}` },
-                ],
+                context: [{ text: `At line ${lineOffset + (line === undefined ? 0 : line)}` }],
             },
         ];
     }
 
-    if (xmlDoc != null && !xmlDoc.validate(schema)) {
-        const curSchemaErrors = xmlDoc.validationErrors.reduce((acc, error) => {
-            let errContext;
-            const errorDetail = error;
-            if ('line' in errorDetail) {
-                const lineMax = errorDetail.line >= 65535;
-                if (lineOffset > 1) {
-                    errorDetail.line += lineOffset;
-                }
-                errContext = `At line${lineMax ? ' greater than' : ''}: ${errorDetail.line}${
-                    lineMax
-                        ? `. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than ${errorDetail.line} for this activity.`
-                        : ''
-                }`;
-            }
-            if (!_.has(acc, error.message)) {
-                acc[error.message] = {
+    try {
+        const curSchemaErrors = collectSchemaErrors(schema, xmlDoc).reduce((acc, detail) => {
+            // Note the threshold is tested against the raw line but the offset one is
+            // reported, which is how this has always behaved.
+            const lineMax = detail.line >= 65535;
+            const line = lineOffset > 1 ? detail.line + lineOffset : detail.line;
+            const errContext = `At line${lineMax ? ' greater than' : ''}: ${line}${
+                lineMax
+                    ? `. Note: The validator cannot display accurate line numbers for schema errors located at a line greater than ${line} for this activity.`
+                    : ''
+            }`;
+            if (!_.has(acc, detail.message)) {
+                acc[detail.message] = {
                     id: '0.3.1',
                     category: 'schema',
                     severity: 'critical',
-                    message: error.message,
+                    message: detail.message,
                     context: [{ text: errContext }],
-                    ...(showDetails && { details: [{ error: errorDetail }] }),
+                    ...(showDetails && { details: [{ error: toReportedDetail(detail, line) }] }),
                     identifier,
                     title,
                 };
             } else {
-                acc[error.message] = {
-                    ...acc[error.message],
-                    context: [...acc[error.message].context, { text: errContext }],
+                acc[detail.message] = {
+                    ...acc[detail.message],
+                    context: [...acc[detail.message].context, { text: errContext }],
                     ...(showDetails && {
-                        details: [...acc[error.message].details, { error: errorDetail }],
+                        details: [
+                            ...acc[detail.message].details,
+                            { error: toReportedDetail(detail, line) },
+                        ],
                     }),
                 };
             }
             return acc;
         }, {});
         return Object.keys(curSchemaErrors).map((errGroup) => curSchemaErrors[errGroup]);
+    } finally {
+        // Off-heap wasm memory, and this runs once per activity - a missing dispose
+        // grows the heap for the whole length of a large file.
+        xmlDoc.dispose();
     }
-    return [];
 };
 
 const fileDefinition = {

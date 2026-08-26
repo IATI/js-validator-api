@@ -90,11 +90,17 @@ If it has warnings or errors, you'll see them listed.
 
 APPLICATIONINSIGHTS_CONNECTION_STRING
 
--   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
+-   **Required — the app will not start without it.** `config/appInsights.js` calls
+    `appInsights.setup(...).start()` at module load. If the value is empty or malformed the SDK throws
+    `Instrumentation key not found`, the Functions worker fails to load every function that imports it,
+    and requests get `503 Function host is not running` (or an empty 500) naming no cause.
+    For local development any syntactically valid connection string works; no telemetry is sent. The
+    value shipped in `.env.example` is a usable dummy:
 
-BASIC_GITHUB_TOKEN
+GITHUB_OAUTH_APP_CLIENT_ID
+GITHUB_OAUTH_APP_CLIENT_SECRET
 
--   GitHub personal access token. This is needed to pull in the Codelists from the `IATI/IATI-Validator-Codelists` repository. Note that you cannot use a "Personal Access Token (Classic)"; you must generate a fine-grained access token.
+-   GitHub OAuth app. No special permissions or access needed. Optional, but you may get rate limited very easily if you don't.
 
 REDIS_PORT=6379  
 REDIS_HOSTNAME=redis
@@ -108,13 +114,18 @@ VALIDATOR_SERVICES_KEY_VALUE=
 
 -   URL and API Key for Validator Services, used to get list of Publisher Identifiers
 
-DATASTORE_SERVICES_URL=https://dev-func-datastore-services.azurewebsites.net/api
+DATASTORE_SERVICES_URL=https://func-datastore-services-dev.azurewebsites.net/api
 DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME=x-functions-key
 DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE=
 DATASTORE_SERVICES_IATI_IDENTIFIERS_EXIST_MAX_NUMBER_OF_IDS=5000
 
 -   URL and API Key for datastore services, used by the advisory system to check for the
     existence of IATI Identifiers in the Datastore
+
+-   VALIDATOR_SERVICES_KEY_VALUE and DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE are outbound
+    credentials for Azure Functions. If you are an authorised developer on this
+    codebase you can get them from the Azure portal for the respective Function Apps.
+    If you do not have Azure access, ask the team.
 
 ### App config defaults (set in `config/config.js`)
 
@@ -165,7 +176,7 @@ let myEnvVariable = config.ENV_VAR
 
 ## Unit Tests
 
--   `npm run rules:test`
+-   `npm run unit:test`
 
 There is a large set of Mocha unit tests for the Rulesets logic in `ruleset-unit-tests`.
 
@@ -184,7 +195,7 @@ In Docker container
 -   Install newman globally `npm i -g newman`
 -   Edit `function.json` files to set `"authLevel": "anonymous"`, don't forget to change back!
 -   Start function `npm run docker:start`
--   Run Tests `npm docker:int:test`
+-   Run Tests `npm run docker:int:test`
 
 ### Modifying/Adding
 
@@ -201,6 +212,39 @@ Using files:
 ## Deployment / Release / Version Management
 
 https://github.com/IATI/IATI-Internal-Wiki#development-process
+
+### Deploying to dev
+
+Dev deploys are handled by `.github/workflows/develop-func-deploy.yml`, which triggers on push to `develop` and on a daily 04:19 UTC cron.
+
+-   Dependabot PRs are auto-merged with `GITHUB_TOKEN`. GitHub never triggers workflows on `GITHUB_TOKEN` pushes, so those merges are deployed by the next daily cron, not immediately.
+-   This is a public repo, so GitHub auto-disables any workflow with a `schedule` trigger after 60 days without repo activity. When that happens the whole deploy workflow **stops responding to all** triggers, including human pushes to `develop`. Pushing again does not re-enable it.
+-   The workflow will be re-enabled when a commit touches the workflow file itself (e.g. a dependabot action bump), after which the next 04:19 UTC cron deploys. It can also be re-enabled via the GitHub UI, or via this command:
+
+    `gh workflow enable develop-func-deploy.yml`
+
+-   If a merge to `develop` does not deploy, check the workflow state:
+
+    `gh api repos/IATI/js-validator-api/actions/workflows --jq '.workflows[] | "\(.state) \(.path)"'`
+
+    If the deploy workflow is not `active`, use one of the methods detailed above to re-enable the workflow, then do a manual dispatch.
+
+## XML Library
+
+XML parsing and XSD schema validation use [`libxml2-wasm`](https://github.com/jameslan/libxml2-wasm), a WebAssembly build of libxml2. `libxml2-wasm` builds its libxml2 from a git submodule, and from v0.7.0 that submodule points at the maintainer's own fork rather than upstream — earlier releases such as v0.6.0 pinned a clean upstream release tag. Version 0.7.1 pins commit `f52e859`, which is the **v2.15.1 release plus two unmerged commits** by the `libxml2-wasm` maintainer adding Windows path handling. It contains all of 2.15.1, but sits on a branch off it, so those two commits are not in 2.15.2 or 2.15.3.
+
+Those patches touch `uri.c` and `xmlIO.c`, which is the code resolving `xsd:include`, but they do not change behaviour here: every branch they add is guarded by a runtime flag that defaults to off, and `libxml2-wasm` explicitly disables it on any platform other than Windows (`node_modules/libxml2-wasm/lib/libxml2.mjs`). Behaviour was also compared against v0.6.0, which pins the clean upstream v2.14.5 tag, across 426 real published datasets with no disagreement in verdict or error count.
+
+When upgrading `libxml2-wasm`, check whether the submodule has returned to an upstream tag. While it stays on the fork, each bump also takes whatever else is on that branch.
+
+It replaced the native `libxmljs2`, which is no longer maintained and still bundles libxml2 2.9.9 from 2019 — old enough to accept values that later versions correctly reject, so the Validator disagreed with the Dashboard on whether a file was schema valid. No release of `libxmljs2` carries a newer libxml2, which is why the library was changed rather than upgraded.
+
+Two things to know when working with it:
+
+-   Documents and compiled schemas hold memory outside the JS heap and must be `dispose()`d. Whatever creates an `XmlDocument` is responsible for freeing it, normally in a `finally`.
+-   It throws on a parse failure whenever libxml2 recorded any error at all, even when a usable document was still produced. `libxmljs2` threw only when no document could be built, so problems that do not prevent a tree being built — an undeclared namespace prefix, say — were reported later as schema errors. `utils/xmlParse.js` restores that behaviour; without it such files would be rejected with a file level `0.1.1` instead.
+
+Note the `xmllint --recover` pre-pass is a separate, system-installed libxml2 (see Prerequisities), so it is generally an older version than the one used for validation.
 
 ## Customised Dependencies
 

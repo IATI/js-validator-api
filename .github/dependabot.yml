@@ -6,6 +6,15 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    ignore:
+      # Pinned exactly, and upgraded by hand. A libxml2-wasm release can carry a different
+      # bundled libxml2, which is what decides whether a file is schema valid - and since
+      # v0.7.0 its libxml2 submodule tracks the maintainer's fork rather than an upstream
+      # release tag, so a bump also takes whatever else is on that branch. PR CI does not
+      # run the differential harness that verified verdicts against the Dashboard, and
+      # dependabot PRs auto-merge once CI is green, so a bump would otherwise land with no
+      # human reading it. See README "XML Library".
+      - dependency-name: 'libxml2-wasm'
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'

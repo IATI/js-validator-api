@@ -1,4 +1,29 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# Running the integration tests against the Docker container requires temporarily
+# setting "authLevel": "anonymous" in the function.json files (see README). The
+# container has no AzureWebJobsStorage, so it cannot validate function keys and
+# every request 401s otherwise.
+#
+# Committing that change would leave the deployed endpoints reachable without a
+# function key. This guard refuses the commit instead of relying on memory.
+#
+# Restore with:  git checkout -- '*/function.json'
+for f in $(git diff --cached --name-only --diff-filter=ACM | grep 'function\.json$'); do
+    if git show ":$f" | grep -qi '"authLevel"[[:space:]]*:[[:space:]]*"anonymous"'; then
+        echo ""
+        echo "ERROR  $f is staged with \"authLevel\": \"anonymous\""
+        echo ""
+        echo "       That would leave the deployed endpoint unauthenticated."
+        echo "       It is only meant to be set temporarily, to run the"
+        echo "       integration tests against the Docker container."
+        echo ""
+        echo "       Restore all of them with:"
+        echo "           git checkout -- '*/function.json'"
+        echo ""
+        exit 1
+    fi
+done
+
 npx --no-install lint-staged

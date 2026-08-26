@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iati-organisations version="2.03" generated-datetime="2026-01-01">
+    <iati-organisation last-updated-datetime="2026-01-01T00:00:00" xml:lang="en" default-currency="USD">
+        <organisation-identifier>AA-AAA-123456789</organisation-identifier>
+        <name>
+            <narrative>Organisation name</narrative>
+        </name>
+        <reporting-org ref="AA-AAA-123456789" type="40">
+            <narrative>Organisation name</narrative>
+        </reporting-org>
+    </iati-organisation>
+</iati-organisations>

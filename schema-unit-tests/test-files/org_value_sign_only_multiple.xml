@@ -1,0 +1,1168 @@
+<?xml  version="1.0" encoding="utf-8"?>
+<iati-organisations generated-datetime="2026-06-25T18:54:50" version="2.03">
+  <iati-organisation default-currency="EUR" last-updated-datetime="2026-06-25T18:54:50" xml:lang="en">
+    <organisation-identifier>AA-AAA-123456789</organisation-identifier>
+    <name>
+      <narrative>Example narrative</narrative>
+      <narrative xml:lang="en">Example narrative</narrative>
+    </name>
+    <reporting-org ref="AA-AAA-123456789" type="10">
+      <narrative>Example narrative</narrative>
+      <narrative xml:lang="en">Example narrative</narrative>
+    </reporting-org>
+<total-budget status="1"> <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </total-budget>
+<total-budget status="1"> <period-start iso-date="2027-01-01" />
+      <period-end iso-date="2027-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </total-budget>
+<total-budget status="1"> <period-start iso-date="2028-01-01" />
+      <period-end iso-date="2028-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </total-budget>
+<recipient-region-budget status="1"> <recipient-region code="298" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-region-budget>
+<recipient-region-budget status="1"> <recipient-region code="498" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-region-budget>
+<recipient-region-budget status="1"> <recipient-region code="798" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-region-budget>
+<recipient-region-budget status="1"> <recipient-region code="89" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-region-budget>
+<recipient-region-budget status="1"> <recipient-region code="998" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-region-budget>
+<recipient-country-budget> <recipient-country code="AF" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="AL" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="AM" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="BA" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="BF" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="BO" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="BR" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CD" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CF" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CG" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CI" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CM" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01"> -   </value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CO" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="CU" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="DZ" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="EC" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="EG" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="ER" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="ET" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="GH" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="GM" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01"> -   </value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="GN" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="GT" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="IQ" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="JO" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="KE" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="KH" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01"> -   </value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="LB" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="LK" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01"> -   </value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="LY" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="MD" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="ML" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="MR" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="MW" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="MZ" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="NE" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="PK" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="PS" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="SD" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="SN" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="SO" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="SS" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="SV" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="SY" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="TD" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="TN" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="TZ" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="UA" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="UG" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="VE" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="VN" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01"> -   </value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="XK" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<recipient-country-budget> <recipient-country code="ZM" />
+      <period-start iso-date="2026-01-01" />
+      <period-end iso-date="2026-12-31" />
+      <value value-date="2026-01-01">1000.00</value> </recipient-country-budget>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2014-08-11" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2025-07-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2026-01-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2026-03-26" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-12-31" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2022-01-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2025-11-28" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2026-05-05" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2025-10-02" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2022-06-30" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-11-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-01-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2025-07-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2025-08-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2025-04-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-09-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-05-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-01-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-12-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-01-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-01-16" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-01-24" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-04-23" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-02-27" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-02-27" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-01-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-02-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-12-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-12-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2024-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B02" />
+      <language code="en" />
+      <document-date iso-date="2023-10-01" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-05-01" />
+      <recipient-country code="BF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-05-01" />
+      <recipient-country code="BF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-05-01" />
+      <recipient-country code="CI" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-05-01" />
+      <recipient-country code="CI" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-05-01" />
+      <recipient-country code="ET" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="ET" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-04-01" />
+      <recipient-country code="EG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-05-01" />
+      <recipient-country code="KE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-10-01" />
+      <recipient-country code="KE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="MZ" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="MZ" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-04-01" />
+      <recipient-country code="NE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-05-01" />
+      <recipient-country code="NE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-03-01" />
+      <recipient-country code="SN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-06-01" />
+      <recipient-country code="TN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2024-09-01" />
+      <recipient-country code="TN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-02-01" />
+      <recipient-country code="JO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-02-01" />
+      <recipient-country code="LB" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-04-01" />
+      <recipient-country code="PS" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-04-01" />
+      <recipient-country code="PS" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-04-01" />
+      <recipient-country code="PS" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-06-01" />
+      <recipient-country code="PK" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="PK" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="PK" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-05-01" />
+      <recipient-country code="AF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="AF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-06-01" />
+      <recipient-country code="AF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2025-05-01" />
+      <recipient-country code="VN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2024-02-01" />
+      <recipient-country code="CO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-06-01" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-03-01" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-03-01" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-06-01" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-06-01" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-01-01" />
+      <recipient-country code="SV" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-01-01" />
+      <recipient-country code="AL" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-04-01" />
+      <recipient-country code="UA" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-03-01" />
+      <recipient-country code="UA" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B01" />
+      <language code="en" />
+      <document-date iso-date="2026-03-01" />
+      <recipient-country code="UA" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2013-01-15" />
+      <recipient-country code="BF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2015-04-23" />
+      <recipient-country code="ET" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2010-06-22" />
+      <recipient-country code="EG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1985-11-19" />
+      <recipient-country code="KE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2013-10-07" />
+      <recipient-country code="MZ" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2022-11-02" />
+      <recipient-country code="NE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2011-07-12" />
+      <recipient-country code="SN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1961-11-23" />
+      <recipient-country code="TN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2022-02-01" />
+      <recipient-country code="TN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1993-03-16" />
+      <recipient-country code="UG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1987-03-10" />
+      <recipient-country code="CI" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2018-11-05" />
+      <recipient-country code="JO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2005-05-18" />
+      <recipient-country code="LB" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2013-11-01" />
+      <recipient-country code="PS" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1976-02-13" />
+      <recipient-country code="PK" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2011-09-12" />
+      <recipient-country code="AF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2013-04-22" />
+      <recipient-country code="AF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1989-12-26" />
+      <recipient-country code="VN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2001-10-01" />
+      <recipient-country code="CO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1975-07-03" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="1973-09-24" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2022-07-28" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2021-10-25" />
+      <recipient-country code="SV" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2009-08-01" />
+      <recipient-country code="AL" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B13" />
+      <language code="en" />
+      <document-date iso-date="2004-11-19" />
+      <recipient-country code="UA" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B16" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="IT" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B16" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="IT" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B16" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="IT" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B16" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="IT" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B16" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="IT" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="TN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="TN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="LB" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="LB" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="NE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="NE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="CO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="CO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="BF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="BF" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="JO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="JO" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="PK" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="PK" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="PS" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="PS" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="KE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="KE" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="ET" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="ET" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="CU" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="AL" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="AL" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="UG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="UG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="EG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="EG" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="SN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="SN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="VN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="VN" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="MZ" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="MZ" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="MZ" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="SV" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="SV" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="UA" /> </document-link>
+<document-link url="https://www.example.org/document.pdf" format="text/html">
+      <title> <narrative>Example narrative</narrative> </title>
+      <category code="B17" />
+      <language code="en" />
+      <document-date iso-date="2026-05-06" />
+      <recipient-country code="UA" /> </document-link>
+</iati-organisation>
+</iati-organisations>

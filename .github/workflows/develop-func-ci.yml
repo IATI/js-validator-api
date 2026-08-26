@@ -12,6 +12,30 @@ on:
       - main
 
 jobs:
+  # Running the integration tests against the Docker container requires temporarily
+  # setting "authLevel": "anonymous" in the function.json files (see README), because
+  # the container has no AzureWebJobsStorage and so cannot validate function keys.
+  # Committing that would leave the deployed endpoints reachable without a key.
+  # There is a matching .husky/pre-commit guard, but hooks are skippable with
+  # --no-verify and are absent in a fresh clone until `npm install` has run.
+  check-auth-level:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v7
+
+      - name: 'Reject authLevel anonymous in function.json'
+        run: |
+          if grep -il '"authLevel"[[:space:]]*:[[:space:]]*"anonymous"' */function.json > /tmp/hits; then
+            echo "::error::function.json committed with authLevel anonymous - the deployed endpoint would need no function key"
+            echo "Offending files:"
+            cat /tmp/hits
+            echo ""
+            echo "Restore with:  git checkout -- '*/function.json'"
+            exit 1
+          fi
+          echo "OK - all function.json files require a function key."
+
   build-test-node:
     runs-on: ubuntu-latest
     steps:
@@ -21,10 +45,10 @@ jobs:
           sudo apt-get install libxml2-utils
 
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 'Setup Node Environment'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -34,26 +58,33 @@ jobs:
           npm i -g npm@^10
           npm ci
 
+      # Runs before the unit tests because it catches a class they cannot: a source file
+      # importing a package that is not installed. No unit test imports utils.js - it
+      # pulls in Redis - so a tree where utils.js and package.json disagree about the XML
+      # library still reports every test passing.
+      - name: 'Lint'
+        run: npx eslint .
+
       - name: 'Run unit tests'
-        run: npm run rules:test
+        run: npm run unit:test
 
   build-docker:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 'Build Docker Image'
         run: |
           docker build . -t validator-local:latest
 
   automerge:
-    needs: [build-test-node, build-docker]
+    needs: [check-auth-level, build-test-node, build-docker]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     steps:
-      - uses: fastify/github-action-merge-dependabot@v3.9.1
+      - uses: fastify/github-action-merge-dependabot@v3.15.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}

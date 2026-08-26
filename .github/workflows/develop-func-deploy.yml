@@ -32,7 +32,8 @@ env:
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
   KV_URI: ${{ secrets.DEV_KV_URI }}
-  BASIC_GITHUB_TOKEN: ${{ secrets.BASIC_GITHUB_TOKEN }}
+  GITHUB_OAUTH_APP_CLIENT_ID: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_ID }}
+  GITHUB_OAUTH_APP_CLIENT_SECRET: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_SECRET }}
   DATASTORE_SERVICES_URL: ${{ secrets.DEV_DATASTORE_SERVICES_URL }}
   DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME: ${{ secrets.DEV_DATASTORE_SERVICES_AUTH_HTTP_HEADER_NAME }}
   DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE: ${{ secrets.DEV_DATASTORE_SERVICES_AUTH_HTTP_HEADER_VALUE }}
@@ -48,15 +49,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 'Login via Azure CLI'
-        uses: azure/login@v1.4.7
+        uses: azure/login@v3.0.1
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
       - name: 'Docker Login'
-        uses: azure/docker-login@v1
+        uses: azure/docker-login@v2
         with:
           login-server: ${{ env.ACR_LOGIN_SERVER }}
           username: ${{ env.ACR_USERNAME }}
@@ -134,8 +135,13 @@ jobs:
                     "slotSetting": false
                 },
                 {
-                    "name": "BASIC_GITHUB_TOKEN",
-                    "value": "${{ env.BASIC_GITHUB_TOKEN }}",
+                    "name": "GITHUB_OAUTH_APP_CLIENT_ID",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_ID }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_SECRET",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_SECRET }}",
                     "slotSetting": false
                 },
                 {
@@ -172,7 +178,7 @@ jobs:
           image: ${{ env.ACR_LOGIN_SERVER }}/func-${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
 
       - name: 'Tag resource for Tech Climate Impact'
-        uses: 'azure/CLI@v1.0.8'
+        uses: 'azure/CLI@v3.0.0'
         with:
           azcliversion: 2.30.0
           inlineScript: |
@@ -190,7 +196,7 @@ jobs:
         run: sleep 180
 
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 'Install newman'
         run: |
