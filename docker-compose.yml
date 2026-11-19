@@ -3,6 +3,8 @@ version: "3.9"
 services:
   web:
     build: .
+    # base image is amd64-only
+    platform: linux/amd64
     env_file:
       - .env
     ports:
