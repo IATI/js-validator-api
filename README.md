@@ -20,7 +20,8 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 ## Prerequisities
 
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
--   Node LTS
+-   Node 24.22.2 with npm 11.19.1
+    -   `package.json` permits Node 24.22.1 or newer within 24.x because 24.22.1 introduced the eMudhra SPKI blocklist; `.nvmrc` pins the tested target.
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
 -   [Azure Functions Core Tools v4](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
@@ -180,22 +181,64 @@ let myEnvVariable = config.ENV_VAR
 
 There is a large set of Mocha unit tests for the Rulesets logic in `ruleset-unit-tests`.
 
+## Security Regression Tests
+
+-   `npm run security:test`
+
+This is an offline TLS test proving that the Node runtime rejects all eight compromised
+eMudhra intermediate SPKIs with `CERT_REVOKED`. It requires Node 24.22.1 or later; see
+`security-tests/README.md`.
+
 ## Integration Tests
 
 ### Running
 
 Locally
 
--   Install newman globally `npm i -g newman`
 -   Start function `npm start`
--   Run Tests `npm run int:test`
+-   Run tests `npm run int:test` (uses pinned Newman through `npm exec`)
 
-In Docker container
+### Running in Docker
 
--   Install newman globally `npm i -g newman`
--   Edit `function.json` files to set `"authLevel": "anonymous"`, don't forget to change back!
--   Start function `npm run docker:start`
--   Run Tests `npm run docker:int:test`
+Do not edit and commit `function.json` authentication. Use a disposable copy and an
+authorised local `.env` (gitignored); `.env.example` is enough to start the container
+but not to pass the advisory tests:
+
+```sh
+INTEGRATION_DIR="$(mktemp -d)"
+cp -a . "$INTEGRATION_DIR/source"
+cp .env "$INTEGRATION_DIR/source/.env"
+node --input-type=module - "$INTEGRATION_DIR/source" <<'NODE'
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.argv[2];
+for (const entry of fs.readdirSync(root)) {
+    const file = path.join(root, entry, 'function.json');
+    if (!fs.existsSync(file)) continue;
+    const config = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const binding of config.bindings ?? []) {
+        if (binding.type?.toLowerCase() === 'httptrigger') binding.authLevel = 'anonymous';
+    }
+    fs.writeFileSync(file, `${JSON.stringify(config, null, 4)}\n`);
+}
+NODE
+docker compose --project-directory "$INTEGRATION_DIR/source" up --build --detach
+ready=false
+for attempt in $(seq 1 60); do
+    if curl -fsS --max-time 2 http://localhost:8080/api/pub/version >/dev/null; then
+        ready=true
+        break
+    fi
+    sleep 3
+done
+test "$ready" = true
+npm run docker:int:test
+docker compose --project-directory "$INTEGRATION_DIR/source" down --volumes --remove-orphans
+rm -rf "$INTEGRATION_DIR"
+```
+
+If a command fails, still run the final `docker compose ... down` and `rm -rf`.
 
 ### Modifying/Adding
 
