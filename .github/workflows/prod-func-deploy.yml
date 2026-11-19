@@ -183,13 +183,9 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v7
 
-      - name: 'Install newman'
-        run: |
-          sudo npm i -g newman
-
       - name: 'Run integration tests'
         run: |
-          newman run integration-tests/js-validator-api-tests.postman_collection.json \
+          npm exec --yes --package=newman@6.2.3 -- newman run integration-tests/js-validator-api-tests.postman_collection.json \
             -e integration-tests/envs/func-iativalidator-PROD.postman_environment.json \
             --working-dir integration-tests/test-files \
             --env-var keyValue=$API_KEY \

@@ -53,10 +53,16 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - name: 'Install Dependencies with Npm'
+      - name: 'Assert Node and npm toolchain'
         run: |
-          npm i -g npm@^10
-          npm ci
+          test "$(node -p 'process.version')" = 'v24.22.2'
+          test "$(npm --version)" = '11.19.1'
+
+      - name: 'Install Dependencies with Npm'
+        run: npm ci
+
+      - name: 'Run runtime and TLS security tests'
+        run: npm run security:test
 
       # Runs before the unit tests because it catches a class they cannot: a source file
       # importing a package that is not installed. No unit test imports utils.js - it
@@ -75,8 +81,24 @@ jobs:
         uses: actions/checkout@v7
 
       - name: 'Build Docker Image'
+        run: docker build --pull . -t validator-local:latest
+
+      - name: 'Run TLS security test in final image'
+        run: docker run --rm --entrypoint npm validator-local:latest run security:test
+
+      - name: 'Assert final image toolchain and CA store'
         run: |
-          docker build . -t validator-local:latest
+          docker run --rm -i --entrypoint node validator-local:latest --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { execFileSync } from 'node:child_process';
+          assert.equal(process.version, 'v24.22.2');
+          assert.equal(execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim(), '11.19.1');
+          assert.equal(
+              execFileSync('dpkg-query', ['-W', '-f=${Version}', 'ca-certificates'], { encoding: 'utf8' }),
+              '20260816ubuntu0.24.04.1',
+          );
+          console.log('Toolchain and CA store verified');
+          NODE
 
   automerge:
     needs: [check-auth-level, build-test-node, build-docker]

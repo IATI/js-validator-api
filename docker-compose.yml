@@ -1,11 +1,14 @@
-version: '3.9'
+---
+version: "3.9"
 services:
   web:
     build: .
+    # base image is amd64-only
+    platform: linux/amd64
     env_file:
       - .env
     ports:
-      - '8080:80'
+      - "8080:80"
 
   redis:
-    image: 'redis:alpine'
+    image: "redis:alpine"
