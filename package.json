@@ -8,22 +8,23 @@
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",
         "unit:test": "mocha './ruleset-unit-tests/**/test.js' './schema-unit-tests/**/test.js' './utils-unit-tests/**/test.js'",
-        "int:test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
+        "security:test": "node ./security-tests/tls-spki-blocklist.mjs",
+        "int:test": "npm exec --yes --package=newman@6.2.3 -- newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "docker:start": "docker compose up --build",
-        "docker:int:test": "newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-docker-function.postman_environment.json --working-dir integration-tests/test-files",
+        "docker:int:test": "npm exec --yes --package=newman@6.2.3 -- newman run integration-tests/js-validator-api-tests.postman_collection.json -e integration-tests/envs/local-docker-function.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install",
         "postinstall": "node ./utils/validate-xmllint-installation.js"
     },
     "author": "IATI",
     "dependencies": {
-        "@xmldom/xmldom": "^0.8.10",
-        "applicationinsights": "^2.7.3",
+        "@xmldom/xmldom": "0.8.15",
+        "applicationinsights": "2.7.3",
         "date-fns": "^2.30.0",
         "dotenv": "^16.3.1",
         "libxml2-wasm": "0.7.1",
         "node-fetch": "^3.3.2",
         "redis": "^4.4.0",
-        "underscore": "^1.13.6",
+        "underscore": "1.13.8",
         "xml2js": "^0.6.2",
         "xpath": "github:IATI/xpath#v0.0.34"
     },
@@ -44,8 +45,8 @@
         "*.{js,css,md}": "prettier --write"
     },
     "engines": {
-        "node": "20.x.x",
-        "npm": "10.x.x"
+        "node": ">=24.22.1 <25",
+        "npm": ">=11.19.1 <12"
     },
     "directories": {
         "doc": "docs"
@@ -62,5 +63,8 @@
     "bugs": {
         "url": "https://github.com/IATI/js-validator-api/issues"
     },
-    "homepage": "https://iativalidator.iatistandard.org"
+    "homepage": "https://iativalidator.iatistandard.org",
+    "overrides": {
+        "form-data": "4.0.6"
+    }
 }
