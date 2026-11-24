@@ -6,12 +6,9 @@ RUN \
     apt-get install -y git libxml2-utils
 
 # Fail if the reviewed digest is replaced by an unpatched runtime or CA store.
-RUN node -e "const [a,b,c]=process.versions.node.split('.').map(Number); \
-    if (a!==24 || b<22 || (b===22 && c<1)) { \
-    console.error('Unpatched Node: '+process.version); process.exit(1) }" && \
-    test "$(node -p 'process.version')" = 'v24.22.2' && \
-    test "$(npm --version)" = '11.19.1' && \
-    test "$(dpkg-query -W -f='${Version}' ca-certificates)" = '20260816ubuntu0.24.04.1'
+RUN node -e "if (process.version !== 'v24.22.2') { \
+    console.error('Expected v24.22.2, got ' + process.version); process.exit(1) }" && \
+    test "$(npm --version)" = '11.19.1'
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true

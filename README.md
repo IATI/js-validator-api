@@ -13,7 +13,7 @@
 
 [![Deploy_To_Dev_Function_On_Push](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml/badge.svg)](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml)
 
-## Endpoints
+## API Specification
 
 See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagger UI, you can use the `42crunch.vscode-openapi` VSCode extension.
 
@@ -31,16 +31,16 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
     -   There are two ways to run this locally: directly, or using the `docker compose` setup. The docker build includes the `xmllint` tool. If you run it directly, you may need to install this tool.
         -   On Ubuntu it is in `libxml2-utils`, so you'll need something like `sudo apt install libxml2-utils`.
 
-## Getting Started
+## Local development: getting Started
 
 1. Clone this repository
 1. Follow instructions for nvm/node prerequisties above
 1. Setup the environment variables using the `.env` file (instructions below)
-    - If running directly (option 1), this will mean setting up a `redis` database.
+    - If running directly (option 1), this will mean setting up a `redis` database. The easiest way to do this is to use the docker compose setup in the `local-dev` folder, which currently just runs a local redis instance.
 
 ### Option 1: running directly
 
-4. Run `npm i` to install dependencies
+1. Run `npm i` to install dependencies
 1. Run `npm start` to run the Function locally using the Azure Functions Core Tools
 1. The API end points will be available on `localhost:7071`
 
