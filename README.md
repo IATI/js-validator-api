@@ -13,14 +13,15 @@
 
 [![Deploy_To_Dev_Function_On_Push](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml/badge.svg)](https://github.com/IATI/js-validator-api/actions/workflows/develop-func-deploy.yml)
 
-## Endpoints
+## API Specification
 
 See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagger UI, you can use the `42crunch.vscode-openapi` VSCode extension.
 
 ## Prerequisities
 
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
--   Node LTS
+-   Node 24.22.2 with npm 11.19.1
+    -   `package.json` permits Node 24.22.1 or newer within 24.x because 24.22.1 introduced the eMudhra SPKI blocklist; `.nvmrc` pins the tested target.
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
 -   [Azure Functions Core Tools v4](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
@@ -30,16 +31,16 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
     -   There are two ways to run this locally: directly, or using the `docker compose` setup. The docker build includes the `xmllint` tool. If you run it directly, you may need to install this tool.
         -   On Ubuntu it is in `libxml2-utils`, so you'll need something like `sudo apt install libxml2-utils`.
 
-## Getting Started
+## Local development: getting Started
 
 1. Clone this repository
 1. Follow instructions for nvm/node prerequisties above
 1. Setup the environment variables using the `.env` file (instructions below)
-    - If running directly (option 1), this will mean setting up a `redis` database.
+    - If running directly (option 1), this will mean setting up a `redis` database. The easiest way to do this is to use the docker compose setup in the `local-dev` folder, which currently just runs a local redis instance.
 
 ### Option 1: running directly
 
-4. Run `npm i` to install dependencies
+1. Run `npm i` to install dependencies
 1. Run `npm start` to run the Function locally using the Azure Functions Core Tools
 1. The API end points will be available on `localhost:7071`
 
@@ -180,22 +181,33 @@ let myEnvVariable = config.ENV_VAR
 
 There is a large set of Mocha unit tests for the Rulesets logic in `ruleset-unit-tests`.
 
+## Security Regression Tests
+
+-   `npm run security:test`
+
+This is an offline TLS test proving that the Node runtime rejects all eight compromised
+eMudhra intermediate SPKIs with `CERT_REVOKED`. It requires Node 24.22.1 or later; see
+`security-tests/README.md`.
+
 ## Integration Tests
 
 ### Running
 
 Locally
 
--   Install newman globally `npm i -g newman`
 -   Start function `npm start`
--   Run Tests `npm run int:test`
+-   Run tests `npm run int:test` (uses pinned Newman through `npm exec`)
 
-In Docker container
+### Running in Docker
 
--   Install newman globally `npm i -g newman`
--   Edit `function.json` files to set `"authLevel": "anonymous"`, don't forget to change back!
--   Start function `npm run docker:start`
--   Run Tests `npm run docker:int:test`
+Do not edit and commit `function.json` authentication. Use a disposable copy and
+an authorised local `.env` (gitignored); `.env.example` is enough to start the
+container but not to pass the advisory tests. The script in
+`local-dev/run-integration-tests.sh` creates a disposable copy and changes the
+function auth to `anonymous` to allow running of the tests without passing a
+functions key.
+
+If a command fails, still run the final `docker compose ... down` and `rm -rf`.
 
 ### Modifying/Adding
 

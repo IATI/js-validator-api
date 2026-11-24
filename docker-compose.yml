@@ -1,11 +1,20 @@
-version: '3.9'
+---
+version: "3.9"
 services:
   web:
     build: .
+    # base image is amd64-only
+    platform: linux/amd64
     env_file:
       - .env
+    environment:
+      # Inside the container localhost is the container itself, so the redis service
+      # is reached by service name. This overrides env_file, letting a host-oriented
+      # .env (for native development with local-dev/docker-compose-redis-only.yml)
+      # drive both workflows.
+      REDIS_HOSTNAME: redis
     ports:
-      - '8080:80'
+      - "8080:80"
 
   redis:
-    image: 'redis:alpine'
+    image: "redis:alpine"

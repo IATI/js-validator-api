@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: 'Login via Azure CLI'
-        uses: azure/login@v3.0.1
+        uses: azure/login@v3.0.2
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
@@ -183,13 +183,9 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v7
 
-      - name: 'Install newman'
-        run: |
-          sudo npm i -g newman
-
       - name: 'Run integration tests'
         run: |
-          newman run integration-tests/js-validator-api-tests.postman_collection.json \
+          npm exec --yes --package=newman@6.2.3 -- newman run integration-tests/js-validator-api-tests.postman_collection.json \
             -e integration-tests/envs/func-iativalidator-PROD.postman_environment.json \
             --working-dir integration-tests/test-files \
             --env-var keyValue=$API_KEY \
