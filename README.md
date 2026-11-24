@@ -200,43 +200,12 @@ Locally
 
 ### Running in Docker
 
-Do not edit and commit `function.json` authentication. Use a disposable copy and an
-authorised local `.env` (gitignored); `.env.example` is enough to start the container
-but not to pass the advisory tests:
-
-```sh
-INTEGRATION_DIR="$(mktemp -d)"
-cp -a . "$INTEGRATION_DIR/source"
-cp .env "$INTEGRATION_DIR/source/.env"
-node --input-type=module - "$INTEGRATION_DIR/source" <<'NODE'
-import fs from 'node:fs';
-import path from 'node:path';
-
-const root = process.argv[2];
-for (const entry of fs.readdirSync(root)) {
-    const file = path.join(root, entry, 'function.json');
-    if (!fs.existsSync(file)) continue;
-    const config = JSON.parse(fs.readFileSync(file, 'utf8'));
-    for (const binding of config.bindings ?? []) {
-        if (binding.type?.toLowerCase() === 'httptrigger') binding.authLevel = 'anonymous';
-    }
-    fs.writeFileSync(file, `${JSON.stringify(config, null, 4)}\n`);
-}
-NODE
-docker compose --project-directory "$INTEGRATION_DIR/source" up --build --detach
-ready=false
-for attempt in $(seq 1 60); do
-    if curl -fsS --max-time 2 http://localhost:8080/api/pub/version >/dev/null; then
-        ready=true
-        break
-    fi
-    sleep 3
-done
-test "$ready" = true
-npm run docker:int:test
-docker compose --project-directory "$INTEGRATION_DIR/source" down --volumes --remove-orphans
-rm -rf "$INTEGRATION_DIR"
-```
+Do not edit and commit `function.json` authentication. Use a disposable copy and
+an authorised local `.env` (gitignored); `.env.example` is enough to start the
+container but not to pass the advisory tests. The script in
+`local-dev/run-integration-tests.sh` creates a disposable copy and changes the
+function auth to `anonymous` to allow running of the tests without passing a
+functions key.
 
 If a command fails, still run the final `docker compose ... down` and `rm -rf`.
 
