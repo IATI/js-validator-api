@@ -3,10 +3,10 @@ name: CI_AutoMerge_Dependabot
 on:
   pull_request:
     paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
-      - '**/README.md'
-      - '**/dependabot.yml'
-      - 'docs/*'
-      - '.vscode/*'
+      - "**/README.md"
+      - "**/dependabot.yml"
+      - "docs/*"
+      - ".vscode/*"
     branches:
       - develop
       - main
@@ -21,10 +21,10 @@ jobs:
   check-auth-level:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v7
 
-      - name: 'Reject authLevel anonymous in function.json'
+      - name: "Reject authLevel anonymous in function.json"
         run: |
           if grep -il '"authLevel"[[:space:]]*:[[:space:]]*"anonymous"' */function.json > /tmp/hits; then
             echo "::error::function.json committed with authLevel anonymous - the deployed endpoint would need no function key"
@@ -39,44 +39,62 @@ jobs:
   build-test-node:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Install libxml2-utils'
+      - name: "Install libxml2-utils"
         run: |
           sudo apt-get update && \
           sudo apt-get install libxml2-utils
 
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v7
 
-      - name: 'Setup Node Environment'
+      - name: "Setup Node Environment"
         uses: actions/setup-node@v7
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
-      - name: 'Install Dependencies with Npm'
+      - name: "Assert Node and npm toolchain"
         run: |
-          npm i -g npm@^10
-          npm ci
+          test "$(node -p 'process.version')" = 'v24.22.2'
+          test "$(npm --version)" = '11.19.1'
+
+      - name: "Install Dependencies with Npm"
+        run: npm ci
+
+      - name: "Run runtime and TLS security tests"
+        run: npm run security:test
 
       # Runs before the unit tests because it catches a class they cannot: a source file
       # importing a package that is not installed. No unit test imports utils.js - it
       # pulls in Redis - so a tree where utils.js and package.json disagree about the XML
       # library still reports every test passing.
-      - name: 'Lint'
+      - name: "Lint"
         run: npx eslint .
 
-      - name: 'Run unit tests'
+      - name: "Run unit tests"
         run: npm run unit:test
 
   build-docker:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v7
 
-      - name: 'Build Docker Image'
+      - name: "Build Docker Image"
+        run: docker build --pull . -t validator-local:latest
+
+      - name: "Run TLS security test in final image"
+        run: docker run --rm --entrypoint npm validator-local:latest run security:test
+
+      - name: "Assert final image toolchain and CA store"
         run: |
-          docker build . -t validator-local:latest
+          docker run --rm -i --entrypoint node validator-local:latest --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { execFileSync } from 'node:child_process';
+          assert.equal(process.version, 'v24.22.2');
+          assert.equal(execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim(), '11.19.1');
+          console.log('Toolchain and CA store verified');
+          NODE
 
   automerge:
     needs: [check-auth-level, build-test-node, build-docker]

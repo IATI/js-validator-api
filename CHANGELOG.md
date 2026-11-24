@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 
+## [2.5.1] - 2026-11-19
+
+### Added
+
+-   Some security tests for the Node runtime's TLS stack
+-   Prints version to the console to aid debugging
+
+### Changed
+
+-   Upgraded to Node 24
+
 ## [2.5.0] - 2026-08-24
 
 ### Changed
